@@ -28,8 +28,10 @@ int add_token(struct token_list *list, int lineno, int *tokenno, char *content, 
 
 void print_list(struct token_list *list){
     alpha_token_t *curr = list->head;
+    printf("\n");
     while (curr != NULL) {
-        printf("lineno: %d, tokenno: %d, content: %s, category: %s, type: %s\n", curr->lineno, curr->tokenno, curr->content, curr->category, curr->type);
+        // printf("lineno: %d, tokenno: %d, content: %s, category: %s, type: %s\n", curr->lineno, curr->tokenno, curr->content, curr->category, curr->type);
+        printf("%d:\t#%d\t\"%s\"\t%s\t%s\n", curr->lineno, curr->tokenno, curr->content, curr->category, curr->type);
         curr = curr->next;
     }
     return;

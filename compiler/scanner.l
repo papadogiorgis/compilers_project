@@ -4,6 +4,9 @@
     #include <stdlib.h>
 
     #define YY_DECL int alpha_yylex(alpha_token_t *token)
+    #define KEYWORD "KEYWORD"
+    #define OP "OPERATOR"
+    #define PUNC "PUNCTUATION"
 
     int tokencnt = 0;
     struct token_list token_list = {NULL};
@@ -158,7 +161,58 @@ new_line \n
 }
 
 "\"" {
+    char c, lookAhead;
+    unsigned int bufsize = 1024;
+    char *buf = malloc(sizeof(char) * bufsize);
+    int stringEnded = 0;
+    int currBufSize = -1;  
+    int breakFlag = 0; // will use it to continue from while if i have already written in buf a special char
 
+    while (!stringEnded){
+        c = input();
+        currBufSize++;
+        breakFlag = 0;
+        if (c == EOF){
+            fprintf(stderr, "String error.\n");
+            exit(-1);
+        }
+        if (currBufSize == bufsize){
+            char *tmp = realloc(buf, 2*bufsize);
+            if (tmp == NULL) {
+                fprintf(stderr, "Realloc failed\n");
+                free(buf);
+                exit(-1);
+            }
+            buf = tmp;
+            bufsize = bufsize * 2;
+        }
+
+        if (c == '\"'){
+            buf[currBufSize] = '\0'; //terminate string
+            stringEnded = 1;
+            continue;
+        }
+        if (c == '\\'){
+            lookAhead = input();
+            switch (lookAhead) {
+                case 'n':
+                    breakFlag = 1;
+                    buf[currBufSize] = '\n';
+                    break;
+                default:
+                    unput(lookAhead);
+            }
+        }
+        if (breakFlag){
+            continue;
+        }
+        else {
+            buf[currBufSize] = c;
+        }
+    }
+
+
+    add_token(&token_list, yylineno, &tokencnt, buf, "STRING", buf);
 }
 
 
@@ -173,11 +227,12 @@ int main (int argc, char **argv){
         }
     }
     else {
-        yyin = stdin;
+        /* yyin = stdin; */
     }
     /* yylex();*/
     alpha_token_t t;
     alpha_yylex(&t);
+    fprintf(stderr, "--------------- Lexical Analysis ---------------\n");
     print_list(&token_list);
     return 0;   
 }

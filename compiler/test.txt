@@ -2,10 +2,12 @@ ena 1234 if osd
 
 : 
 //trakarame// GAMO TO 
-/*wefuiwefghbgibebweruiuweribwgbi ujwegh wegughjw kh  wer 
+"this is a"this is a " string"
+/*wefuiwefghbgibebweruiuweribwgbiwefuiwefghbgibebweruiuweribwgbiwefuiwefghbgibebwer
 
-
-
-
-
+"this is a string"
 uihergihw ergwehrgwh wiowi erhg whihwwh i*/
+fgwrefg
+/**.77/?*/
+test variable
+end
