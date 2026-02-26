@@ -4,9 +4,10 @@
     #include <stdlib.h>
 
     #define YY_DECL int alpha_yylex(alpha_token_t *token)
-    #define KEYWORD "KEYWORD"
-    #define OP "OPERATOR"
-    #define PUNC "PUNCTUATION"
+    #define ADD_KEYWORD(content, type) add_token(&token_list, yylineno, &tokencnt, content, "KEYWORD", type)
+    #define ADD_OP(content, type) add_token(&token_list, yylineno, &tokencnt, content, "OPERATOR", type)
+    #define ADD_PUNC(content, type) add_token(&token_list, yylineno, &tokencnt, content, "PUNCTUATION", type)
+
 
     int tokencnt = 0;
     struct token_list token_list = {NULL};
@@ -65,53 +66,52 @@ new_line \n
 
 %%
 
-
-{if}   {add_token(&token_list, yylineno, &tokencnt, "if", "KEYWORD", "IF");}
-{else}   {add_token(&token_list, yylineno, &tokencnt, "else", "KEYWORD", "ELSE");}
-{while}   {add_token(&token_list, yylineno, &tokencnt, "while", "KEYWORD", "WHILE");}
-{for}   {add_token(&token_list, yylineno, &tokencnt, "for", "KEYWORD", "FOR");}
-{function}   {add_token(&token_list, yylineno, &tokencnt, "function", "KEYWORD", "FUNCTION");}
-{return}   {add_token(&token_list, yylineno, &tokencnt, "return", "KEYWORD", "RETURN");}
-{break}   {add_token(&token_list, yylineno, &tokencnt, "break", "KEYWORD", "BREAK");}
-{continue}   {add_token(&token_list, yylineno, &tokencnt, "continue", "KEYWORD", "CONTINUE");}
-{and}   {add_token(&token_list, yylineno, &tokencnt, "and", "KEYWORD", "AND");}
-{not}   {add_token(&token_list, yylineno, &tokencnt, "not", "KEYWORD", "NOT");}
-{or}   {add_token(&token_list, yylineno, &tokencnt, "or", "KEYWORD", "OR");}
-{local}   {add_token(&token_list, yylineno, &tokencnt, "local", "KEYWORD", "LOCAL");}
-{true}   {add_token(&token_list, yylineno, &tokencnt, "true", "KEYWORD", "TRUE");}
-{false}   {add_token(&token_list, yylineno, &tokencnt, "false", "KEYWORD", "FALSE");}
-{nil}   {add_token(&token_list, yylineno, &tokencnt, "nil", "KEYWORD", "NIL");}
-
-
-{equal}   {add_token(&token_list, yylineno, &tokencnt, "==", "OPERATOR", "EQUAL");}
-{plus}   {add_token(&token_list, yylineno, &tokencnt, "+", "OPERATOR", "PLUS");}
-{assign}   {add_token(&token_list, yylineno, &tokencnt, "=", "OPERATOR", "ASSIGNMENT");}
-{minus}   {add_token(&token_list, yylineno, &tokencnt, "-", "OPERATOR", "MINUS");}
-{mul}   {add_token(&token_list, yylineno, &tokencnt, "*", "OPERATOR", "MULTIPLICATION");}
-{div}   {add_token(&token_list, yylineno, &tokencnt, "/", "OPERATOR", "DIVISION");}
-{mod}   {add_token(&token_list, yylineno, &tokencnt, "%", "OPERATOR", "MOD");}
-{noteq}   {add_token(&token_list, yylineno, &tokencnt, "!=", "OPERATOR", "NOT_EQUAL");}
-{incr}   {add_token(&token_list, yylineno, &tokencnt, "++", "OPERATOR", "INCREMENT");}
-{decr}   {add_token(&token_list, yylineno, &tokencnt, "--", "OPERATOR", "DECREMENT");}
-{grthan}   {add_token(&token_list, yylineno, &tokencnt, ">", "OPERATOR", "GREATER_THAN");}
-{lessthan}   {add_token(&token_list, yylineno, &tokencnt, "<", "OPERATOR", "LESS_THAN");}
-{geq}   {add_token(&token_list, yylineno, &tokencnt, ">=", "OPERATOR", "GREATER_EQUAL");}
-{leq}   {add_token(&token_list, yylineno, &tokencnt, "<=", "OPERATOR", "LESS_EQUAL");}
+{if}   {ADD_KEYWORD("if", "IF");}
+{else}   {ADD_KEYWORD("else", "ELSE");}
+{while}   {ADD_KEYWORD("while", "WHILE");}
+{for}   {ADD_KEYWORD("for", "FOR");}
+{function}   {ADD_KEYWORD("function", "FUNCTION");}
+{return}   {ADD_KEYWORD("return", "RETURN");}
+{break}   {ADD_KEYWORD("break", "BREAK");}
+{continue}   {ADD_KEYWORD("continue", "CONTINUE");}
+{and}   {ADD_KEYWORD("and", "AND");}
+{not}   {ADD_KEYWORD("not", "NOT");}
+{or}   {ADD_KEYWORD("or", "OR");}
+{local}   {ADD_KEYWORD("local", "LOCAL");}
+{true}   {ADD_KEYWORD("true", "TRUE");}
+{false}   {ADD_KEYWORD("false", "FALSE");}
+{nil}   {ADD_KEYWORD("nil", "NIL");} 
 
 
-{semicol}   {add_token(&token_list, yylineno, &tokencnt, ";", "PUNCTUATION", "SEMICOLON");}
-{comma}   {add_token(&token_list, yylineno, &tokencnt, ",", "PUNCTUATION", "COMMA");}
-{colon}   {add_token(&token_list, yylineno, &tokencnt, ":", "PUNCTUATION", "COLON");}
-{doublecolon}   {add_token(&token_list, yylineno, &tokencnt, "::", "PUNCTUATION", "DOUBLE_COLON");}
-{dot}   {add_token(&token_list, yylineno, &tokencnt, ".", "PUNCTUATION", "DOT");}
-{doubledot}   {add_token(&token_list, yylineno, &tokencnt, "..", "PUNCTUATION", "DOUBLE_DOT");}
-{leftsqbrack}   {add_token(&token_list, yylineno, &tokencnt, "[", "PUNCTUATION", "LEFT_SQ_BAR");}
-{rightsqbrack}   {add_token(&token_list, yylineno, &tokencnt, "]", "PUNCTUATION", "RIGHT_SQ_BAR");}
-{leftcurlbr}   {add_token(&token_list, yylineno, &tokencnt, "{", "PUNCTUATION", "LEFT_CURL_BAR");}
-{rightcurlbr}   {add_token(&token_list, yylineno, &tokencnt, "}", "PUNCTUATION", "RIGHT_CURL_BAR");}
+{equal}   {ADD_OP("==", "EQUAL");}
+{plus}   {ADD_OP("+", "PLUS");}
+{assign}   {ADD_OP("=", "ASSIGNMENT");}
+{minus}   {ADD_OP("-", "MINUS");}
+{mul}   {ADD_OP("*", "MULTIPLICATION");}
+{div}   {ADD_OP("/", "DIVISION");}
+{mod}   {ADD_OP("%", "MOD");}
+{noteq}   {ADD_OP("!=", "NOT_EQUAL");}
+{incr}   {ADD_OP("++", "INCREMENT");}
+{decr}   {ADD_OP("--", "DECREMENT");}
+{grthan}   {ADD_OP(">", "GREATER_THAN");}
+{lessthan}   {ADD_OP("<", "LESS_THAN");}
+{geq}   {ADD_OP(">=", "GREATER_EQUAL");}
+{leq}   {ADD_OP("<=", "LESS_EQUAL");}
+
+
+{semicol}   {ADD_PUNC(";", "SEMICOLON");}
+{comma}   {ADD_PUNC(",", "COMMA");}
+{colon}   {ADD_PUNC(":", "COLON");}
+{doublecolon}   {ADD_PUNC("::", "DOUBLE_COLON");}
+{dot}   {ADD_PUNC(".", "DOT");}
+{doubledot}   {ADD_PUNC("..", "DOUBLE_DOT");}
+{leftsqbrack}   {ADD_PUNC("[", "LEFT_SQ_BAR");}
+{rightsqbrack}   {ADD_PUNC("]", "RIGHT_SQ_BAR");}
+{leftcurlbr}   {ADD_PUNC("{", "LEFT_CURL_BR");}
+{rightcurlbr}   {ADD_PUNC("}", "RIGHT_CURL_BR");}
 {new_line} {yylineno;}
-{leftpar}   {add_token(&token_list, yylineno, &tokencnt, "(", "PUNCTUATION", "LEFT_PAR");}
-{rightpar}   {add_token(&token_list, yylineno, &tokencnt, ")", "PUNCTUATION", "RIGHT_PAR");}
+{leftpar}   {ADD_PUNC("(", "LEFT_PAR");}
+{rightpar}   {ADD_PUNC(")", "RIGHT_PAR");}
 
 {int} {add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_INT", yytext);}
 {real} {add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_REAL", yytext);}
@@ -198,6 +198,22 @@ new_line \n
                 case 'n':
                     breakFlag = 1;
                     buf[currBufSize] = '\n';
+                    break;
+                case 't':
+                    breakFlag = 1;
+                    buf[currBufSize] = '\t';
+                    break;
+                case '\\':
+                    breakFlag = 1;
+                    buf[currBufSize] = '\\';
+                    break;
+                case '\"':
+                    breakFlag = 1;
+                    buf[currBufSize] = '\"';
+                    break;
+                case '0':
+                    breakFlag = 1;
+                    buf[currBufSize] = '\0';
                     break;
                 default:
                     unput(lookAhead);

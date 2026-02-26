@@ -1,13 +1,21 @@
-ena 1234 if osd
+/*ena 1234 if osd
 
-: 
+if if else
+/*: 
 //trakarame// GAMO TO 
-"this is a"this is a " string"
-/*wefuiwefghbgibebweruiuweribwgbiwefuiwefghbgibebweruiuweribwgbiwefuiwefghbgibebwer
+"\"this\\\\\tis\ta\""this is a " string"
+/*wefuiwefghbgibebweruiu\tweribwgbiwefuiwefghbgibebweruiuweribwgbiwefuiwefghbgibebwer
 
 "this is a string"
 uihergihw ergwehrgwh wiowi erhg whihwwh i*/
 fgwrefg
 /**.77/?*/
 test variable
-end
+end*/*/
+
+int main(void) {
+    printf("Hello World\n");
+    if (++1 >= ++0)
+        return 10 != 3;
+    return 0;
+}

@@ -542,15 +542,16 @@ char *yytext;
     #include <stdlib.h>
 
     #define YY_DECL int alpha_yylex(alpha_token_t *token)
-    #define KEYWORD "KEYWORD"
-    #define OP "OPERATOR"
-    #define PUNC "PUNCTUATION"
+    #define ADD_KEYWORD(content, type) add_token(&token_list, yylineno, &tokencnt, content, "KEYWORD", type)
+    #define ADD_OP(content, type) add_token(&token_list, yylineno, &tokencnt, content, "OPERATOR", type)
+    #define ADD_PUNC(content, type) add_token(&token_list, yylineno, &tokencnt, content, "PUNCTUATION", type)
+
 
     int tokencnt = 0;
     struct token_list token_list = {NULL};
     int commentcount=0, startline=0, endline=0;
-#line 553 "scanner.c"
 #line 554 "scanner.c"
+#line 555 "scanner.c"
 
 #define INITIAL 0
 
@@ -767,8 +768,7 @@ YY_DECL
 		}
 
 	{
-#line 66 "scanner.l"
-
+#line 67 "scanner.l"
 
 
 #line 775 "scanner.c"
@@ -841,197 +841,197 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 69 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "if", "KEYWORD", "IF");}
+{ADD_KEYWORD("if", "IF");}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 70 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "else", "KEYWORD", "ELSE");}
+{ADD_KEYWORD("else", "ELSE");}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 71 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "while", "KEYWORD", "WHILE");}
+{ADD_KEYWORD("while", "WHILE");}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 72 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "for", "KEYWORD", "FOR");}
+{ADD_KEYWORD("for", "FOR");}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 73 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "function", "KEYWORD", "FUNCTION");}
+{ADD_KEYWORD("function", "FUNCTION");}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 74 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "return", "KEYWORD", "RETURN");}
+{ADD_KEYWORD("return", "RETURN");}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 75 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "break", "KEYWORD", "BREAK");}
+{ADD_KEYWORD("break", "BREAK");}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 76 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "continue", "KEYWORD", "CONTINUE");}
+{ADD_KEYWORD("continue", "CONTINUE");}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 77 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "and", "KEYWORD", "AND");}
+{ADD_KEYWORD("and", "AND");}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 78 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "not", "KEYWORD", "NOT");}
+{ADD_KEYWORD("not", "NOT");}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 79 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "or", "KEYWORD", "OR");}
+{ADD_KEYWORD("or", "OR");}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 80 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "local", "KEYWORD", "LOCAL");}
+{ADD_KEYWORD("local", "LOCAL");}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 81 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "true", "KEYWORD", "TRUE");}
+{ADD_KEYWORD("true", "TRUE");}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 82 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "false", "KEYWORD", "FALSE");}
+{ADD_KEYWORD("false", "FALSE");}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 83 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "nil", "KEYWORD", "NIL");}
+{ADD_KEYWORD("nil", "NIL");} 
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 86 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "==", "OPERATOR", "EQUAL");}
+{ADD_OP("==", "EQUAL");}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 87 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "+", "OPERATOR", "PLUS");}
+{ADD_OP("+", "PLUS");}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 88 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "=", "OPERATOR", "ASSIGNMENT");}
+{ADD_OP("=", "ASSIGNMENT");}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 89 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "-", "OPERATOR", "MINUS");}
+{ADD_OP("-", "MINUS");}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 90 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "*", "OPERATOR", "MULTIPLICATION");}
+{ADD_OP("*", "MULTIPLICATION");}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 91 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "/", "OPERATOR", "DIVISION");}
+{ADD_OP("/", "DIVISION");}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 92 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "%", "OPERATOR", "MOD");}
+{ADD_OP("%", "MOD");}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 93 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "!=", "OPERATOR", "NOT_EQUAL");}
+{ADD_OP("!=", "NOT_EQUAL");}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 94 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "++", "OPERATOR", "INCREMENT");}
+{ADD_OP("++", "INCREMENT");}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 95 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "--", "OPERATOR", "DECREMENT");}
+{ADD_OP("--", "DECREMENT");}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 96 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, ">", "OPERATOR", "GREATER_THAN");}
+{ADD_OP(">", "GREATER_THAN");}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 97 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "<", "OPERATOR", "LESS_THAN");}
+{ADD_OP("<", "LESS_THAN");}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 98 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, ">=", "OPERATOR", "GREATER_EQUAL");}
+{ADD_OP(">=", "GREATER_EQUAL");}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 99 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "<=", "OPERATOR", "LESS_EQUAL");}
+{ADD_OP("<=", "LESS_EQUAL");}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 102 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, ";", "PUNCTUATION", "SEMICOLON");}
+{ADD_PUNC(";", "SEMICOLON");}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 103 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, ",", "PUNCTUATION", "COMMA");}
+{ADD_PUNC(",", "COMMA");}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 104 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, ":", "PUNCTUATION", "COLON");}
+{ADD_PUNC(":", "COLON");}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 105 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "::", "PUNCTUATION", "DOUBLE_COLON");}
+{ADD_PUNC("::", "DOUBLE_COLON");}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 106 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, ".", "PUNCTUATION", "DOT");}
+{ADD_PUNC(".", "DOT");}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 107 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "..", "PUNCTUATION", "DOUBLE_DOT");}
+{ADD_PUNC("..", "DOUBLE_DOT");}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 108 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "[", "PUNCTUATION", "LEFT_SQ_BAR");}
+{ADD_PUNC("[", "LEFT_SQ_BAR");}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 109 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "]", "PUNCTUATION", "RIGHT_SQ_BAR");}
+{ADD_PUNC("]", "RIGHT_SQ_BAR");}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 110 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "{", "PUNCTUATION", "LEFT_CURL_BAR");}
+{ADD_PUNC("{", "LEFT_CURL_BR");}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 111 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "}", "PUNCTUATION", "RIGHT_CURL_BAR");}
+{ADD_PUNC("}", "RIGHT_CURL_BR");}
 	YY_BREAK
 case 40:
 /* rule 40 can match eol */
@@ -1042,12 +1042,12 @@ YY_RULE_SETUP
 case 41:
 YY_RULE_SETUP
 #line 113 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, "(", "PUNCTUATION", "LEFT_PAR");}
+{ADD_PUNC("(", "LEFT_PAR");}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 114 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, ")", "PUNCTUATION", "RIGHT_PAR");}
+{ADD_PUNC(")", "RIGHT_PAR");}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
@@ -1155,6 +1155,22 @@ YY_RULE_SETUP
                     breakFlag = 1;
                     buf[currBufSize] = '\n';
                     break;
+                case 't':
+                    breakFlag = 1;
+                    buf[currBufSize] = '\t';
+                    break;
+                case '\\':
+                    breakFlag = 1;
+                    buf[currBufSize] = '\\';
+                    break;
+                case '\"':
+                    breakFlag = 1;
+                    buf[currBufSize] = '\"';
+                    break;
+                case '0':
+                    breakFlag = 1;
+                    buf[currBufSize] = '\0';
+                    break;
                 default:
                     unput(lookAhead);
             }
@@ -1173,10 +1189,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 220 "scanner.l"
+#line 236 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1180 "scanner.c"
+#line 1196 "scanner.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2193,7 +2209,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 220 "scanner.l"
+#line 236 "scanner.l"
 
 
 int main (int argc, char **argv){
