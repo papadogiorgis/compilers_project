@@ -128,7 +128,9 @@ new_line \n
 }
 
 "/*" {
-    int com_stack[256];
+    //int com_stack[256];
+    int *com_stack = malloc(sizeof(int) * 256);
+    int stack_size = 256;
     int top = 1;
     char c;
     char buf[1024];
@@ -137,17 +139,27 @@ new_line \n
 
     while(top > 0){
         c = input();
+
         if(c == EOF || c == '\0'){
-            fprintf(stderr, "Block comment error!!\n");
+            fprintf(stderr, "Block comment error. (line: %d)\n", yylineno);
             break;
         }
 
         if(c == '/'){
             if((c = input()) == '*'){
-                if(top < 256){
+                if(top < stack_size){
                     com_stack[top++] = yylineno;
                 }else{
-                    fprintf(stderr, "Warning: Comment nesting limit reached!!\n");
+                    // fprintf(stderr, "Warning: Comment nesting limit reached!!\n");
+                    int *tmp = realloc(com_stack, (2 * stack_size)*sizeof(int));
+                    if (tmp == NULL){
+                      free(com_stack);
+                      fprintf(stderr, "Memory error on comment stack.\n");
+                      exit(-1);
+                    }
+                    com_stack = tmp;
+                    stack_size = stack_size * 2;
+                    com_stack[top++] = yylineno;
                 }
             }else{
                 unput(c);

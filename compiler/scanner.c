@@ -1081,7 +1081,9 @@ case 47:
 YY_RULE_SETUP
 #line 130 "scanner.l"
 {
-    int com_stack[256];
+    //int com_stack[256];
+    int *com_stack = malloc(sizeof(int) * 256);
+    int stack_size = 256;
     int top = 1;
     char c;
     char buf[1024];
@@ -1090,17 +1092,27 @@ YY_RULE_SETUP
 
     while(top > 0){
         c = input();
+
         if(c == EOF || c == '\0'){
-            fprintf(stderr, "Block comment error!!\n");
+            fprintf(stderr, "Block comment error. (line: %d)\n", yylineno);
             break;
         }
 
         if(c == '/'){
             if((c = input()) == '*'){
-                if(top < 256){
+                if(top < stack_size){
                     com_stack[top++] = yylineno;
                 }else{
-                    fprintf(stderr, "Warning: Comment nesting limit reached!!\n");
+                    // fprintf(stderr, "Warning: Comment nesting limit reached!!\n");
+                    int *tmp = realloc(com_stack, (2 * stack_size)*sizeof(int));
+                    if (tmp == NULL){
+                      free(com_stack);
+                      fprintf(stderr, "Memory error on comment stack.\n");
+                      exit(-1);
+                    }
+                    com_stack = tmp;
+                    stack_size = stack_size * 2;
+                    com_stack[top++] = yylineno;
                 }
             }else{
                 unput(c);
@@ -1124,7 +1136,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 172 "scanner.l"
+#line 184 "scanner.l"
 {
     char c, lookAhead;
     unsigned int bufsize = 1024;
@@ -1198,10 +1210,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 245 "scanner.l"
+#line 257 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1205 "scanner.c"
+#line 1217 "scanner.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2218,7 +2230,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 245 "scanner.l"
+#line 257 "scanner.l"
 
 
 int main (int argc, char **argv){
@@ -2238,3 +2250,4 @@ int main (int argc, char **argv){
     print_list(&token_list);
     return 0;   
 }
+
