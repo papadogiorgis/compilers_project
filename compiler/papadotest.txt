@@ -1,8 +1,3 @@
-#include "tokens_list.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
 int add_token(struct token_list *list, int lineno, int *tokenno, char *content, char *category, char *type, char *storage_type){
     alpha_token_t *new_token = malloc(sizeof(alpha_token_t));
     (*tokenno)++;
