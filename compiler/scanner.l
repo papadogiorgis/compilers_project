@@ -3,6 +3,8 @@
     #include "inc/tokens_list.h"
     #include <stdlib.h>
 
+    extern struct token_list token_list;
+
     #define YY_DECL int alpha_yylex(alpha_token_t *token)
     #define ADD_KEYWORD(content, type) add_token(&token_list, yylineno, &tokencnt, content, "KEYWORD", type, "enumerated")
     #define ADD_OP(content, type) add_token(&token_list, yylineno, &tokencnt, content, "OPERATOR", type, "enumerated")
@@ -10,7 +12,6 @@
 
 
     int tokencnt = 0;
-    struct token_list token_list = {NULL};
     int startline=0;
 %}
 
@@ -256,20 +257,3 @@ new_line \n
 
 %%
 
-int main (int argc, char **argv){
-    if (argc > 1){
-        if (!(yyin = fopen(argv[1], "r"))){
-            fprintf(stderr, "cant open file\n");
-            return 1;
-        }
-    }
-    else {
-        /* yyin = stdin; */
-    }
-    /* yylex();*/
-    alpha_token_t t;
-    alpha_yylex(&t);
-    fprintf(stderr, "--------------- Lexical Analysis ---------------\n");
-    print_list(&token_list);
-    return 0;   
-}
