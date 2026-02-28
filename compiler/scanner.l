@@ -4,14 +4,14 @@
     #include <stdlib.h>
 
     #define YY_DECL int alpha_yylex(alpha_token_t *token)
-    #define ADD_KEYWORD(content, type) add_token(&token_list, yylineno, &tokencnt, content, "KEYWORD", type)
-    #define ADD_OP(content, type) add_token(&token_list, yylineno, &tokencnt, content, "OPERATOR", type)
-    #define ADD_PUNC(content, type) add_token(&token_list, yylineno, &tokencnt, content, "PUNCTUATION", type)
+    #define ADD_KEYWORD(content, type) add_token(&token_list, yylineno, &tokencnt, content, "KEYWORD", type, "enumerated")
+    #define ADD_OP(content, type) add_token(&token_list, yylineno, &tokencnt, content, "OPERATOR", type, "enumerated")
+    #define ADD_PUNC(content, type) add_token(&token_list, yylineno, &tokencnt, content, "PUNCTUATION", type, "enumerated")
 
 
     int tokencnt = 0;
     struct token_list token_list = {NULL};
-    int commentcount=0, startline=0, endline=0;
+    int startline=0;
 %}
 
 %option noyywrap
@@ -109,16 +109,17 @@ new_line \n
 {rightsqbrack}   {ADD_PUNC("]", "RIGHT_SQ_BAR");}
 {leftcurlbr}   {ADD_PUNC("{", "LEFT_CURL_BR");}
 {rightcurlbr}   {ADD_PUNC("}", "RIGHT_CURL_BR");}
-{new_line} {yylineno;}
+{new_line} {}
 {leftpar}   {ADD_PUNC("(", "LEFT_PAR");}
 {rightpar}   {ADD_PUNC(")", "RIGHT_PAR");}
 
-{int} {add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_INT", yytext);}
-{real} {add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_REAL", yytext);}
-{id} {add_token(&token_list, yylineno, &tokencnt, yytext, "IDENTIFIER", yytext);}
+{int} {add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_INT", yytext, "integer");}
+{real} {add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_REAL", yytext, "real");}
+{id} {add_token(&token_list, yylineno, &tokencnt, yytext, "IDENTIFIER", yytext, "char*");}
 
 "//" {
     char c;
+    add_token(&token_list, yylineno, &tokencnt, "", "COMMENT", "LINE_COMMENT", "enumerated");
     while ((c = input()) != EOF){
         if (c == '\n' || c == '\0'){
             break;
@@ -127,37 +128,45 @@ new_line \n
 }
 
 "/*" {
-    commentcount++;
-    startline = yylineno;
+    int com_stack[256];
+    int top = 1;
     char c;
     char buf[1024];
 
-    while(commentcount > 0){
+    com_stack[0] = yylineno;
+
+    while(top > 0){
         c = input();
         if(c == EOF || c == '\0'){
-            commentcount = -1;
             fprintf(stderr, "Block comment error!!\n");
-            exit(-1);
             break;
         }
 
         if(c == '/'){
             if((c = input()) == '*'){
-                commentcount++;
+                if(top < 256){
+                    com_stack[top++] = yylineno;
+                }else{
+                    fprintf(stderr, "Warning: Comment nesting limit reached!!\n");
+                }
             }else{
                 unput(c);
             }
         }else if(c == '*'){
             if((c = input()) == '/'){
-                commentcount--;
-                endline = yylineno;
+                startline = com_stack[--top];
+                sprintf(buf, "%d - %d", startline, yylineno);
+
+                if(top > 0){
+                    add_token(&token_list, startline, &tokencnt, buf, "COMMENT", "NESTED_COMMENT", "enumerated");
+                }else{
+                    add_token(&token_list, startline, &tokencnt, buf, "COMMENT", "BLOCK_COMMENT", "enumerated");
+                }
             }else{
                 unput(c);
             }
         }
     }
-    sprintf(buf, "%d - %d", startline, endline);
-    add_token(&token_list, yylineno, &tokencnt, buf, "COMMENT", "BLOCK_COMMENT");
 }
 
 "\"" {
@@ -228,7 +237,7 @@ new_line \n
     }
 
 
-    add_token(&token_list, yylineno, &tokencnt, buf, "STRING", buf);
+    add_token(&token_list, yylineno, &tokencnt, buf, "STRING", buf, "char*");
 }
 
 
@@ -252,4 +261,3 @@ int main (int argc, char **argv){
     print_list(&token_list);
     return 0;   
 }
-

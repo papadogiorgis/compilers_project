@@ -542,14 +542,14 @@ char *yytext;
     #include <stdlib.h>
 
     #define YY_DECL int alpha_yylex(alpha_token_t *token)
-    #define ADD_KEYWORD(content, type) add_token(&token_list, yylineno, &tokencnt, content, "KEYWORD", type)
-    #define ADD_OP(content, type) add_token(&token_list, yylineno, &tokencnt, content, "OPERATOR", type)
-    #define ADD_PUNC(content, type) add_token(&token_list, yylineno, &tokencnt, content, "PUNCTUATION", type)
+    #define ADD_KEYWORD(content, type) add_token(&token_list, yylineno, &tokencnt, content, "KEYWORD", type, "enumerated")
+    #define ADD_OP(content, type) add_token(&token_list, yylineno, &tokencnt, content, "OPERATOR", type, "enumerated")
+    #define ADD_PUNC(content, type) add_token(&token_list, yylineno, &tokencnt, content, "PUNCTUATION", type, "enumerated")
 
 
     int tokencnt = 0;
     struct token_list token_list = {NULL};
-    int commentcount=0, startline=0, endline=0;
+    int startline=0;
 #line 554 "scanner.c"
 #line 555 "scanner.c"
 
@@ -1037,7 +1037,7 @@ case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
 #line 112 "scanner.l"
-{yylineno;}
+{}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
@@ -1052,23 +1052,24 @@ YY_RULE_SETUP
 case 43:
 YY_RULE_SETUP
 #line 116 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_INT", yytext);}
+{add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_INT", yytext, "integer");}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
 #line 117 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_REAL", yytext);}
+{add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_REAL", yytext, "real");}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 118 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, yytext, "IDENTIFIER", yytext);}
+{add_token(&token_list, yylineno, &tokencnt, yytext, "IDENTIFIER", yytext, "char*");}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
 #line 120 "scanner.l"
 {
     char c;
+    add_token(&token_list, yylineno, &tokencnt, "", "COMMENT", "LINE_COMMENT", "enumerated");
     while ((c = input()) != EOF){
         if (c == '\n' || c == '\0'){
             break;
@@ -1078,44 +1079,52 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 129 "scanner.l"
+#line 130 "scanner.l"
 {
-    commentcount++;
-    startline = yylineno;
+    int com_stack[256];
+    int top = 1;
     char c;
     char buf[1024];
 
-    while(commentcount > 0){
+    com_stack[0] = yylineno;
+
+    while(top > 0){
         c = input();
         if(c == EOF || c == '\0'){
-            commentcount = -1;
             fprintf(stderr, "Block comment error!!\n");
-            exit(-1);
             break;
         }
 
         if(c == '/'){
             if((c = input()) == '*'){
-                commentcount++;
+                if(top < 256){
+                    com_stack[top++] = yylineno;
+                }else{
+                    fprintf(stderr, "Warning: Comment nesting limit reached!!\n");
+                }
             }else{
                 unput(c);
             }
         }else if(c == '*'){
             if((c = input()) == '/'){
-                commentcount--;
-                endline = yylineno;
+                startline = com_stack[--top];
+                sprintf(buf, "%d - %d", startline, yylineno);
+
+                if(top > 0){
+                    add_token(&token_list, startline, &tokencnt, buf, "COMMENT", "NESTED_COMMENT", "enumerated");
+                }else{
+                    add_token(&token_list, startline, &tokencnt, buf, "COMMENT", "BLOCK_COMMENT", "enumerated");
+                }
             }else{
                 unput(c);
             }
         }
     }
-    sprintf(buf, "%d - %d", startline, endline);
-    add_token(&token_list, yylineno, &tokencnt, buf, "COMMENT", "BLOCK_COMMENT");
 }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 163 "scanner.l"
+#line 172 "scanner.l"
 {
     char c, lookAhead;
     unsigned int bufsize = 1024;
@@ -1184,15 +1193,15 @@ YY_RULE_SETUP
     }
 
 
-    add_token(&token_list, yylineno, &tokencnt, buf, "STRING", buf);
+    add_token(&token_list, yylineno, &tokencnt, buf, "STRING", buf, "char*");
 }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 236 "scanner.l"
+#line 245 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1196 "scanner.c"
+#line 1205 "scanner.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2209,7 +2218,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 236 "scanner.l"
+#line 245 "scanner.l"
 
 
 int main (int argc, char **argv){
@@ -2229,5 +2238,3 @@ int main (int argc, char **argv){
     print_list(&token_list);
     return 0;   
 }
-
-

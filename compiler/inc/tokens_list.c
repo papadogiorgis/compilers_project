@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-int add_token(struct token_list *list, int lineno, int *tokenno, char *content, char *category, char *type){
+int add_token(struct token_list *list, int lineno, int *tokenno, char *content, char *category, char *type, char *storage_type){
     alpha_token_t *new_token = malloc(sizeof(alpha_token_t));
     (*tokenno)++;
     new_token->lineno = lineno;
@@ -11,6 +11,7 @@ int add_token(struct token_list *list, int lineno, int *tokenno, char *content, 
     new_token->content = strdup(content);
     new_token->category = strdup(category);
     new_token->type = strdup(type);
+    new_token->storage_type = strdup(storage_type);
     new_token->next=NULL;
 
     if (list->head == NULL){
@@ -31,7 +32,7 @@ void print_list(struct token_list *list){
     printf("\n");
     while (curr != NULL) {
         // printf("lineno: %d, tokenno: %d, content: %s, category: %s, type: %s\n", curr->lineno, curr->tokenno, curr->content, curr->category, curr->type);
-        printf("%d:\t#%d\t\"%s\"\t%s\t%s\n", curr->lineno, curr->tokenno, curr->content, curr->category, curr->type);
+        printf("%d:\t#%d\t\"%s\"\t%s\t%s\t<-%s\n", curr->lineno, curr->tokenno, curr->content, curr->category, curr->type, curr->storage_type);
         curr = curr->next;
     }
     return;
