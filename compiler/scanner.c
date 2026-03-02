@@ -543,10 +543,10 @@ char *yytext;
 
     extern struct token_list token_list;
 
-    #define YY_DECL int alpha_yylex(alpha_token_t *token)
-    #define ADD_KEYWORD(content, type) add_token(&token_list, yylineno, &tokencnt, content, "KEYWORD", type, "enumerated")
-    #define ADD_OP(content, type) add_token(&token_list, yylineno, &tokencnt, content, "OPERATOR", type, "enumerated")
-    #define ADD_PUNC(content, type) add_token(&token_list, yylineno, &tokencnt, content, "PUNCTUATION", type, "enumerated")
+    #define YY_DECL int alpha_yylex(void *ylval)
+    #define ADD_KEYWORD(content, type) add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, content, "KEYWORD", type, "enumerated");return 1
+    #define ADD_OP(content, type) add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, content, "OPERATOR", type, "enumerated");return 1
+    #define ADD_PUNC(content, type) add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, content, "PUNCTUATION", type, "enumerated");return 1
 
 
     int tokencnt = 0;
@@ -1053,24 +1053,24 @@ YY_RULE_SETUP
 case 43:
 YY_RULE_SETUP
 #line 117 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_INT", yytext, "integer");}
+{add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, yytext, "CONST_INT", yytext, "integer");return 1;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
 #line 118 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_REAL", yytext, "real");}
+{add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, yytext, "CONST_REAL", yytext, "real");return 1;}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 119 "scanner.l"
-{add_token(&token_list, yylineno, &tokencnt, yytext, "IDENTIFIER", yytext, "char*");}
+{add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, yytext, "IDENTIFIER", yytext, "char*");return 1;}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
 #line 121 "scanner.l"
 {
     char c;
-    add_token(&token_list, yylineno, &tokencnt, "", "COMMENT", "LINE_COMMENT", "enumerated");
+    add_token(NULL,&token_list, yylineno, &tokencnt, "", "COMMENT", "LINE_COMMENT", "enumerated");
     while ((c = input()) != EOF){
         if (c == '\n' || c == '\0'){
             break;
@@ -1082,6 +1082,9 @@ case 47:
 YY_RULE_SETUP
 #line 131 "scanner.l"
 {
+    
+    // if (*(int *)ylval == 5)
+    //     fprintf(stderr, "1431253252512462346436423\n");
     //int com_stack[256];
     int *com_stack = malloc(sizeof(int) * 256);
     int stack_size = 256;
@@ -1124,9 +1127,9 @@ YY_RULE_SETUP
                 sprintf(buf, "%d - %d", startline, yylineno);
 
                 if(top > 0){
-                    add_token(&token_list, startline, &tokencnt, buf, "COMMENT", "NESTED_COMMENT", "enumerated");
+                    add_token(NULL, &token_list, startline, &tokencnt, buf, "COMMENT", "NESTED_COMMENT", "enumerated");
                 }else{
-                    add_token(&token_list, startline, &tokencnt, buf, "COMMENT", "BLOCK_COMMENT", "enumerated");
+                    add_token(NULL, &token_list, startline, &tokencnt, buf, "COMMENT", "BLOCK_COMMENT", "enumerated");
                 }
             }else{
                 unput(c);
@@ -1137,7 +1140,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 185 "scanner.l"
+#line 188 "scanner.l"
 {
     char c, lookAhead;
     unsigned int bufsize = 1024;
@@ -1147,6 +1150,7 @@ YY_RULE_SETUP
     int breakFlag = 0; // will use it to continue from while if i have already written in buf a special char
 
     while (!stringEnded){
+        // fprintf(stderr, "1");
         c = input();
         currBufSize++;
         breakFlag = 0;
@@ -1206,15 +1210,15 @@ YY_RULE_SETUP
     }
 
 
-    add_token(&token_list, yylineno, &tokencnt, buf, "STRING", buf, "char*");
+    add_token(NULL, &token_list, yylineno, &tokencnt, buf, "STRING", buf, "char*");
 }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 258 "scanner.l"
+#line 262 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1218 "scanner.c"
+#line 1222 "scanner.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2231,7 +2235,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 258 "scanner.l"
+#line 262 "scanner.l"
 
 
 

@@ -3,8 +3,13 @@
 #include <stdio.h>
 #include <string.h>
 
-int add_token(struct token_list *list, int lineno, int *tokenno, char *content, char *category, char *type, char *storage_type){
-    alpha_token_t *new_token = malloc(sizeof(alpha_token_t));
+int add_token(alpha_token_t *new_token, struct token_list *list, int lineno, int *tokenno, char *content, char *category, char *type, char *storage_type){
+    // alpha_token_t *new_token = malloc(sizeof(alpha_token_t));
+
+    if (new_token == NULL){
+        new_token = malloc(sizeof(alpha_token_t));
+    }
+
     (*tokenno)++;
     new_token->lineno = lineno;
     new_token->tokenno = *tokenno;

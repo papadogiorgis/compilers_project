@@ -5,10 +5,10 @@
 
     extern struct token_list token_list;
 
-    #define YY_DECL int alpha_yylex(alpha_token_t *token)
-    #define ADD_KEYWORD(content, type) add_token(&token_list, yylineno, &tokencnt, content, "KEYWORD", type, "enumerated")
-    #define ADD_OP(content, type) add_token(&token_list, yylineno, &tokencnt, content, "OPERATOR", type, "enumerated")
-    #define ADD_PUNC(content, type) add_token(&token_list, yylineno, &tokencnt, content, "PUNCTUATION", type, "enumerated")
+    #define YY_DECL int alpha_yylex(void *ylval)
+    #define ADD_KEYWORD(content, type) add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, content, "KEYWORD", type, "enumerated");return 1
+    #define ADD_OP(content, type) add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, content, "OPERATOR", type, "enumerated");return 1
+    #define ADD_PUNC(content, type) add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, content, "PUNCTUATION", type, "enumerated");return 1
 
 
     int tokencnt = 0;
@@ -114,13 +114,13 @@ new_line \n
 {leftpar}   {ADD_PUNC("(", "LEFT_PAR");}
 {rightpar}   {ADD_PUNC(")", "RIGHT_PAR");}
 
-{int} {add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_INT", yytext, "integer");}
-{real} {add_token(&token_list, yylineno, &tokencnt, yytext, "CONST_REAL", yytext, "real");}
-{id} {add_token(&token_list, yylineno, &tokencnt, yytext, "IDENTIFIER", yytext, "char*");}
+{int} {add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, yytext, "CONST_INT", yytext, "integer");return 1;}
+{real} {add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, yytext, "CONST_REAL", yytext, "real");return 1;}
+{id} {add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, yytext, "IDENTIFIER", yytext, "char*");return 1;}
 
 "//" {
     char c;
-    add_token(&token_list, yylineno, &tokencnt, "", "COMMENT", "LINE_COMMENT", "enumerated");
+    add_token(NULL,&token_list, yylineno, &tokencnt, "", "COMMENT", "LINE_COMMENT", "enumerated");
     while ((c = input()) != EOF){
         if (c == '\n' || c == '\0'){
             break;
@@ -129,6 +129,9 @@ new_line \n
 }
 
 "/*" {
+    
+    // if (*(int *)ylval == 5)
+    //     fprintf(stderr, "1431253252512462346436423\n");
     //int com_stack[256];
     int *com_stack = malloc(sizeof(int) * 256);
     int stack_size = 256;
@@ -171,9 +174,9 @@ new_line \n
                 sprintf(buf, "%d - %d", startline, yylineno);
 
                 if(top > 0){
-                    add_token(&token_list, startline, &tokencnt, buf, "COMMENT", "NESTED_COMMENT", "enumerated");
+                    add_token(NULL, &token_list, startline, &tokencnt, buf, "COMMENT", "NESTED_COMMENT", "enumerated");
                 }else{
-                    add_token(&token_list, startline, &tokencnt, buf, "COMMENT", "BLOCK_COMMENT", "enumerated");
+                    add_token(NULL, &token_list, startline, &tokencnt, buf, "COMMENT", "BLOCK_COMMENT", "enumerated");
                 }
             }else{
                 unput(c);
@@ -191,6 +194,7 @@ new_line \n
     int breakFlag = 0; // will use it to continue from while if i have already written in buf a special char
 
     while (!stringEnded){
+        // fprintf(stderr, "1");
         c = input();
         currBufSize++;
         breakFlag = 0;
@@ -250,7 +254,7 @@ new_line \n
     }
 
 
-    add_token(&token_list, yylineno, &tokencnt, buf, "STRING", buf, "char*");
+    add_token(NULL, &token_list, yylineno, &tokencnt, buf, "STRING", buf, "char*");
 }
 
 

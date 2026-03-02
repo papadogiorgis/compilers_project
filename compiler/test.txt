@@ -35,9 +35,13 @@ enter new line"*/*/
 */*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
 */*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
 
+// line comment
+
 int main(void) {
     printf("Hello World\n");
     if (++1 >= ++0)
         return 10 != 3;
     return 0;
 }
+
+/* block comment after main*/
