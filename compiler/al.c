@@ -2,7 +2,7 @@
 #include "scanner.h"
 #include "inc/tokens_list.h"
 
-extern int alpha_yylex(void *tok);
+extern int yylex(void);
 
 struct token_list token_list = {NULL};
 
@@ -18,10 +18,7 @@ int main(int argc, char **argv){
         return -1;
     }
 
-    alpha_token_t *t = malloc(sizeof(alpha_token_t));
-    while (alpha_yylex(t)){
-        t = malloc(sizeof(alpha_token_t));
-    }
+    while (yylex());
     fprintf(stderr, "--------------- Lexical Analysis ---------------\n");
     print_list(&token_list);
     return 0;

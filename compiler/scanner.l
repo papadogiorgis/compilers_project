@@ -2,13 +2,13 @@
     #include <string.h>
     #include "inc/tokens_list.h"
     #include <stdlib.h>
+    #include "syntax_parser.h"
 
     extern struct token_list token_list;
 
-    #define YY_DECL int alpha_yylex(void *ylval)
-    #define ADD_KEYWORD(content, type) add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, content, "KEYWORD", type, "enumerated");return 1
-    #define ADD_OP(content, type) add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, content, "OPERATOR", type, "enumerated");return 1
-    #define ADD_PUNC(content, type) add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, content, "PUNCTUATION", type, "enumerated");return 1
+    #define ADD_KEYWORD(content, type) add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, content, "KEYWORD", type, "enumerated");return 1
+    #define ADD_OP(content, type) add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, content, "OPERATOR", type, "enumerated");return 1
+    #define ADD_PUNC(content, type) add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, content, "PUNCTUATION", type, "enumerated");return 1
 
 
     int tokencnt = 0;
@@ -67,56 +67,56 @@ new_line \n
 
 %%
 
-{if}   {ADD_KEYWORD("if", "IF");}
-{else}   {ADD_KEYWORD("else", "ELSE");}
-{while}   {ADD_KEYWORD("while", "WHILE");}
-{for}   {ADD_KEYWORD("for", "FOR");}
-{function}   {ADD_KEYWORD("function", "FUNCTION");}
-{return}   {ADD_KEYWORD("return", "RETURN");}
-{break}   {ADD_KEYWORD("break", "BREAK");}
-{continue}   {ADD_KEYWORD("continue", "CONTINUE");}
-{and}   {ADD_KEYWORD("and", "AND");}
-{not}   {ADD_KEYWORD("not", "NOT");}
-{or}   {ADD_KEYWORD("or", "OR");}
-{local}   {ADD_KEYWORD("local", "LOCAL");}
-{true}   {ADD_KEYWORD("true", "TRUE");}
-{false}   {ADD_KEYWORD("false", "FALSE");}
-{nil}   {ADD_KEYWORD("nil", "NIL");} 
+{if}   {ADD_KEYWORD("if", "IF"); return IF;}
+{else}   {ADD_KEYWORD("else", "ELSE"); return ELSE;}
+{while}   {ADD_KEYWORD("while", "WHILE"); return WHILE;}
+{for}   {ADD_KEYWORD("for", "FOR"); return FOR;}
+{function}   {ADD_KEYWORD("function", "FUNCTION"); return FUNC;}
+{return}   {ADD_KEYWORD("return", "RETURN"); return RETURN;}
+{break}   {ADD_KEYWORD("break", "BREAK"); return BREAK;}
+{continue}   {ADD_KEYWORD("continue", "CONTINUE"); return CONTINUE;}
+{and}   {ADD_KEYWORD("and", "AND"); return AND;}
+{not}   {ADD_KEYWORD("not", "NOT"); return NOT;}
+{or}   {ADD_KEYWORD("or", "OR"); return OR;}
+{local}   {ADD_KEYWORD("local", "LOCAL"); return LOCAL;}
+{true}   {ADD_KEYWORD("true", "TRUE"); return TRUE;}
+{false}   {ADD_KEYWORD("false", "FALSE"); return FALSE;}
+{nil}   {ADD_KEYWORD("nil", "NIL"); return NIL;} 
 
 
-{equal}   {ADD_OP("==", "EQUAL");}
-{plus}   {ADD_OP("+", "PLUS");}
-{assign}   {ADD_OP("=", "ASSIGNMENT");}
-{minus}   {ADD_OP("-", "MINUS");}
-{mul}   {ADD_OP("*", "MULTIPLICATION");}
-{div}   {ADD_OP("/", "DIVISION");}
-{mod}   {ADD_OP("%", "MOD");}
-{noteq}   {ADD_OP("!=", "NOT_EQUAL");}
-{incr}   {ADD_OP("++", "INCREMENT");}
-{decr}   {ADD_OP("--", "DECREMENT");}
-{grthan}   {ADD_OP(">", "GREATER_THAN");}
-{lessthan}   {ADD_OP("<", "LESS_THAN");}
-{geq}   {ADD_OP(">=", "GREATER_EQUAL");}
-{leq}   {ADD_OP("<=", "LESS_EQUAL");}
+{equal}   {ADD_OP("==", "EQUAL"); return EQ;}
+{plus}   {ADD_OP("+", "PLUS"); return PLUS;}
+{assign}   {ADD_OP("=", "ASSIGNMENT"); return ASSIGN;}
+{minus}   {ADD_OP("-", "MINUS"); return MINUS;}
+{mul}   {ADD_OP("*", "MULTIPLICATION"); return MULT;}
+{div}   {ADD_OP("/", "DIVISION");return DIV;}
+{mod}   {ADD_OP("%", "MOD");return MOD;}
+{noteq}   {ADD_OP("!=", "NOT_EQUAL"); return NOT_EQ;}
+{incr}   {ADD_OP("++", "INCREMENT"); return INCR;}
+{decr}   {ADD_OP("--", "DECREMENT");return DECR;}
+{grthan}   {ADD_OP(">", "GREATER_THAN"); return GR_THAN;}
+{lessthan}   {ADD_OP("<", "LESS_THAN"); return LESS_THAN;}
+{geq}   {ADD_OP(">=", "GREATER_EQUAL"); return GREQ_THAN;}
+{leq}   {ADD_OP("<=", "LESS_EQUAL"); return LEQ_THAN;}
 
 
-{semicol}   {ADD_PUNC(";", "SEMICOLON");}
-{comma}   {ADD_PUNC(",", "COMMA");}
-{colon}   {ADD_PUNC(":", "COLON");}
-{doublecolon}   {ADD_PUNC("::", "DOUBLE_COLON");}
-{dot}   {ADD_PUNC(".", "DOT");}
-{doubledot}   {ADD_PUNC("..", "DOUBLE_DOT");}
-{leftsqbrack}   {ADD_PUNC("[", "LEFT_SQ_BAR");}
-{rightsqbrack}   {ADD_PUNC("]", "RIGHT_SQ_BAR");}
-{leftcurlbr}   {ADD_PUNC("{", "LEFT_CURL_BR");}
-{rightcurlbr}   {ADD_PUNC("}", "RIGHT_CURL_BR");}
+{semicol}   {ADD_PUNC(";", "SEMICOLON"); return SEMICOLON;}
+{comma}   {ADD_PUNC(",", "COMMA"); return COMMA;}
+{colon}   {ADD_PUNC(":", "COLON"); return COLON;}
+{doublecolon}   {ADD_PUNC("::", "DOUBLE_COLON"); return DOUBLE_COLON;}
+{dot}   {ADD_PUNC(".", "DOT"); return DOT;}
+{doubledot}   {ADD_PUNC("..", "DOUBLE_DOT"); return DOTDOT;}
+{leftsqbrack}   {ADD_PUNC("[", "LEFT_SQ_BAR"); return SQ_BR_LEFT;}
+{rightsqbrack}   {ADD_PUNC("]", "RIGHT_SQ_BAR"); return SQ_BR_RIGHT;}
+{leftcurlbr}   {ADD_PUNC("{", "LEFT_CURL_BR"); return LEFT_CURL_BR;}
+{rightcurlbr}   {ADD_PUNC("}", "RIGHT_CURL_BR"); return RIGHT_CURL_BR;}
 {new_line} {}
-{leftpar}   {ADD_PUNC("(", "LEFT_PAR");}
-{rightpar}   {ADD_PUNC(")", "RIGHT_PAR");}
+{leftpar}   {ADD_PUNC("(", "LEFT_PAR"); return LEFT_PAR;}
+{rightpar}   {ADD_PUNC(")", "RIGHT_PAR"); return RIGHT_PAR;}
 
-{int} {add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, yytext, "CONST_INT", yytext, "integer");return 1;}
-{real} {add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, yytext, "CONST_REAL", yytext, "real");return 1;}
-{id} {add_token((alpha_token_t *)ylval, &token_list, yylineno, &tokencnt, yytext, "IDENTIFIER", yytext, "char*");return 1;}
+{int} {add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, yytext, "CONST_INT", yytext, "integer");return 1;}
+{real} {add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, yytext, "CONST_REAL", yytext, "real");return 1;}
+{id} {add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, yytext, "IDENTIFIER", yytext, "char*");return 1;}
 
 "//" {
     char c;
