@@ -1,9 +1,12 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "scanner.h"
 #include "inc/tokens_list.h"
 #include "syntax_parser.h"
 
 extern int yylex(void);
+extern int yyparse(void);
+extern FILE* yyin;
 
 struct token_list token_list = {NULL};
 
@@ -19,11 +22,16 @@ int main(int argc, char **argv){
         return -1;
     }
 
-    // while (yylex());
-    // while (yyparse());
-    yyparse();
+    int parse_res = yyparse();
+    if(parse_res == 0){
+        fprintf(stderr, "\nParsigng completed!\n");
+    }else{
+        fprintf(stderr, "\nParsing failed!\n");
+    }
 
     fprintf(stderr, "--------------- Lexical Analysis ---------------\n");
-    print_list(&token_list);
-    return 0;
+    // print_list(&token_list);
+
+    fclose(yyin);
+    return parse_res;
 }

@@ -17,4 +17,4 @@ $(SYNTAX_C): $(SYNTAX)
 	bison --yacc --defines --output=$(SYNTAX_C) $(SYNTAX)
 
 clean: 
-	rm -f $(FLEX_C) $(SYNTAX_C) parse scanner.h syntax_parser.h
+	rm -f $(FLEX_C) $(SYNTAX_C) parse

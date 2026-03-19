@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.8.2.  */
+/* A Bison parser, made by GNU Bison 3.5.1.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -31,9 +31,8 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
-   especially those whose name start with YY_ or yy_.  They are
-   private implementation details that can be changed or removed.  */
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
 
 #ifndef YY_YY_SYNTAX_PARSER_H_INCLUDED
 # define YY_YY_SYNTAX_PARSER_H_INCLUDED
@@ -45,115 +44,106 @@
 extern int yydebug;
 #endif
 
-/* Token kinds.  */
+/* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    YYEMPTY = -2,
-    YYEOF = 0,                     /* "end of file"  */
-    YYerror = 256,                 /* error  */
-    YYUNDEF = 257,                 /* "invalid token"  */
-    ID = 258,                      /* ID  */
-    INTEGER = 259,                 /* INTEGER  */
-    INT = 260,                     /* INT  */
-    REAL = 261,                    /* REAL  */
-    ASSIGN = 262,                  /* ASSIGN  */
-    OR = 263,                      /* OR  */
-    AND = 264,                     /* AND  */
-    EQ = 265,                      /* EQ  */
-    NOT_EQ = 266,                  /* NOT_EQ  */
-    GR_THAN = 267,                 /* GR_THAN  */
-    GREQ_THAN = 268,               /* GREQ_THAN  */
-    LESS_THAN = 269,               /* LESS_THAN  */
-    LEQ_THAN = 270,                /* LEQ_THAN  */
-    PLUS = 271,                    /* PLUS  */
-    MINUS = 272,                   /* MINUS  */
-    MULT = 273,                    /* MULT  */
-    DIV = 274,                     /* DIV  */
-    MOD = 275,                     /* MOD  */
-    NOT = 276,                     /* NOT  */
-    INCR = 277,                    /* INCR  */
-    DECR = 278,                    /* DECR  */
-    UMINUS = 279,                  /* UMINUS  */
-    DOT = 280,                     /* DOT  */
-    DOTDOT = 281,                  /* DOTDOT  */
-    SQ_BR_RIGHT = 282,             /* SQ_BR_RIGHT  */
-    SQ_BR_LEFT = 283,              /* SQ_BR_LEFT  */
-    LEFT_PAR = 284,                /* LEFT_PAR  */
-    RIGHT_PAR = 285,               /* RIGHT_PAR  */
-    SEMICOLON = 286,               /* SEMICOLON  */
-    COMMA = 287,                   /* COMMA  */
-    COLON = 288,                   /* COLON  */
-    DOUBLE_COLON = 289,            /* DOUBLE_COLON  */
-    IF = 290,                      /* IF  */
-    ELSE = 291,                    /* ELSE  */
-    WHILE = 292,                   /* WHILE  */
-    FOR = 293,                     /* FOR  */
-    FUNC = 294,                    /* FUNC  */
-    RETURN = 295,                  /* RETURN  */
-    BREAK = 296,                   /* BREAK  */
-    LEFT_CURL_BR = 297,            /* LEFT_CURL_BR  */
-    RIGHT_CURL_BR = 298,           /* RIGHT_CURL_BR  */
-    CONTINUE = 299,                /* CONTINUE  */
-    LOCAL = 300,                   /* LOCAL  */
-    TRUE = 301,                    /* TRUE  */
-    FALSE = 302,                   /* FALSE  */
-    NIL = 303                      /* NIL  */
+    ASSIGN = 258,
+    OR = 259,
+    AND = 260,
+    EQ = 261,
+    NOT_EQ = 262,
+    GR_THAN = 263,
+    GREQ_THAN = 264,
+    LESS_THAN = 265,
+    LEQ_THAN = 266,
+    PLUS = 267,
+    MINUS = 268,
+    MULT = 269,
+    DIV = 270,
+    MOD = 271,
+    NOT = 272,
+    INCR = 273,
+    DECR = 274,
+    UMINUS = 275,
+    DOT = 276,
+    DOTDOT = 277,
+    SQ_BR_RIGHT = 278,
+    SQ_BR_LEFT = 279,
+    LEFT_PAR = 280,
+    RIGHT_PAR = 281,
+    SEMICOLON = 282,
+    COMMA = 283,
+    COLON = 284,
+    DOUBLE_COLON = 285,
+    IF = 286,
+    ELSE = 287,
+    WHILE = 288,
+    FOR = 289,
+    FUNC = 290,
+    RETURN = 291,
+    BREAK = 292,
+    LEFT_CURL_BR = 293,
+    RIGHT_CURL_BR = 294,
+    CONTINUE = 295,
+    LOCAL = 296,
+    TRUE = 297,
+    FALSE = 298,
+    NIL = 299,
+    ID = 300,
+    STRING = 301,
+    INT = 302,
+    REAL = 303
   };
-  typedef enum yytokentype yytoken_kind_t;
 #endif
-/* Token kinds.  */
-#define YYEMPTY -2
-#define YYEOF 0
-#define YYerror 256
-#define YYUNDEF 257
-#define ID 258
-#define INTEGER 259
-#define INT 260
-#define REAL 261
-#define ASSIGN 262
-#define OR 263
-#define AND 264
-#define EQ 265
-#define NOT_EQ 266
-#define GR_THAN 267
-#define GREQ_THAN 268
-#define LESS_THAN 269
-#define LEQ_THAN 270
-#define PLUS 271
-#define MINUS 272
-#define MULT 273
-#define DIV 274
-#define MOD 275
-#define NOT 276
-#define INCR 277
-#define DECR 278
-#define UMINUS 279
-#define DOT 280
-#define DOTDOT 281
-#define SQ_BR_RIGHT 282
-#define SQ_BR_LEFT 283
-#define LEFT_PAR 284
-#define RIGHT_PAR 285
-#define SEMICOLON 286
-#define COMMA 287
-#define COLON 288
-#define DOUBLE_COLON 289
-#define IF 290
-#define ELSE 291
-#define WHILE 292
-#define FOR 293
-#define FUNC 294
-#define RETURN 295
-#define BREAK 296
-#define LEFT_CURL_BR 297
-#define RIGHT_CURL_BR 298
-#define CONTINUE 299
-#define LOCAL 300
-#define TRUE 301
-#define FALSE 302
-#define NIL 303
+/* Tokens.  */
+#define ASSIGN 258
+#define OR 259
+#define AND 260
+#define EQ 261
+#define NOT_EQ 262
+#define GR_THAN 263
+#define GREQ_THAN 264
+#define LESS_THAN 265
+#define LEQ_THAN 266
+#define PLUS 267
+#define MINUS 268
+#define MULT 269
+#define DIV 270
+#define MOD 271
+#define NOT 272
+#define INCR 273
+#define DECR 274
+#define UMINUS 275
+#define DOT 276
+#define DOTDOT 277
+#define SQ_BR_RIGHT 278
+#define SQ_BR_LEFT 279
+#define LEFT_PAR 280
+#define RIGHT_PAR 281
+#define SEMICOLON 282
+#define COMMA 283
+#define COLON 284
+#define DOUBLE_COLON 285
+#define IF 286
+#define ELSE 287
+#define WHILE 288
+#define FOR 289
+#define FUNC 290
+#define RETURN 291
+#define BREAK 292
+#define LEFT_CURL_BR 293
+#define RIGHT_CURL_BR 294
+#define CONTINUE 295
+#define LOCAL 296
+#define TRUE 297
+#define FALSE 298
+#define NIL 299
+#define ID 300
+#define STRING 301
+#define INT 302
+#define REAL 303
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -166,7 +156,7 @@ union YYSTYPE
     float floatval;
 
 
-#line 170 "syntax_parser.h"
+#line 160 "syntax_parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -177,8 +167,6 @@ typedef union YYSTYPE YYSTYPE;
 
 extern YYSTYPE yylval;
 
-
 int yyparse (void);
-
 
 #endif /* !YY_YY_SYNTAX_PARSER_H_INCLUDED  */

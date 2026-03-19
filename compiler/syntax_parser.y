@@ -32,9 +32,9 @@
 %left SQ_BR_RIGHT SQ_BR_LEFT
 %left LEFT_PAR RIGHT_PAR
 %token SEMICOLON COMMA COLON DOUBLE_COLON IF ELSE WHILE FOR FUNC RETURN BREAK 
-%token LEFT_CURL_BR RIGHT_CURL_BR CONTINUE LOCAL TRUE FALSE NIL ENDLINE
+%token LEFT_CURL_BR RIGHT_CURL_BR CONTINUE LOCAL TRUE FALSE NIL /*ENDLINE*/
 
-%token <strval> ID
+%token <strval> ID STRING
 %token <intval> INT
 %token <floatval> REAL
 %%
@@ -144,11 +144,11 @@ funcdef:        FUNC ID LEFT_PAR idlist RIGHT_PAR block{fprintf(stderr, "functio
 
 const:          INT{;}
                 | REAL{;}
-                // | STRING
+                | STRING
                 | NIL{;}
                 | TRUE{;}
                 | FALSE{;}
-                | ENDLINE{;}
+                // | ENDLINE{;}
                 ;
 
 idlist:         ID {;}
@@ -172,6 +172,6 @@ returnstmt:     RETURN SEMICOLON{;}
 
 int yyerror (char* yaccProvideMessage){
     fprintf(stderr, "%s: at line %d before token: %s\n", yaccProvideMessage, yylineno, yytext);
-    /* fprintf(stderr, "INPUT NOT VALID!\n"); */
+    fprintf(stderr, "Input not valid!\n");
     return -1;
 }
