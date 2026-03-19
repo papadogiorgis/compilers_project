@@ -90,6 +90,7 @@ assignexpr:     lvalue ASSIGN expr{;};
 primary:        lvalue{;}
                 | call{;}
                 | objectdef{;}
+                | funcdef {;} // to avoid crashing on foo = function(...){...} case
                 | LEFT_PAR funcdef RIGHT_PAR{;}
                 | const{;}
                 ;
@@ -142,9 +143,9 @@ funcdef:        FUNC ID LEFT_PAR idlist RIGHT_PAR block{fprintf(stderr, "functio
                 | FUNC LEFT_PAR idlist RIGHT_PAR block{;}
                 ;
 
-const:          INT{;}
-                | REAL{;}
-                | STRING
+const:          INT{fprintf(stderr, "int: %d\n", yylval.intval);}
+                | REAL{fprintf(stderr, "real: %f\n", yylval.floatval);}
+                | STRING {fprintf(stderr, "string: \"%s\"\n", yylval.strval);}
                 | NIL{;}
                 | TRUE{;}
                 | FALSE{;}

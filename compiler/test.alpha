@@ -1,4 +1,3 @@
-
 global_int = 42;
 global_real = 3.14159;
 global_string = "Hello, Alpha!\nThis is a \"test\" string.\t";
@@ -43,6 +42,7 @@ function calculate_sum(a, b) {
 }
 
 // Anonymous function assignment
+
 multiply = function(x, y) {
     return x * y;
 };
