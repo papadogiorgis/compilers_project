@@ -3,6 +3,7 @@
 #include "scanner.h"
 #include "inc/tokens_list.h"
 #include "syntax_parser.h"
+#include "inc/symtable.h"
 
 extern int yylex(void);
 extern int yyparse(void);
@@ -33,5 +34,11 @@ int main(int argc, char **argv){
     // print_list(&token_list);
 
     fclose(yyin);
+
+    /* hashtable test */
+    SymTable_T symtable = SymTable_new();
+    putLibFunctions(symtable);
+    printScopeList();
+
     return parse_res;
 }

@@ -6,6 +6,64 @@
 
 #define HASH_MULTIPLIER 65599
 
+ScopeLists *slists;
+
+int addToScopeList(node *n){
+	int index = n->scope;
+	slists->bindings++;
+	// insert at head
+	if (slists->bindings >= slists->size){
+		int old_size = slists->size;
+		int new_size = 2 * slists->size;
+		node** tmp = realloc(slists->lists, sizeof(node) * new_size);
+		if (tmp == NULL){
+			fprintf(stderr, "Realloc failed\n");
+		} 
+		for (int i = old_size; i < new_size; i++){
+			slists->lists[i] = NULL;
+		}
+		slists->lists = tmp;
+		slists->size = new_size;
+	}
+	n->nextScope = slists->lists[index];
+	slists->lists[index] = n;
+
+	return 1;
+}
+
+void printScopeList(){
+	node *curr;
+	for (int i = 0; i < slists->size; i++){
+		curr = slists->lists[i];
+		while (curr != NULL) {
+			printf("Scope: %d, tok: %s\n", curr->scope, curr->key);
+			curr = curr->nextScope;
+		}
+	}
+}
+
+int putLibFunctions(SymTable_T symtable){
+	SymTable_put(symtable, "print", "print", LIBFUNC, 0, 0); 
+	SymTable_put(symtable, "input", "input", LIBFUNC, 0, 0);
+	SymTable_put(symtable, "objectmemberkeys" , "objectmemberkeys", LIBFUNC, 0, 0); 
+	SymTable_put(symtable, "objecttotalmembers", "objecttotalmembers", LIBFUNC, 0, 0);
+	SymTable_put(symtable, "objectcopy", "objectcopy", LIBFUNC, 0, 0);
+	SymTable_put(symtable, "totalarguments", "totalarguments", LIBFUNC, 0, 0);
+	SymTable_put(symtable, "argument", "argument", LIBFUNC, 1, 0);
+	SymTable_put(symtable, "typeof", "typeof", LIBFUNC, 1, 0);
+	SymTable_put(symtable, "strtonum", "strtonum", LIBFUNC, 1, 0);
+	SymTable_put(symtable, "sqrt", "sqrt", LIBFUNC, 2, 0);
+	SymTable_put(symtable, "cos", "cos", LIBFUNC, 2, 0);
+	SymTable_put(symtable, "sin", "sin", LIBFUNC, 1, 0);
+
+	// for(int i =0; i < 130; i++){
+	// 	char c[20];
+	// 	sprintf(c, "name_%d", i);
+	// 	SymTable_put(symtable, strdup(c) , "test", LIBFUNC, i, 0);
+	// }
+
+	return 1;
+}
 
 static unsigned int SymTable_hash(const char *pcKey){
 	size_t ui;
@@ -16,11 +74,6 @@ static unsigned int SymTable_hash(const char *pcKey){
 	return uiHash;
 }
 
-struct symtable{
-	node **hashtable;
-	unsigned int bindings;
-	int size;
-};
 
 int findNextSize(int curr){ /*parameter : current size*/
 	if (curr == 510)
@@ -73,6 +126,14 @@ void rehash(SymTable_T oSymTable, int curr_size){
 SymTable_T SymTable_new(void){
 	int i;
 	SymTable_T new = malloc(sizeof(struct symtable));
+
+	slists = malloc(sizeof(ScopeLists));
+	slists->lists = malloc(sizeof(node) * 128);
+	for (int i = 0; i < 128; i++){
+		slists->lists[i] = NULL;
+	}
+	slists->size = 128;
+	slists->bindings = 0;
 
 	if (new == NULL) {
 		printf("Memory allocation failed. Exit");
@@ -144,7 +205,8 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey){
 
 
 /*if pcKey doesnt already exist inside the symtable it is inserted*/
-int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue){
+int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
+				, enum SymbolType type, unsigned int scope, unsigned int line){
 	int index = SymTable_hash(pcKey) % (oSymTable -> size); /*index of hashtable*/
 	node *new;
 
@@ -157,14 +219,23 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue){
 	new = malloc(sizeof(node));
 	new -> key = malloc(strlen(pcKey) + 1);
 	strcpy(new -> key, pcKey);
-	new -> value = (void *)pvValue;
+	if (type == USERFUNC || type == LIBFUNC){
+		new -> value.funcVal = (Function *)pvValue;
+	}
+	else {
+		new->value.varVal = (Variable *)pvValue;
+	}
+	new->line = line;
+	new->scope = scope;
+	new->type = type;
 	new -> next = oSymTable -> hashtable[index];
 	oSymTable -> hashtable[index] = new;
+	addToScopeList(new);
 
 	(oSymTable -> bindings)++;
 	if (oSymTable -> bindings > oSymTable -> size){ /*if hashtable gets too big we rehash*/
 		if(oSymTable -> size < 65521){ /*until size == 65521*/
-			rehash(oSymTable , oSymTable->bindings);
+			// rehash(oSymTable , oSymTable->bindings);
 			printf("buckets: %d\n" , oSymTable -> bindings);
 		}
 	}
@@ -223,8 +294,14 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey){
 		curr = curr -> next;
 	}
 
-	if (curr != NULL && strcmp(pcKey, curr -> key) == 0)
-		return curr -> value;
+	if (curr != NULL && strcmp(pcKey, curr -> key) == 0){
+		if (curr->type == USERFUNC || curr->type == LIBFUNC){
+			return curr -> value.funcVal;
+		}
+		else {
+			return curr->value.varVal;
+		}
+	}
 	else 
 		return NULL;
 }
@@ -232,18 +309,18 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey){
 
 
 /*applies pfApply function to all the bindings of the symtable*/
-void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra), const void *pvExtra){
-	node *curr;	
-	int i;
+// void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra), const void *pvExtra){
+// 	node *curr;	
+// 	int i;
 
-	assert(pfApply != NULL);
-	assert(oSymTable != NULL);
+// 	assert(pfApply != NULL);
+// 	assert(oSymTable != NULL);
 
-	for (i = 0; i< oSymTable -> size; i++){
-		curr = oSymTable -> hashtable[i];
-		while (curr != NULL){
-			pfApply(curr -> key, curr -> value, (void*)pvExtra); /*cast to avoid compiler warnings, CAREFUL with use of pvExtra in apply*/
-			curr = curr -> next;
-		}
-	}
-}
+// 	for (i = 0; i< oSymTable -> size; i++){
+// 		curr = oSymTable -> hashtable[i];
+// 		while (curr != NULL){
+// 			pfApply(curr -> key, curr -> value, (void*)pvExtra); /*cast to avoid compiler warnings, CAREFUL with use of pvExtra in apply*/
+// 			curr = curr -> next;
+// 		}
+// 	}
+// }

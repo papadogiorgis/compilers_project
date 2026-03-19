@@ -111,7 +111,7 @@ new_line \n
 {leftcurlbr}   {ADD_PUNC("{", "LEFT_CURL_BR"); return LEFT_CURL_BR;}
 {rightcurlbr}   {ADD_PUNC("}", "RIGHT_CURL_BR"); return RIGHT_CURL_BR;}
 {new_line} {/*return ENDLINE;*/}
-[[:space:]]+ {/*ignores them*/}
+[ \t\n]+ {/*ignores them*/}
 {leftpar}   {ADD_PUNC("(", "LEFT_PAR"); return LEFT_PAR;}
 {rightpar}   {ADD_PUNC(")", "RIGHT_PAR"); return RIGHT_PAR;}
 

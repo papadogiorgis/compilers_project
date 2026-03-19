@@ -1,6 +1,7 @@
 %{
     #include <stdio.h>
-    
+    #include "inc/symtable.h"
+
     int yyerror (char* yaccProvideMessage);
 
     extern int yylex(void);
