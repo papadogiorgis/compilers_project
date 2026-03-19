@@ -6,9 +6,9 @@
 
     extern struct token_list token_list;
 
-    #define ADD_KEYWORD(content, type) add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, content, "KEYWORD", type, "enumerated");return 1
-    #define ADD_OP(content, type) add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, content, "OPERATOR", type, "enumerated");return 1
-    #define ADD_PUNC(content, type) add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, content, "PUNCTUATION", type, "enumerated");return 1
+    #define ADD_KEYWORD(content, type) add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, content, "KEYWORD", type, "enumerated");
+    #define ADD_OP(content, type) add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, content, "OPERATOR", type, "enumerated");
+    #define ADD_PUNC(content, type) add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, content, "PUNCTUATION", type, "enumerated");
 
 
     int tokencnt = 0;
@@ -110,13 +110,14 @@ new_line \n
 {rightsqbrack}   {ADD_PUNC("]", "RIGHT_SQ_BAR"); return SQ_BR_RIGHT;}
 {leftcurlbr}   {ADD_PUNC("{", "LEFT_CURL_BR"); return LEFT_CURL_BR;}
 {rightcurlbr}   {ADD_PUNC("}", "RIGHT_CURL_BR"); return RIGHT_CURL_BR;}
-{new_line} {}
+{new_line} {return ENDLINE;}
 {leftpar}   {ADD_PUNC("(", "LEFT_PAR"); return LEFT_PAR;}
 {rightpar}   {ADD_PUNC(")", "RIGHT_PAR"); return RIGHT_PAR;}
 
-{int} {add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, yytext, "CONST_INT", yytext, "integer");return 1;}
-{real} {add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, yytext, "CONST_REAL", yytext, "real");return 1;}
-{id} {add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, yytext, "IDENTIFIER", yytext, "char*");return 1;}
+{int} {add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, yytext, "CONST_INT", yytext, "integer"); return INT;}
+{real} {add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, yytext, "CONST_REAL", yytext, "real"); return REAL;}
+{id} {add_token((alpha_token_t *)&yylval, &token_list, yylineno, &tokencnt, yytext, "IDENTIFIER", yytext, "char*"); return ID;}
+
 
 "//" {
     char c;
@@ -129,10 +130,6 @@ new_line \n
 }
 
 "/*" {
-    
-    // if (*(int *)ylval == 5)
-    //     fprintf(stderr, "1431253252512462346436423\n");
-    //int com_stack[256];
     int *com_stack = malloc(sizeof(int) * 256);
     int stack_size = 256;
     int top = 1;
@@ -194,7 +191,6 @@ new_line \n
     int breakFlag = 0; // will use it to continue from while if i have already written in buf a special char
 
     while (!stringEnded){
-        // fprintf(stderr, "1");
         c = input();
         currBufSize++;
         breakFlag = 0;
@@ -253,11 +249,9 @@ new_line \n
         }
     }
 
-
     add_token(NULL, &token_list, yylineno, &tokencnt, buf, "STRING", buf, "char*");
 }
 
 
 
 %%
-

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "scanner.h"
 #include "inc/tokens_list.h"
+#include "syntax_parser.h"
 
 extern int yylex(void);
 
@@ -18,7 +19,10 @@ int main(int argc, char **argv){
         return -1;
     }
 
-    while (yylex());
+    // while (yylex());
+    // while (yyparse());
+    yyparse();
+
     fprintf(stderr, "--------------- Lexical Analysis ---------------\n");
     print_list(&token_list);
     return 0;
