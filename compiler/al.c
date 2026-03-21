@@ -39,6 +39,11 @@ int main(int argc, char **argv){
     SymTable_T symtable = SymTable_new();
     putLibFunctions(symtable);
     printScopeList();
+    for (int i = 0; i < 8; i++){
+        hideScope(i);
+        printf("get: %s, active:%d\n", SymTable_get(symtable, "print")->key, SymTable_get(symtable,
+                                                                                "print")->isActive);
+    }
 
     return parse_res;
 }

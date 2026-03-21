@@ -159,7 +159,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 14 "syntax_parser.y"
+#line 16 "syntax_parser.y"
 
     int intval;
     char *strval;

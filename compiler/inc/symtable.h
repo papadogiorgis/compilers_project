@@ -1,11 +1,11 @@
 
-typedef struct Variable {
-	const char *name;
-} Variable;
+// typedef struct Variable {
+// 	const char *name;
+// } Variable;
 
-typedef struct Function {
-	const char *name;
-} Function;
+// typedef struct Function {
+// 	const char *name;
+// } Function;
 
 enum SymbolType {
 	GLOBAL, LOCALV, FORMAL, USERFUNC, LIBFUNC
@@ -13,10 +13,11 @@ enum SymbolType {
 
 typedef struct node {
 	int isActive;
-	union {
-		Variable *varVal;
-		Function *funcVal;
-	} value;
+	// union {
+	// 	Variable *varVal;
+	// 	Function *funcVal;
+	// } value;
+	int isVar;
 	enum SymbolType type;
 	char *key;
 	unsigned int scope;
@@ -40,6 +41,8 @@ struct symtable{
 
 typedef struct symtable* SymTable_T;
 
+void hideScope(unsigned int scope);
+
 SymTable_T SymTable_new(void);
 
 void SymTable_free(SymTable_T oSymTable);
@@ -53,7 +56,7 @@ int SymTable_remove(SymTable_T oSymTable, const char *pcKey);
 
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey);
 
-void *SymTable_get(SymTable_T oSymTable, const char *pcKey);
+node *SymTable_get(SymTable_T oSymTable, const char *pcKey);
 
 void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra), const void *pvExtra);
 

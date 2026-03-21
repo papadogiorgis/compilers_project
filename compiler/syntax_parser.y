@@ -4,6 +4,8 @@
 
     int yyerror (char* yaccProvideMessage);
 
+    int scope = 0;
+
     extern int yylex(void);
 
     extern int yylineno;
@@ -136,7 +138,7 @@ indexed:        indexedelem{;}
 indexedelem:    LEFT_CURL_BR expr COLON expr RIGHT_CURL_BR{;}
                 ;
 
-block:          LEFT_CURL_BR RIGHT_CURL_BR{;}
+block:          LEFT_CURL_BR {scope++; fprintf(stderr, "scope = %d\n", scope);} RIGHT_CURL_BR{scope--; fprintf(stderr, "scope = %d\n", scope);}
                 | LEFT_CURL_BR stmts RIGHT_CURL_BR{;}
                 ;
 

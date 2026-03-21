@@ -65,6 +65,15 @@ int putLibFunctions(SymTable_T symtable){
 	return 1;
 }
 
+void hideScope(unsigned int scope){
+	assert(scope < slists->size);
+	node *curr = slists->lists[scope];
+	while (curr) {
+		curr->isActive = 0;
+		curr = curr->nextScope;
+	}
+}
+
 static unsigned int SymTable_hash(const char *pcKey){
 	size_t ui;
 	unsigned int uiHash = 0U;
@@ -219,13 +228,14 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
 	new = malloc(sizeof(node));
 	new -> key = malloc(strlen(pcKey) + 1);
 	strcpy(new -> key, pcKey);
-	if (type == USERFUNC || type == LIBFUNC){
-		new -> value.funcVal = (Function *)pvValue;
-	}
-	else {
-		new->value.varVal = (Variable *)pvValue;
-	}
+	// if (type == USERFUNC || type == LIBFUNC){
+	// 	new -> value.funcVal = (Function *)pvValue;
+	// }
+	// else {
+	// 	new->value.varVal = (Variable *)pvValue;
+	// }
 	new->line = line;
+	new->isActive = 1;
 	new->scope = scope;
 	new->type = type;
 	new -> next = oSymTable -> hashtable[index];
@@ -279,8 +289,7 @@ int SymTable_remove(SymTable_T oSymTable, const char *pcKey){
 }
 
 
-/*returns the value of a specific key inside the hashtable*/
-void *SymTable_get(SymTable_T oSymTable, const char *pcKey){
+node *SymTable_get(SymTable_T oSymTable, const char *pcKey){
 	node *curr;
 	int index = SymTable_hash(pcKey) % (oSymTable -> size);
 	
@@ -295,12 +304,13 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey){
 	}
 
 	if (curr != NULL && strcmp(pcKey, curr -> key) == 0){
-		if (curr->type == USERFUNC || curr->type == LIBFUNC){
-			return curr -> value.funcVal;
-		}
-		else {
-			return curr->value.varVal;
-		}
+		// if (curr->type == USERFUNC || curr->type == LIBFUNC){
+		// 	return curr -> value.funcVal;
+		// }
+		// else {
+		// 	return curr->value.varVal;
+		// }
+		return curr;
 	}
 	else 
 		return NULL;
