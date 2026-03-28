@@ -45,137 +45,137 @@
 %token <floatval> REAL
 %%
 
-program:        stmts{printf("program -> stmts\n");};
+program:        stmts{printf("line %d: program -> stmts\n", yylineno);};
 
-stmts:          stmts statement {printf("stmts->stmts statement\n");}
-                | statement{printf("stmts->statement\n");}
+stmts:          stmts statement {printf("line %d: stmts->stmts statement\n", yylineno);}
+                | statement{printf("line %d: stmts->statement\n", yylineno);}
                 ;
 
-statement:      expr SEMICOLON {printf("statement->expr;\n");}
-                | ifstmt {printf("statement->ifstmt\n");}
-                | whilestmt {printf("statement->whilestmt\n");}
-                | forstmt {printf("statement->forstmt\n");}
-                | returnstmt {printf("statement->returnstmt\n");}
-                | BREAK SEMICOLON {printf("statement->break;\n");}
-                | CONTINUE SEMICOLON{printf("statement->continue;\n");}
-                | block{printf("statement->block\n");}
-                | funcdef{printf("statement->funcdef\n");}
-                | SEMICOLON{printf("statement->;");}
+statement:      expr SEMICOLON {printf("line %d: statement->expr;\n", yylineno);}
+                | ifstmt {printf("line %d: statement->ifstmt\n", yylineno);}
+                | whilestmt {printf("line %d: statement->whilestmt\n", yylineno);}
+                | forstmt {printf("line %d: statement->forstmt\n", yylineno);}
+                | returnstmt {printf("line %d: statement->returnstmt\n", yylineno);}
+                | BREAK SEMICOLON {printf("line %d: statement->break;\n", yylineno);}
+                | CONTINUE SEMICOLON{printf("line %d: statement->continue;\n", yylineno);}
+                | block{printf("line %d: statement->block\n", yylineno);}
+                | funcdef{printf("line %d: statement->funcdef\n", yylineno);}
+                | SEMICOLON{printf("line %d: statement->;\n", yylineno);}
                 ;
 
 
-expr:           assignexpr{printf("expr->assignexpr\n");}
-                | expr PLUS expr{printf("expr->expr+expr\n");}
-                | expr MINUS expr{printf("expr->exor-expr\n");}
-                | expr MULT expr{printf("expr->expr*expr\n");}
-                | expr DIV expr{printf("expr->expr/expr\n");}
-                | expr MOD expr{printf("expr->expr%expr\n");}
-                | expr GR_THAN expr{printf("expr->expr>expr\n");}
-                | expr GREQ_THAN expr{printf("expr->expr >= expr\n");}
-                | expr LESS_THAN expr{printf("expr->expr < expr\n");}
-                | expr LEQ_THAN expr{printf("expr->expr <= expr\n");}
-                | expr EQ expr{printf("expr->expr == expr\n");}
-                | expr NOT_EQ expr{printf("expr->expr != expr\n");}
-                | expr AND expr{printf("expr->expr and expr\n");}
-                | expr OR expr{printf("expr->expr or expr\n");}
-                | term{printf("expr->term\n");}
+expr:           assignexpr{printf("line %d: expr->assignexpr\n", yylineno);}
+                | expr PLUS expr{printf("line %d: expr->expr+expr\n", yylineno);}
+                | expr MINUS expr{printf("line %d: expr->exor-expr\n", yylineno);}
+                | expr MULT expr{printf("line %d: expr->expr*expr\n", yylineno);}
+                | expr DIV expr{printf("line %d: expr->expr/expr\n", yylineno);}
+                | expr MOD expr{printf("line %d: expr->expr MOD expr\n", yylineno);}
+                | expr GR_THAN expr{printf("line %d: expr->expr>expr\n", yylineno);}
+                | expr GREQ_THAN expr{printf("line %d: expr->expr >= expr\n", yylineno);}
+                | expr LESS_THAN expr{printf("line %d: expr->expr < expr\n", yylineno);}
+                | expr LEQ_THAN expr{printf("line %d: expr->expr <= expr\n", yylineno);}
+                | expr EQ expr{printf("line %d: expr->expr == expr\n", yylineno);}
+                | expr NOT_EQ expr{printf("line %d: expr->expr != expr\n", yylineno);}
+                | expr AND expr{printf("line %d: expr->expr and expr\n", yylineno);}
+                | expr OR expr{printf("line %d: expr->expr or expr\n", yylineno);}
+                | term{printf("line %d: expr->term\n", yylineno);}
                 ;
 
-term:           LEFT_PAR expr RIGHT_PAR{printf("term-> (expr)\n");}
-                | UMINUS expr{printf("term-> -expr\n");}
-                | NOT expr{printf("term-> not expr\n");}
-                | INCR lvalue{printf("term-> ++lvalue\n");}
-                | lvalue INCR{printf("term-> lvalue++\n");}
-                | DECR lvalue{printf("term-> --lvalue\n");}
-                | lvalue DECR{printf("term-> lvalue--\n");}
-                | primary  {printf("term->primary\n");}
+term:           LEFT_PAR expr RIGHT_PAR{printf("line %d: term-> (expr)\n", yylineno);}
+                | UMINUS expr{printf("line %d: term-> -expr\n", yylineno);}
+                | NOT expr{printf("line %d: term-> not expr\n", yylineno);}
+                | INCR lvalue{printf("line %d: term-> ++lvalue\n", yylineno);}
+                | lvalue INCR{printf("line %d: term-> lvalue++\n", yylineno);}
+                | DECR lvalue{printf("line %d: term-> --lvalue\n", yylineno);}
+                | lvalue DECR{printf("line %d: term-> lvalue--\n", yylineno);}
+                | primary  {printf("line %d: term->primary\n", yylineno);}
                 ;
 
-assignexpr:     lvalue ASSIGN expr{printf("assignexpr->lvalue = expr\n");};
+assignexpr:     lvalue ASSIGN expr{printf("line %d: assignexpr->lvalue = expr\n", yylineno);};
 
-primary:        lvalue{printf("primary->lvalue\n");}
-                | call{printf("primary->call\n");}
-                | objectdef{printf("primary->objectdef\n");}
-                | funcdef {printf("primary->funcdef\n");} // to avoid crashing on foo = function(...){...} case
-                | LEFT_PAR funcdef RIGHT_PAR{printf("primary->(funcdef)\n");}
-                | const{printf("primary->const\n");}
+primary:        lvalue{printf("line %d: primary->lvalue\n", yylineno);}
+                | call{printf("line %d: primary->call\n", yylineno);}
+                | objectdef{printf("line %d: primary->objectdef\n", yylineno);}
+                | funcdef {printf("line %d: primary->funcdef\n", yylineno);} // to avoid crashing on foo = function(...){...} case
+                | LEFT_PAR funcdef RIGHT_PAR{printf("line %d: primary->(funcdef)\n", yylineno);}
+                | const{printf("line %d: primary->const\n", yylineno);}
                 ;
 
-lvalue:         ID{if (scope == 0) {SymTable_put(symtable, $1,$1, GLOBAL, scope, yylineno,0);} else {SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno,0);}; printf("lvalue->id\n");}
-                | LOCAL ID{SymTable_put(symtable, $2,$2, LOCALV, scope, yylineno,1); printf("lvalue->local id\n");}
-                | DOUBLE_COLON ID{printf("lvalue-> ::id\n");}
-                | member{printf("lvalue-> member\n");}
+lvalue:         ID{if (scope == 0) {SymTable_put(symtable, $1,$1, GLOBAL, scope, yylineno,0);} else {SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno,0);}; printf("line %d: lvalue->id\n", yylineno);}
+                | LOCAL ID{SymTable_put(symtable, $2,$2, LOCALV, scope, yylineno,1); printf("line %d: lvalue->local id\n", yylineno);}
+                | DOUBLE_COLON ID{printf("line %d: lvalue-> ::id\n", yylineno);}
+                | member{printf("line %d: lvalue-> member\n", yylineno);}
                 ;
 
-member:         lvalue DOT ID{;}
-                | lvalue SQ_BR_LEFT expr SQ_BR_RIGHT{;}
-                | call DOT ID{;}
-                | call SQ_BR_LEFT expr SQ_BR_RIGHT{;}
+member:         lvalue DOT ID{printf("line %d: member-> lvalue.ID\n", yylineno);}
+                | lvalue SQ_BR_LEFT expr SQ_BR_RIGHT{printf("line %d: member-> lvalue{expr}\n", yylineno);}
+                | call DOT ID{printf("line %d: member-> call.ID\n", yylineno);}
+                | call SQ_BR_LEFT expr SQ_BR_RIGHT{printf("line %d: member-> call{expr}\n", yylineno);}
                 ;
 
-call:           call LEFT_PAR elist RIGHT_PAR{fprintf(stderr, "call (elist)\n");}
-                | lvalue callsuffix{;}
-                | LEFT_PAR funcdef RIGHT_PAR LEFT_PAR elist RIGHT_PAR{;}
+call:           call LEFT_PAR elist RIGHT_PAR{printf("line %d: call-> call(elist)\n", yylineno);}
+                | lvalue callsuffix{printf("line %d: call-> lvalue callsuffix\n", yylineno);}
+                | LEFT_PAR funcdef RIGHT_PAR LEFT_PAR elist RIGHT_PAR{printf("line %d: call-> (funcdef)(elist)\n", yylineno);}
                 ;
 
-callsuffix:     normcall{;}
-                | methodcall{;}
+callsuffix:     normcall{printf("line %d: callsuffix-> normcall\n", yylineno);}
+                | methodcall{printf("line %d: callsuffix-> methodcall\n", yylineno);}
                 ;
 
-normcall:       LEFT_PAR elist RIGHT_PAR{;};
-methodcall:     DOTDOT ID LEFT_PAR elist RIGHT_PAR {;};
+normcall:       LEFT_PAR elist RIGHT_PAR{printf("line %d: normcall-> (elist)\n", yylineno);};
+methodcall:     DOTDOT ID LEFT_PAR elist RIGHT_PAR {printf("line %d: methodcall-> ..ID(elist)\n", yylineno);};
 
-elist:          expr{;}
-                | expr COMMA elist{;}
-                |
+elist:          expr{printf("line %d: elist-> expr\n", yylineno);}
+                | expr COMMA elist{printf("line %d: elist-> expr,elist\n", yylineno);}
+                | {printf("line %d: elist-> EMPTY RULE\n", yylineno);}
                 ;
 
-objectdef:      SQ_BR_LEFT elist SQ_BR_RIGHT{;}
-                | SQ_BR_LEFT indexed SQ_BR_RIGHT{;}
+objectdef:      SQ_BR_LEFT elist SQ_BR_RIGHT{printf("line %d: objectdef-> [elist]\n", yylineno);}
+                | SQ_BR_LEFT indexed SQ_BR_RIGHT{printf("line %d: objectdef-> [indexed]\n", yylineno);}
                 ;
             
-indexed:        indexedelem{;}
-                | indexedelem COMMA indexed{;}
+indexed:        indexedelem{printf("line %d: indexed-> indexedelem\n", yylineno);}
+                | indexedelem COMMA indexed{printf("line %d: indexed-> indexedelem,indexed\n", yylineno);}
                 ;
 
-indexedelem:    LEFT_CURL_BR {scope++; fprintf(stderr, "scope = %d\n", scope);} expr COLON expr RIGHT_CURL_BR{scope--; fprintf(stderr, "scope = %d\n", scope);;}
+indexedelem:    LEFT_CURL_BR {scope++;} expr COLON expr RIGHT_CURL_BR{scope--; printf("line %d: indexedelem-> {expr:expr}\n", yylineno);}
                 ;
 
 block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;}
-                              else {funcFlag = 0;}; fprintf(stderr, "scope = %d\n", scope);} RIGHT_CURL_BR{scope--; fprintf(stderr, "scope = %d\n", scope);}
+                              else {funcFlag = 0;};} RIGHT_CURL_BR{scope--; printf("line %d: block-> {}\n", yylineno);}
                 | LEFT_CURL_BR {if (funcFlag == 0){scope++;}
-                                else {funcFlag = 0;}; fprintf(stderr, "scope = %d\n", scope);} stmts RIGHT_CURL_BR{scope--; fprintf(stderr, "scope = %d\n", scope);}
+                                else {funcFlag = 0;};} stmts RIGHT_CURL_BR{scope--; printf("line %d: block-> {stmts}\n", yylineno);}
                 ;
 
-funcdef:        FUNC ID {SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; fprintf(stderr, "scope = %d\n", scope);} 
-                                idlist RIGHT_PAR block{;}
-                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; fprintf(stderr, "scope = %d\n", scope);} idlist RIGHT_PAR block{;}
+funcdef:        FUNC ID {SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; } 
+                                idlist RIGHT_PAR block{printf("line %d: funcdef-> function ID(idlist) block\n", yylineno);}
+                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++;} idlist RIGHT_PAR block{printf("line %d: funcdef-> function (idlist) block\n", yylineno);}
                 ;
 
-const:          INT{fprintf(stderr, "int: %d\n", yylval.intval);}
-                | REAL{fprintf(stderr, "real: %f\n", yylval.floatval);}
-                | STRING {fprintf(stderr, "string: \"%s\"\n", yylval.strval);}
-                | NIL{;}
-                | TRUE{;}
-                | FALSE{;}
+const:          INT{printf("line %d: const-> int\n", yylineno);}
+                | REAL{printf("line %d: const-> real\n", yylineno);}
+                | STRING {printf("line %d: const-> string\n", yylineno);}
+                | NIL{printf("line %d: const-> nil\n", yylineno);}
+                | TRUE{printf("line %d: const-> true\n", yylineno);}
+                | FALSE{printf("line %d: const-> false\n", yylineno);}
                 // | ENDLINE{;}
                 ;
 
-idlist:         ID {SymTable_put(symtable, $1, $1, FORMAL, scope, yylineno, 0);}
-                | idlist COMMA ID{SymTable_put(symtable, $3, $3, FORMAL, scope, yylineno, 0);}
-                |
+idlist:         ID {SymTable_put(symtable, $1, $1, FORMAL, scope, yylineno, 0); printf("line %d: idlist-> ID\n", yylineno);}
+                | idlist COMMA ID{SymTable_put(symtable, $3, $3, FORMAL, scope, yylineno, 0); printf("line %d: idlist-> idlist, ID\n", yylineno);}
+                | {printf("line %d: idlist-> EMPTY RULE\n", yylineno);}
                 ;
 
-ifstmt:         IF LEFT_PAR expr RIGHT_PAR statement{;}
-                | IF LEFT_PAR expr RIGHT_PAR statement ELSE statement{;}
+ifstmt:         IF LEFT_PAR expr RIGHT_PAR statement{printf("line %d: ifstmt-> if(expr) statement\n", yylineno);}
+                | IF LEFT_PAR expr RIGHT_PAR statement ELSE statement{printf("line %d: ifstmt-> if(expr) statement else statement\n", yylineno);}
                 ;
 
-whilestmt:      WHILE LEFT_PAR expr RIGHT_PAR statement{;};
+whilestmt:      WHILE LEFT_PAR expr RIGHT_PAR statement{printf("line %d: whilestmt-> while(expr) statement\n", yylineno);};
 
-forstmt:        FOR LEFT_PAR elist SEMICOLON expr SEMICOLON elist RIGHT_PAR statement{;};
+forstmt:        FOR LEFT_PAR elist SEMICOLON expr SEMICOLON elist RIGHT_PAR statement{printf("line %d: forstmt-> for(elist;expr;elist) statement\n", yylineno);};
 
-returnstmt:     RETURN SEMICOLON{;}
-                | RETURN expr SEMICOLON{;}
+returnstmt:     RETURN SEMICOLON{printf("line %d: returnstmt-> return;\n", yylineno);}
+                | RETURN expr SEMICOLON{printf("line %d: returnstmt-> return expr;\n", yylineno);}
                 ;
 
 %%

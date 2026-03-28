@@ -13,6 +13,7 @@ extern SymTable_T symtable;
 struct token_list token_list = {NULL};
 
 int main(int argc, char **argv){
+    fprintf(stderr, "--------------- Syntax Analysis ---------------\n");
     symtable = SymTable_new();
     putLibFunctions(symtable);
     if (argc > 1){
@@ -27,25 +28,12 @@ int main(int argc, char **argv){
     }
 
     int parse_res = yyparse();
-    if(parse_res == 0){
-        fprintf(stderr, "\nParsigng completed!\n");
-    }else{
+    if(parse_res != 0){
         fprintf(stderr, "\nParsing failed!\n");
     }
 
-    fprintf(stderr, "--------------- Lexical Analysis ---------------\n");
-    // print_list(&token_list);
-
     fclose(yyin);
-
-    /* hashtable test */
-    // SymTable_T symtable = SymTable_new();
     printScopeList();
-    // for (int i = 0; i < 8; i++){
-    //     hideScope(i);
-    //     printf("get: %s, active:%d\n", SymTable_get(symtable, "print")->key, SymTable_get(symtable,
-    //                                                                             "print")->isActive);
-    // }
 
     return parse_res;
 }

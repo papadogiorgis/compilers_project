@@ -238,8 +238,7 @@ int findScope(const char *pcKey, SymTable_T oSymTable, int ind) {
 	curr = oSymTable->hashtable[ind];
 	while (curr != NULL) {
 		if (strcmp(curr->key, pcKey) == 0){
-			if ((int)(curr->scope) > (int) max /*&& curr->isActive == 1*/){
-				printf("(SCOPE=%d)",curr->scope);
+			if ((int)(curr->scope) > (int) max && curr->isActive == 1){
 				max = curr->scope;
 			}
 		}
@@ -257,14 +256,9 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
 	assert(oSymTable != NULL);
 	assert(pcKey != NULL);
 	
-	// if (SymTable_contains(oSymTable, pcKey) == 1) return 0; /*key already stored*/
-	
-
 	int find_scope = findScope(pcKey, oSymTable, index);
 
-	printf("find scope %d, pcKey: %s\n", find_scope, pcKey);
-	if ((find_scope != -1 && localKwd == 0) || (localKwd == 1 && find_scope == scope)){
-		printf("No need to alloc.\n");	
+	if ((find_scope != -1 && localKwd == 0 && type!=FORMAL) || (localKwd == 1 && find_scope == scope)){
 		return 1;
 	}
 
