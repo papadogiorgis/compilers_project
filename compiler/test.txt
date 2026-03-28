@@ -1,5 +1,9 @@
-function main (i, j) {
+dalaras = 2;
+kurwo = 1;
+function TESTETSTETSSTSTTSSTTS(i, j) {
     i + j;
+    adreas = 10;
+    local george = 1;
     { 
         { 
             { 
@@ -7,4 +11,19 @@ function main (i, j) {
             }
         }
     }
+}
+
+function (x) {
+
+}
+function (x) {
+    
+}function (x) {
+    
+}function (x) {
+    
+}function (x) {
+    
+}function (x) {
+    
 }

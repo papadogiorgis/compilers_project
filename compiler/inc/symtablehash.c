@@ -31,14 +31,39 @@ int addToScopeList(node *n){
 	return 1;
 }
 
+char *getType(enum SymbolType type){
+	switch(type){
+		case GLOBAL:
+			return "global variable";
+		case LOCALV:
+			return "local variable";
+		case FORMAL:
+			return "formal argument";
+		case LIBFUNC:
+			return "library function";
+		case USERFUNC:
+			return "user function";
+		default:
+			return "bad type"; 
+	}
+}
+
+void printNodeInfo(node *curr) {
+	if (curr == NULL) return;
+	printNodeInfo(curr->nextScope);
+
+	printf("\"%s\" [%s] (line %d) (scope %d)\n", curr->key, getType(curr->type), curr->line, curr->scope);
+	return;
+}
+
 void printScopeList(){
 	node *curr;
 	for (int i = 0; i < slists->size; i++){
 		curr = slists->lists[i];
-		while (curr != NULL) {
-			printf("Scope: %d, tok: %s\n", curr->scope, curr->key);
-			curr = curr->nextScope;
+		if (curr != NULL) {
+			printf("\n\n-----------   Scope #%d   -----------\n", curr->scope);
 		}
+		printNodeInfo(curr);
 	}
 }
 
@@ -49,18 +74,12 @@ int putLibFunctions(SymTable_T symtable){
 	SymTable_put(symtable, "objecttotalmembers", "objecttotalmembers", LIBFUNC, 0, 0);
 	SymTable_put(symtable, "objectcopy", "objectcopy", LIBFUNC, 0, 0);
 	SymTable_put(symtable, "totalarguments", "totalarguments", LIBFUNC, 0, 0);
-	SymTable_put(symtable, "argument", "argument", LIBFUNC, 1, 0);
-	SymTable_put(symtable, "typeof", "typeof", LIBFUNC, 1, 0);
-	SymTable_put(symtable, "strtonum", "strtonum", LIBFUNC, 1, 0);
-	SymTable_put(symtable, "sqrt", "sqrt", LIBFUNC, 2, 0);
-	SymTable_put(symtable, "cos", "cos", LIBFUNC, 2, 0);
-	SymTable_put(symtable, "sin", "sin", LIBFUNC, 1, 0);
-
-	// for(int i =0; i < 130; i++){
-	// 	char c[20];
-	// 	sprintf(c, "name_%d", i);
-	// 	SymTable_put(symtable, strdup(c) , "test", LIBFUNC, i, 0);
-	// }
+	SymTable_put(symtable, "argument", "argument", LIBFUNC, 0, 0);
+	SymTable_put(symtable, "typeof", "typeof", LIBFUNC, 0, 0);
+	SymTable_put(symtable, "strtonum", "strtonum", LIBFUNC, 0, 0);
+	SymTable_put(symtable, "sqrt", "sqrt", LIBFUNC, 0, 0);
+	SymTable_put(symtable, "cos", "cos", LIBFUNC, 0, 0);
+	SymTable_put(symtable, "sin", "sin", LIBFUNC, 0, 0);
 
 	return 1;
 }

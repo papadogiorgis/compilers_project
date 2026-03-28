@@ -8,10 +8,13 @@
 extern int yylex(void);
 extern int yyparse(void);
 extern FILE* yyin;
+extern SymTable_T symtable;
 
 struct token_list token_list = {NULL};
 
 int main(int argc, char **argv){
+    symtable = SymTable_new();
+    putLibFunctions(symtable);
     if (argc > 1){
         if (!(yyin = fopen(argv[1], "r"))){
             fprintf(stderr, "Can't open file\n");
@@ -36,14 +39,13 @@ int main(int argc, char **argv){
     fclose(yyin);
 
     /* hashtable test */
-    SymTable_T symtable = SymTable_new();
-    putLibFunctions(symtable);
+    // SymTable_T symtable = SymTable_new();
     printScopeList();
-    for (int i = 0; i < 8; i++){
-        hideScope(i);
-        printf("get: %s, active:%d\n", SymTable_get(symtable, "print")->key, SymTable_get(symtable,
-                                                                                "print")->isActive);
-    }
+    // for (int i = 0; i < 8; i++){
+    //     hideScope(i);
+    //     printf("get: %s, active:%d\n", SymTable_get(symtable, "print")->key, SymTable_get(symtable,
+    //                                                                             "print")->isActive);
+    // }
 
     return parse_res;
 }

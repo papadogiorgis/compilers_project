@@ -5,7 +5,10 @@
     int yyerror (char* yaccProvideMessage);
 
     int scope = 0;
-
+    int funcFlag = 0;
+    int anonymousCnt = 0;
+    char buf[1024]; 
+    SymTable_T symtable;
     extern int yylex(void);
 
     extern int yylineno;
@@ -20,7 +23,7 @@
 
 }
 
-
+// TODO Keep reading after error
 
 %start program
 %right ASSIGN
@@ -98,8 +101,8 @@ primary:        lvalue{;}
                 | const{;}
                 ;
 
-lvalue:         ID{;}
-                | LOCAL ID{;}
+lvalue:         ID{if (scope == 0) {SymTable_put(symtable, $1,$1, GLOBAL, scope, yylineno);} else {SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno);}; }
+                | LOCAL ID{SymTable_put(symtable, $2,$2, LOCALV, scope, yylineno);;}
                 | DOUBLE_COLON ID{;}
                 | member{;}
                 ;
@@ -135,15 +138,18 @@ indexed:        indexedelem{;}
                 | indexedelem COMMA indexed{;}
                 ;
 
-indexedelem:    LEFT_CURL_BR expr COLON expr RIGHT_CURL_BR{;}
+indexedelem:    LEFT_CURL_BR {scope++; fprintf(stderr, "scope = %d\n", scope);} expr COLON expr RIGHT_CURL_BR{scope--; fprintf(stderr, "scope = %d\n", scope);;}
                 ;
 
-block:          LEFT_CURL_BR {scope++; fprintf(stderr, "scope = %d\n", scope);} RIGHT_CURL_BR{scope--; fprintf(stderr, "scope = %d\n", scope);}
-                | LEFT_CURL_BR stmts RIGHT_CURL_BR{;}
+block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;}
+                              else {funcFlag = 0;}; fprintf(stderr, "scope = %d\n", scope);} RIGHT_CURL_BR{scope--; fprintf(stderr, "scope = %d\n", scope);}
+                | LEFT_CURL_BR {if (funcFlag == 0){scope++;}
+                                else {funcFlag = 0;}; fprintf(stderr, "scope = %d\n", scope);} stmts RIGHT_CURL_BR{scope--; fprintf(stderr, "scope = %d\n", scope);}
                 ;
 
-funcdef:        FUNC ID LEFT_PAR idlist RIGHT_PAR block{fprintf(stderr, "function def\n"); }
-                | FUNC LEFT_PAR idlist RIGHT_PAR block{;}
+funcdef:        FUNC ID {SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno);} LEFT_PAR {scope++; funcFlag++; fprintf(stderr, "scope = %d\n", scope);} 
+                                idlist RIGHT_PAR block{;}
+                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno);} LEFT_PAR {scope++; funcFlag++; fprintf(stderr, "scope = %d\n", scope);} idlist RIGHT_PAR block{;}
                 ;
 
 const:          INT{fprintf(stderr, "int: %d\n", yylval.intval);}
@@ -155,8 +161,8 @@ const:          INT{fprintf(stderr, "int: %d\n", yylval.intval);}
                 // | ENDLINE{;}
                 ;
 
-idlist:         ID {;}
-                | idlist COMMA ID{;}
+idlist:         ID {SymTable_put(symtable, $1, $1, FORMAL, scope, yylineno);}
+                | idlist COMMA ID{SymTable_put(symtable, $3, $3, FORMAL, scope, yylineno);}
                 |
                 ;
 
@@ -177,5 +183,5 @@ returnstmt:     RETURN SEMICOLON{;}
 int yyerror (char* yaccProvideMessage){
     fprintf(stderr, "%s: at line %d before token: %s\n", yaccProvideMessage, yylineno, yytext);
     fprintf(stderr, "Input not valid!\n");
-    return -1;
+    return 0;
 }
