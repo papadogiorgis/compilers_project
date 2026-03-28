@@ -68,18 +68,18 @@ void printScopeList(){
 }
 
 int putLibFunctions(SymTable_T symtable){
-	SymTable_put(symtable, "print", "print", LIBFUNC, 0, 0); 
-	SymTable_put(symtable, "input", "input", LIBFUNC, 0, 0);
-	SymTable_put(symtable, "objectmemberkeys" , "objectmemberkeys", LIBFUNC, 0, 0); 
-	SymTable_put(symtable, "objecttotalmembers", "objecttotalmembers", LIBFUNC, 0, 0);
-	SymTable_put(symtable, "objectcopy", "objectcopy", LIBFUNC, 0, 0);
-	SymTable_put(symtable, "totalarguments", "totalarguments", LIBFUNC, 0, 0);
-	SymTable_put(symtable, "argument", "argument", LIBFUNC, 0, 0);
-	SymTable_put(symtable, "typeof", "typeof", LIBFUNC, 0, 0);
-	SymTable_put(symtable, "strtonum", "strtonum", LIBFUNC, 0, 0);
-	SymTable_put(symtable, "sqrt", "sqrt", LIBFUNC, 0, 0);
-	SymTable_put(symtable, "cos", "cos", LIBFUNC, 0, 0);
-	SymTable_put(symtable, "sin", "sin", LIBFUNC, 0, 0);
+	SymTable_put(symtable, "print", "print", LIBFUNC, 0, 0, 0); 
+	SymTable_put(symtable, "input", "input", LIBFUNC, 0, 0,0 );
+	SymTable_put(symtable, "objectmemberkeys" , "objectmemberkeys", LIBFUNC, 0, 0, 0); 
+	SymTable_put(symtable, "objecttotalmembers", "objecttotalmembers", LIBFUNC, 0, 0, 0);
+	SymTable_put(symtable, "objectcopy", "objectcopy", LIBFUNC, 0, 0, 0);
+	SymTable_put(symtable, "totalarguments", "totalarguments", LIBFUNC, 0, 0, 0);
+	SymTable_put(symtable, "argument", "argument", LIBFUNC, 0, 0, 0);
+	SymTable_put(symtable, "typeof", "typeof", LIBFUNC, 0, 0, 0);
+	SymTable_put(symtable, "strtonum", "strtonum", LIBFUNC, 0, 0, 0);
+	SymTable_put(symtable, "sqrt", "sqrt", LIBFUNC, 0, 0, 0);
+	SymTable_put(symtable, "cos", "cos", LIBFUNC, 0, 0, 0);
+	SymTable_put(symtable, "sin", "sin", LIBFUNC, 0, 0, 0);
 
 	return 1;
 }
@@ -231,28 +231,47 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey){
 	return 0;
 }
 
+int findScope(const char *pcKey, SymTable_T oSymTable, int ind) {
+	node *curr;
+	int max = -1;
+	// int index = SymTable_hash(pcKey) % (oSymTable->size);
+	curr = oSymTable->hashtable[ind];
+	while (curr != NULL) {
+		if (strcmp(curr->key, pcKey) == 0){
+			if ((int)(curr->scope) > (int) max /*&& curr->isActive == 1*/){
+				printf("(SCOPE=%d)",curr->scope);
+				max = curr->scope;
+			}
+		}
+		curr = curr->next;
+	}
+	return max;
+}
 
 /*if pcKey doesnt already exist inside the symtable it is inserted*/
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
-				, enum SymbolType type, unsigned int scope, unsigned int line){
+				, enum SymbolType type, unsigned int scope, unsigned int line, int localKwd){
 	int index = SymTable_hash(pcKey) % (oSymTable -> size); /*index of hashtable*/
 	node *new;
 
 	assert(oSymTable != NULL);
 	assert(pcKey != NULL);
 	
-	if (SymTable_contains(oSymTable, pcKey) == 1) return 0; /*key already stored*/
+	// if (SymTable_contains(oSymTable, pcKey) == 1) return 0; /*key already stored*/
 	
+
+	int find_scope = findScope(pcKey, oSymTable, index);
+
+	printf("find scope %d, pcKey: %s\n", find_scope, pcKey);
+	if ((find_scope != -1 && localKwd == 0) || (localKwd == 1 && find_scope == scope)){
+		printf("No need to alloc.\n");	
+		return 1;
+	}
+
 
 	new = malloc(sizeof(node));
 	new -> key = malloc(strlen(pcKey) + 1);
 	strcpy(new -> key, pcKey);
-	// if (type == USERFUNC || type == LIBFUNC){
-	// 	new -> value.funcVal = (Function *)pvValue;
-	// }
-	// else {
-	// 	new->value.varVal = (Variable *)pvValue;
-	// }
 	new->line = line;
 	new->isActive = 1;
 	new->scope = scope;

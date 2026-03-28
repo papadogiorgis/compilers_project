@@ -50,7 +50,7 @@ void SymTable_free(SymTable_T oSymTable);
 unsigned int SymTable_getLength(SymTable_T oSymTable);
 
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
-				, enum SymbolType type, unsigned int scope, unsigned int line);
+				, enum SymbolType type, unsigned int scope, unsigned int line, int localKwd);
 
 int SymTable_remove(SymTable_T oSymTable, const char *pcKey);
 

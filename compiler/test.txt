@@ -2,12 +2,13 @@ dalaras = 2;
 kurwo = 1;
 function TESTETSTETSSTSTTSSTTS(i, j) {
     i + j;
+    local i;
     adreas = 10;
     local george = 1;
     { 
         { 
             { 
-                
+                local dalaras = 1;
             }
         }
     }

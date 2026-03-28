@@ -45,66 +45,66 @@
 %token <floatval> REAL
 %%
 
-program:        stmts{;};
+program:        stmts{printf("program -> stmts\n");};
 
-stmts:          stmts statement {;}
-                | statement{;}
+stmts:          stmts statement {printf("stmts->stmts statement\n");}
+                | statement{printf("stmts->statement\n");}
                 ;
 
-statement:      expr SEMICOLON {;}
-                | ifstmt {;}
-                | whilestmt {;}
-                | forstmt {;}
-                | returnstmt {;}
-                | BREAK SEMICOLON {;}
-                | CONTINUE SEMICOLON{;}
-                | block{;}
-                | funcdef{;}
-                | SEMICOLON{;}
+statement:      expr SEMICOLON {printf("statement->expr;\n");}
+                | ifstmt {printf("statement->ifstmt\n");}
+                | whilestmt {printf("statement->whilestmt\n");}
+                | forstmt {printf("statement->forstmt\n");}
+                | returnstmt {printf("statement->returnstmt\n");}
+                | BREAK SEMICOLON {printf("statement->break;\n");}
+                | CONTINUE SEMICOLON{printf("statement->continue;\n");}
+                | block{printf("statement->block\n");}
+                | funcdef{printf("statement->funcdef\n");}
+                | SEMICOLON{printf("statement->;");}
                 ;
 
 
-expr:           assignexpr{;}
-                | expr PLUS expr{;}
-                | expr MINUS expr{;}
-                | expr MULT expr{;}
-                | expr DIV expr{;}
-                | expr MOD expr{;}
-                | expr GR_THAN expr{;}
-                | expr GREQ_THAN expr{;}
-                | expr LESS_THAN expr{;}
-                | expr LEQ_THAN expr{;}
-                | expr EQ expr{;}
-                | expr NOT_EQ expr{;}
-                | expr AND expr{;}
-                | expr OR expr{;}
-                | term{;}
+expr:           assignexpr{printf("expr->assignexpr\n");}
+                | expr PLUS expr{printf("expr->expr+expr\n");}
+                | expr MINUS expr{printf("expr->exor-expr\n");}
+                | expr MULT expr{printf("expr->expr*expr\n");}
+                | expr DIV expr{printf("expr->expr/expr\n");}
+                | expr MOD expr{printf("expr->expr%expr\n");}
+                | expr GR_THAN expr{printf("expr->expr>expr\n");}
+                | expr GREQ_THAN expr{printf("expr->expr >= expr\n");}
+                | expr LESS_THAN expr{printf("expr->expr < expr\n");}
+                | expr LEQ_THAN expr{printf("expr->expr <= expr\n");}
+                | expr EQ expr{printf("expr->expr == expr\n");}
+                | expr NOT_EQ expr{printf("expr->expr != expr\n");}
+                | expr AND expr{printf("expr->expr and expr\n");}
+                | expr OR expr{printf("expr->expr or expr\n");}
+                | term{printf("expr->term\n");}
                 ;
 
-term:           LEFT_PAR expr RIGHT_PAR{;}
-                | UMINUS expr{;}
-                | NOT expr{;}
-                | INCR lvalue{;}
-                | lvalue INCR{;}
-                | DECR lvalue{;}
-                | lvalue DECR{;}
-                | primary  {;}
+term:           LEFT_PAR expr RIGHT_PAR{printf("term-> (expr)\n");}
+                | UMINUS expr{printf("term-> -expr\n");}
+                | NOT expr{printf("term-> not expr\n");}
+                | INCR lvalue{printf("term-> ++lvalue\n");}
+                | lvalue INCR{printf("term-> lvalue++\n");}
+                | DECR lvalue{printf("term-> --lvalue\n");}
+                | lvalue DECR{printf("term-> lvalue--\n");}
+                | primary  {printf("term->primary\n");}
                 ;
 
-assignexpr:     lvalue ASSIGN expr{;};
+assignexpr:     lvalue ASSIGN expr{printf("assignexpr->lvalue = expr\n");};
 
-primary:        lvalue{;}
-                | call{;}
-                | objectdef{;}
-                | funcdef {;} // to avoid crashing on foo = function(...){...} case
-                | LEFT_PAR funcdef RIGHT_PAR{;}
-                | const{;}
+primary:        lvalue{printf("primary->lvalue\n");}
+                | call{printf("primary->call\n");}
+                | objectdef{printf("primary->objectdef\n");}
+                | funcdef {printf("primary->funcdef\n");} // to avoid crashing on foo = function(...){...} case
+                | LEFT_PAR funcdef RIGHT_PAR{printf("primary->(funcdef)\n");}
+                | const{printf("primary->const\n");}
                 ;
 
-lvalue:         ID{if (scope == 0) {SymTable_put(symtable, $1,$1, GLOBAL, scope, yylineno);} else {SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno);}; }
-                | LOCAL ID{SymTable_put(symtable, $2,$2, LOCALV, scope, yylineno);;}
-                | DOUBLE_COLON ID{;}
-                | member{;}
+lvalue:         ID{if (scope == 0) {SymTable_put(symtable, $1,$1, GLOBAL, scope, yylineno,0);} else {SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno,0);}; printf("lvalue->id\n");}
+                | LOCAL ID{SymTable_put(symtable, $2,$2, LOCALV, scope, yylineno,1); printf("lvalue->local id\n");}
+                | DOUBLE_COLON ID{printf("lvalue-> ::id\n");}
+                | member{printf("lvalue-> member\n");}
                 ;
 
 member:         lvalue DOT ID{;}
@@ -147,9 +147,9 @@ block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;}
                                 else {funcFlag = 0;}; fprintf(stderr, "scope = %d\n", scope);} stmts RIGHT_CURL_BR{scope--; fprintf(stderr, "scope = %d\n", scope);}
                 ;
 
-funcdef:        FUNC ID {SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno);} LEFT_PAR {scope++; funcFlag++; fprintf(stderr, "scope = %d\n", scope);} 
+funcdef:        FUNC ID {SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; fprintf(stderr, "scope = %d\n", scope);} 
                                 idlist RIGHT_PAR block{;}
-                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno);} LEFT_PAR {scope++; funcFlag++; fprintf(stderr, "scope = %d\n", scope);} idlist RIGHT_PAR block{;}
+                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; fprintf(stderr, "scope = %d\n", scope);} idlist RIGHT_PAR block{;}
                 ;
 
 const:          INT{fprintf(stderr, "int: %d\n", yylval.intval);}
@@ -161,8 +161,8 @@ const:          INT{fprintf(stderr, "int: %d\n", yylval.intval);}
                 // | ENDLINE{;}
                 ;
 
-idlist:         ID {SymTable_put(symtable, $1, $1, FORMAL, scope, yylineno);}
-                | idlist COMMA ID{SymTable_put(symtable, $3, $3, FORMAL, scope, yylineno);}
+idlist:         ID {SymTable_put(symtable, $1, $1, FORMAL, scope, yylineno, 0);}
+                | idlist COMMA ID{SymTable_put(symtable, $3, $3, FORMAL, scope, yylineno, 0);}
                 |
                 ;
 
