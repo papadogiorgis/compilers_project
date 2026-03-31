@@ -93,6 +93,12 @@ void hideScope(unsigned int scope){
 	}
 }
 
+void hideScopeRange(unsigned int scope) {
+	for (int i = 1; i < scope; i++){
+		hideScope(i);
+	}
+}
+
 static unsigned int SymTable_hash(const char *pcKey){
 	size_t ui;
 	unsigned int uiHash = 0U;
@@ -231,11 +237,12 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey){
 	return 0;
 }
 
-int findScope(const char *pcKey, SymTable_T oSymTable, int ind) {
+int findScope(const char *pcKey, SymTable_T oSymTable) {
 	node *curr;
 	int max = -1;
+	int index = SymTable_hash(pcKey) % (oSymTable->size);
 	// int index = SymTable_hash(pcKey) % (oSymTable->size);
-	curr = oSymTable->hashtable[ind];
+	curr = oSymTable->hashtable[index];
 	while (curr != NULL) {
 		if (strcmp(curr->key, pcKey) == 0){
 			if ((int)(curr->scope) > (int) max && curr->isActive == 1){
@@ -247,6 +254,20 @@ int findScope(const char *pcKey, SymTable_T oSymTable, int ind) {
 	return max;
 }
 
+
+
+node *getSymbol(const char *pcKey, SymTable_T oSymTable) {
+	node *curr;
+	// int index = SymTable_hash(pcKey) % (oSymTable->size);
+	while (curr) {
+		if (strcmp(curr->key, pcKey) == 0 && curr->isActive == 1){
+			return curr;
+		}
+		curr = curr->next;
+	}
+	return NULL;
+}
+
 /*if pcKey doesnt already exist inside the symtable it is inserted*/
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
 				, enum SymbolType type, unsigned int scope, unsigned int line, int localKwd){
@@ -256,7 +277,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
 	assert(oSymTable != NULL);
 	assert(pcKey != NULL);
 	
-	int find_scope = findScope(pcKey, oSymTable, index);
+	int find_scope = findScope(pcKey, oSymTable);
 
 	if ((find_scope != -1 && localKwd == 0 && type!=FORMAL) || (localKwd == 1 && find_scope == scope)){
 		return 1;

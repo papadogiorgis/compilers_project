@@ -23,7 +23,6 @@
 
 }
 
-// TODO Keep reading after error
 
 %start program
 %right ASSIGN
@@ -96,14 +95,16 @@ assignexpr:     lvalue ASSIGN expr{printf("line %d: assignexpr->lvalue = expr\n"
 primary:        lvalue{printf("line %d: primary->lvalue\n", yylineno);}
                 | call{printf("line %d: primary->call\n", yylineno);}
                 | objectdef{printf("line %d: primary->objectdef\n", yylineno);}
-                | funcdef {printf("line %d: primary->funcdef\n", yylineno);} // to avoid crashing on foo = function(...){...} case
+                /* | funcdef {printf("line %d: primary->funcdef\n", yylineno);} // to avoid crashing on foo = function(...){...} case */
                 | LEFT_PAR funcdef RIGHT_PAR{printf("line %d: primary->(funcdef)\n", yylineno);}
                 | const{printf("line %d: primary->const\n", yylineno);}
                 ;
 
 lvalue:         ID{if (scope == 0) {SymTable_put(symtable, $1,$1, GLOBAL, scope, yylineno,0);} else {SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno,0);}; printf("line %d: lvalue->id\n", yylineno);}
-                | LOCAL ID{SymTable_put(symtable, $2,$2, LOCALV, scope, yylineno,1); printf("line %d: lvalue->local id\n", yylineno);}
-                | DOUBLE_COLON ID{printf("line %d: lvalue-> ::id\n", yylineno);}
+                | LOCAL ID{node *tmp = getSymbol($2, symtable); if(tmp!=NULL && tmp->type == LIBFUNC){printf("Error: can't shadow libfunc\n");}
+                                                                else {SymTable_put(symtable, $2,$2, LOCALV, scope, yylineno,1);} 
+                                                                printf("line %d: lvalue->local id\n", yylineno);}
+                | DOUBLE_COLON ID{if (findScope($2, symtable) != 0){printf("Error: global var doesnt exist\n");} ;printf("line %d: lvalue-> ::id\n", yylineno);}
                 | member{printf("line %d: lvalue-> member\n", yylineno);}
                 ;
 
@@ -147,9 +148,9 @@ block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;}
                                 else {funcFlag = 0;};} stmts RIGHT_CURL_BR{scope--; printf("line %d: block-> {stmts}\n", yylineno);}
                 ;
 
-funcdef:        FUNC ID {SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; } 
+funcdef:        FUNC ID {SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; hideScopeRange(scope);} 
                                 idlist RIGHT_PAR block{printf("line %d: funcdef-> function ID(idlist) block\n", yylineno);}
-                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++;} idlist RIGHT_PAR block{printf("line %d: funcdef-> function (idlist) block\n", yylineno);}
+                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; hideScopeRange(scope);} idlist RIGHT_PAR block{printf("line %d: funcdef-> function (idlist) block\n", yylineno);}
                 ;
 
 const:          INT{printf("line %d: const-> int\n", yylineno);}

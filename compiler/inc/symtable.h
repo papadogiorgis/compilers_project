@@ -43,6 +43,12 @@ typedef struct symtable* SymTable_T;
 
 void hideScope(unsigned int scope);
 
+node *getSymbol(const char *pcKey, SymTable_T oSymTable);
+
+int findScope(const char *pcKey, SymTable_T oSymTable);
+
+void hideScopeRange(unsigned int scope);
+
 SymTable_T SymTable_new(void);
 
 void SymTable_free(SymTable_T oSymTable);

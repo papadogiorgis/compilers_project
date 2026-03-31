@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.5.1.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -31,8 +31,9 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Undocumented macros, especially those whose name start with YY_,
-   are private implementation details.  Do not rely on them.  */
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
 
 #ifndef YY_YY_SYNTAX_PARSER_H_INCLUDED
 # define YY_YY_SYNTAX_PARSER_H_INCLUDED
@@ -44,60 +45,69 @@
 extern int yydebug;
 #endif
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    ASSIGN = 258,
-    OR = 259,
-    AND = 260,
-    EQ = 261,
-    NOT_EQ = 262,
-    GR_THAN = 263,
-    GREQ_THAN = 264,
-    LESS_THAN = 265,
-    LEQ_THAN = 266,
-    PLUS = 267,
-    MINUS = 268,
-    MULT = 269,
-    DIV = 270,
-    MOD = 271,
-    NOT = 272,
-    INCR = 273,
-    DECR = 274,
-    UMINUS = 275,
-    DOT = 276,
-    DOTDOT = 277,
-    SQ_BR_RIGHT = 278,
-    SQ_BR_LEFT = 279,
-    LEFT_PAR = 280,
-    RIGHT_PAR = 281,
-    SEMICOLON = 282,
-    COMMA = 283,
-    COLON = 284,
-    DOUBLE_COLON = 285,
-    IF = 286,
-    ELSE = 287,
-    WHILE = 288,
-    FOR = 289,
-    FUNC = 290,
-    RETURN = 291,
-    BREAK = 292,
-    LEFT_CURL_BR = 293,
-    RIGHT_CURL_BR = 294,
-    CONTINUE = 295,
-    LOCAL = 296,
-    TRUE = 297,
-    FALSE = 298,
-    NIL = 299,
-    ID = 300,
-    STRING = 301,
-    INT = 302,
-    REAL = 303
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    ASSIGN = 258,                  /* ASSIGN  */
+    OR = 259,                      /* OR  */
+    AND = 260,                     /* AND  */
+    EQ = 261,                      /* EQ  */
+    NOT_EQ = 262,                  /* NOT_EQ  */
+    GR_THAN = 263,                 /* GR_THAN  */
+    GREQ_THAN = 264,               /* GREQ_THAN  */
+    LESS_THAN = 265,               /* LESS_THAN  */
+    LEQ_THAN = 266,                /* LEQ_THAN  */
+    PLUS = 267,                    /* PLUS  */
+    MINUS = 268,                   /* MINUS  */
+    MULT = 269,                    /* MULT  */
+    DIV = 270,                     /* DIV  */
+    MOD = 271,                     /* MOD  */
+    NOT = 272,                     /* NOT  */
+    INCR = 273,                    /* INCR  */
+    DECR = 274,                    /* DECR  */
+    UMINUS = 275,                  /* UMINUS  */
+    DOT = 276,                     /* DOT  */
+    DOTDOT = 277,                  /* DOTDOT  */
+    SQ_BR_RIGHT = 278,             /* SQ_BR_RIGHT  */
+    SQ_BR_LEFT = 279,              /* SQ_BR_LEFT  */
+    LEFT_PAR = 280,                /* LEFT_PAR  */
+    RIGHT_PAR = 281,               /* RIGHT_PAR  */
+    SEMICOLON = 282,               /* SEMICOLON  */
+    COMMA = 283,                   /* COMMA  */
+    COLON = 284,                   /* COLON  */
+    DOUBLE_COLON = 285,            /* DOUBLE_COLON  */
+    IF = 286,                      /* IF  */
+    ELSE = 287,                    /* ELSE  */
+    WHILE = 288,                   /* WHILE  */
+    FOR = 289,                     /* FOR  */
+    FUNC = 290,                    /* FUNC  */
+    RETURN = 291,                  /* RETURN  */
+    BREAK = 292,                   /* BREAK  */
+    LEFT_CURL_BR = 293,            /* LEFT_CURL_BR  */
+    RIGHT_CURL_BR = 294,           /* RIGHT_CURL_BR  */
+    CONTINUE = 295,                /* CONTINUE  */
+    LOCAL = 296,                   /* LOCAL  */
+    TRUE = 297,                    /* TRUE  */
+    FALSE = 298,                   /* FALSE  */
+    NIL = 299,                     /* NIL  */
+    ID = 300,                      /* ID  */
+    STRING = 301,                  /* STRING  */
+    INT = 302,                     /* INT  */
+    REAL = 303                     /* REAL  */
   };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
-/* Tokens.  */
+/* Token kinds.  */
+#define YYEMPTY -2
+#define YYEOF 0
+#define YYerror 256
+#define YYUNDEF 257
 #define ASSIGN 258
 #define OR 259
 #define AND 260
@@ -156,7 +166,7 @@ union YYSTYPE
     float floatval;
 
 
-#line 160 "syntax_parser.h"
+#line 170 "syntax_parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -167,6 +177,8 @@ typedef union YYSTYPE YYSTYPE;
 
 extern YYSTYPE yylval;
 
+
 int yyparse (void);
+
 
 #endif /* !YY_YY_SYNTAX_PARSER_H_INCLUDED  */

@@ -9,6 +9,8 @@ function TESTETSTETSSTSTTSSTTS(i, j) {
         { 
             { 
                 local dalaras = 1;
+                ::notexisrs = 1;
+                local print= 1;
             }
         }
     }
