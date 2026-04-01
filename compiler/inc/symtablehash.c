@@ -289,8 +289,8 @@ int checkFunc(const char *pcKey, SymTable_T oSymTable, unsigned int scope, int l
 		if (tmp->type == USERFUNC) {
 			printf("\nError: user func already defined, symbol: %s line: %d\n\n", pcKey, lineno);
 		}
-		else if (tmp->type == LOCALV || tmp->type == GLOBAL) {
-			printf("\nError: func of already defined var cant be used, symbol: %s line: %d\n\n", pcKey, lineno);
+		else if (tmp->type == LOCALV || tmp->type == GLOBAL || tmp->type == FORMAL) {
+			printf("\nError: Variable '%s' already defined at line: %d\n\n", pcKey, lineno);
 		}
 	}
 	tmp = getSymbolScope(pcKey, oSymTable, 0);

@@ -7,6 +7,7 @@
     int scope = 0;
     int funcFlag = 0;
     int loopFlag = 0;
+    int infunc=0;
     int anonymousCnt = 0;
     char buf[1024]; 
     SymTable_T symtable;
@@ -88,29 +89,38 @@ expr:           assignexpr{printf("line %d: expr->assignexpr\n", yylineno);}
 term:           LEFT_PAR expr RIGHT_PAR{printf("line %d: term-> (expr)\n", yylineno);}
                 | UMINUS expr{printf("line %d: term-> -expr\n", yylineno);}
                 | NOT expr{printf("line %d: term-> not expr\n", yylineno);}
-                | INCR lvalue{  node *tmp = getSymbolScope($2, symtable, scope);
-                                if ((tmp!=NULL)&& (tmp->type == USERFUNC || tmp->type == LIBFUNC) )
+                | INCR lvalue{ if($2 != NULL){ node *tmp = getSymbol($2, symtable);
+                                if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2, yylineno);};
+                }
                                 printf("line %d: term-> ++lvalue\n", yylineno);}
-                | lvalue INCR{node *tmp = getSymbolScope($1, symtable, scope);
-                                if ((tmp!=NULL) && (tmp->type == USERFUNC || tmp->type == LIBFUNC) )
+                | lvalue INCR{ if($1 != NULL){ node *tmp = getSymbol($1, symtable);
+                                if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1, yylineno);}
+                }
                                 printf("line %d: term-> lvalue++\n", yylineno);}
-                | DECR lvalue{node *tmp = getSymbolScope($2, symtable, scope);
-                                if ((tmp!=NULL) && (tmp->type == USERFUNC || tmp->type == LIBFUNC) )
+                | DECR lvalue{ if($2 != NULL){ node *tmp = getSymbol($2, symtable);
+                                if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2, yylineno);};
+                }
                                 printf("line %d: term-> --lvalue\n", yylineno);}
-                | lvalue DECR{node *tmp = getSymbolScope($1, symtable, scope);
-                                if ((tmp!=NULL) && (tmp->type == USERFUNC || tmp->type == LIBFUNC) )
+                | lvalue DECR{ if($1 != NULL){ node *tmp = getSymbol($1, symtable);
+                                if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1, yylineno);};
-                                    printf("line %d: term-> lvalue--\n", yylineno);}
+                }
+                                printf("line %d: term-> lvalue--\n", yylineno);}
                 | primary  {printf("line %d: term->primary\n", yylineno);}
                 ;
 
-assignexpr:     lvalue ASSIGN expr{node *tmp = getSymbolScope($1, symtable, scope);
-                                if ((tmp!=NULL)&& (tmp->type == USERFUNC || tmp->type == LIBFUNC) )
-                                    {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1, yylineno);}
-                                printf("line %d: assignexpr->lvalue = expr\n", yylineno);};
+assignexpr:     lvalue ASSIGN expr{
+    if($1 != NULL){
+        node *tmp = getSymbol($1, symtable);
+        if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
+                printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1, yylineno);
+        }
+    }
+    printf("line %d: assignexpr->lvalue = expr\n", yylineno);
+    };
 
 primary:        lvalue{printf("line %d: primary->lvalue\n", yylineno);}
                 | call{printf("line %d: primary->call\n", yylineno);}
@@ -138,7 +148,7 @@ lvalue:         ID{$$=$1;node* symbol = getSymbol($1, symtable);
                                                                 printf("line %d: lvalue->local id\n", yylineno);}
                 | DOUBLE_COLON ID{$$=$2;if (getSymbolScope($2, symtable,0) == NULL){printf("\nError: global var doesnt exist, symbol: %s line: %d\n\n", $2, yylineno);} 
                                 printf("line %d: lvalue-> ::id\n", yylineno);}
-                | member{printf("line %d: lvalue-> member\n", yylineno);}
+                | member{$$ = NULL; printf("line %d: lvalue-> member\n", yylineno);}
                 ;
 
 member:         lvalue DOT ID{printf("line %d: member-> lvalue.ID\n", yylineno);}
@@ -172,7 +182,7 @@ indexed:        indexedelem{printf("line %d: indexed-> indexedelem\n", yylineno)
                 | indexedelem COMMA indexed{printf("line %d: indexed-> indexedelem,indexed\n", yylineno);}
                 ;
 
-indexedelem:    LEFT_CURL_BR {scope++;} expr COLON expr RIGHT_CURL_BR{hideScope(scope--); printf("line %d: indexedelem-> {expr:expr}\n", yylineno);}
+indexedelem:    LEFT_CURL_BR {scope++; funcScope[scope]=funcScope[scope-1];} expr COLON expr RIGHT_CURL_BR{hideScope(scope--); printf("line %d: indexedelem-> {expr:expr}\n", yylineno);}
                 ;
 
 block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = funcScope[scope-1];}
@@ -182,9 +192,10 @@ block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = func
                                  printf("line %d: block-> {stmts}\n", yylineno);}
                 ;
 
-funcdef:        FUNC ID {checkFunc($2, symtable, scope, yylineno);SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++;} 
-                                idlist RIGHT_PAR block{printf("line %d: funcdef-> function ID(idlist) block\n", yylineno);}
-                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++;} idlist RIGHT_PAR block{printf("line %d: funcdef-> function (idlist) block\n", yylineno);}
+funcdef:        FUNC ID {checkFunc($2, symtable, scope, yylineno);SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; infunc++; funcScope[scope]=funcScope[scope-1];} 
+                                idlist RIGHT_PAR block{infunc--; printf("line %d: funcdef-> function ID(idlist) block\n", yylineno);}
+                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; infunc++; funcScope[scope]=funcScope[scope-1];} 
+                                idlist RIGHT_PAR block{infunc--; printf("line %d: funcdef-> function (idlist) block\n", yylineno);}
                 ;
 
 const:          INT{printf("line %d: const-> int\n", yylineno);}
@@ -209,8 +220,8 @@ whilestmt:      WHILE {loopFlag = 1;} LEFT_PAR expr RIGHT_PAR statement{loopFlag
 
 forstmt:        FOR {loopFlag = 1;} LEFT_PAR elist SEMICOLON expr SEMICOLON elist RIGHT_PAR statement{loopFlag = 0;printf("line %d: forstmt-> for(elist;expr;elist) statement\n", yylineno);};
 
-returnstmt:     RETURN SEMICOLON{if (funcFlag == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}printf("line %d: returnstmt-> return;\n", yylineno);}
-                | RETURN expr SEMICOLON{if (funcFlag == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}printf("line %d: returnstmt-> return expr;\n", yylineno);}
+returnstmt:     RETURN SEMICOLON{if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}printf("line %d: returnstmt-> return;\n", yylineno);}
+                | RETURN expr SEMICOLON{if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}printf("line %d: returnstmt-> return expr;\n", yylineno);}
                 ;
 
 %%
