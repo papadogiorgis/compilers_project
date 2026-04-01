@@ -86,6 +86,7 @@ int putLibFunctions(SymTable_T symtable){
 
 void hideScope(unsigned int scope){
 	assert(scope < slists->size);
+	if (scope == 0){ return; }
 	node *curr = slists->lists[scope];
 	while (curr) {
 		curr->isActive = 0;
@@ -319,7 +320,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
 		printf("\nError: formal shadows lib function, symbol: %s line: %d\n\n", pcKey, line);
 	}
 
-	if ((find_scope != -1 && localKwd == 0 && type!=FORMAL) || (localKwd == 1 && find_scope == scope)){
+	if ((find_scope != -1 && localKwd == 0 && type!=FORMAL && type != USERFUNC) || (localKwd == 1 && find_scope == scope)){
 		return 1;
 	}
 

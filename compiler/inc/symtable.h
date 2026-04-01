@@ -49,6 +49,9 @@ void hideScope(unsigned int scope);
 
 node *getSymbol(const char *pcKey, SymTable_T oSymTable);
 
+node *getSymbolScope(const char *pcKey, SymTable_T oSymTablem, unsigned int scope);
+
+
 int findScope(const char *pcKey, SymTable_T oSymTable);
 
 void hideScopeRange(unsigned int scope);
