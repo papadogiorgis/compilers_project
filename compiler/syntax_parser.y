@@ -113,14 +113,18 @@ term:           LEFT_PAR expr RIGHT_PAR{printf("line %d: term-> (expr)\n", yylin
                 ;
 
 assignexpr:     lvalue ASSIGN expr{
-    if($1 != NULL){
-        node *tmp = getSymbol($1, symtable);
-        if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
-                printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1, yylineno);
-        }
-    }
-    printf("line %d: assignexpr->lvalue = expr\n", yylineno);
-    };
+                    if($1 != NULL){
+                        node *tmp = getSymbol($1, symtable);
+                        if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
+                                printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1, yylineno);
+                        }
+                    }
+                    printf("line %d: assignexpr->lvalue = expr\n", yylineno);
+                }
+                | call ASSIGN expr {
+                    printf("\nError: function call is not lvalue, line:%d\n\n", yylineno);
+                }
+                ;
 
 primary:        lvalue{printf("line %d: primary->lvalue\n", yylineno);}
                 | call{printf("line %d: primary->call\n", yylineno);}
