@@ -155,13 +155,14 @@ indexed:        indexedelem{printf("line %d: indexed-> indexedelem\n", yylineno)
                 | indexedelem COMMA indexed{printf("line %d: indexed-> indexedelem,indexed\n", yylineno);}
                 ;
 
-indexedelem:    LEFT_CURL_BR {scope++;} expr COLON expr RIGHT_CURL_BR{scope--; printf("line %d: indexedelem-> {expr:expr}\n", yylineno);}
+indexedelem:    LEFT_CURL_BR {scope++;} expr COLON expr RIGHT_CURL_BR{hideScope(scope--); printf("line %d: indexedelem-> {expr:expr}\n", yylineno);}
                 ;
 
 block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = funcScope[scope-1];}
-                              else {funcFlag = 0;funcScope[scope] = funcScope[scope-1] + 1;};} RIGHT_CURL_BR{scope--; printf("line %d: block-> {}\n", yylineno);}
+                              else {funcFlag = 0;funcScope[scope] = funcScope[scope-1] + 1;};} RIGHT_CURL_BR{hideScope(scope--); printf("line %d: block-> {}\n", yylineno);}
                 | LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = funcScope[scope-1];}
-                                else {funcFlag = 0;funcScope[scope] = funcScope[scope-1] + 1;};} stmts RIGHT_CURL_BR{scope--; printf("line %d: block-> {stmts}\n", yylineno);}
+                                else {funcFlag = 0;funcScope[scope] = funcScope[scope-1] + 1;};} stmts RIGHT_CURL_BR{hideScope(scope--);
+                                 printf("line %d: block-> {stmts}\n", yylineno);}
                 ;
 
 funcdef:        FUNC ID {checkFunc($2, symtable, scope, yylineno);SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++;} 
