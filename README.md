@@ -1,4 +1,4 @@
-# CS-340 Compilers Project - Phase A
+# CS-340 Compilers Project - Phase B
 
 ## Authors
 * **Andreas Kantilierakis (csd5411)**
@@ -18,4 +18,3 @@ To compile and execute the lexical analyzer:
 ## 3. Implementation Status
 - **What works great:** The entire standard specification for Phase A has been completed successfully.
 - **What works partially:** None. All implemented features are fully functional.
-- **Not implemented:** We focused entirely on the core requirements, so the optional bonus question was not implemented.
