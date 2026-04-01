@@ -89,26 +89,26 @@ term:           LEFT_PAR expr RIGHT_PAR{printf("line %d: term-> (expr)\n", yylin
                 | UMINUS expr{printf("line %d: term-> -expr\n", yylineno);}
                 | NOT expr{printf("line %d: term-> not expr\n", yylineno);}
                 | INCR lvalue{  node *tmp = getSymbolScope($2, symtable, scope);
-                                if (tmp->type == USERFUNC || tmp->type == LIBFUNC) 
+                                if ((tmp!=NULL)&& (tmp->type == USERFUNC || tmp->type == LIBFUNC) )
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2, yylineno);};
                                 printf("line %d: term-> ++lvalue\n", yylineno);}
                 | lvalue INCR{node *tmp = getSymbolScope($1, symtable, scope);
-                                if (tmp->type == USERFUNC || tmp->type == LIBFUNC) 
+                                if ((tmp!=NULL) && (tmp->type == USERFUNC || tmp->type == LIBFUNC) )
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1, yylineno);}
                                 printf("line %d: term-> lvalue++\n", yylineno);}
                 | DECR lvalue{node *tmp = getSymbolScope($2, symtable, scope);
-                                if (tmp->type == USERFUNC || tmp->type == LIBFUNC) 
+                                if ((tmp!=NULL) && (tmp->type == USERFUNC || tmp->type == LIBFUNC) )
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2, yylineno);};
                                 printf("line %d: term-> --lvalue\n", yylineno);}
                 | lvalue DECR{node *tmp = getSymbolScope($1, symtable, scope);
-                                if (tmp->type == USERFUNC || tmp->type == LIBFUNC) 
+                                if ((tmp!=NULL) && (tmp->type == USERFUNC || tmp->type == LIBFUNC) )
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1, yylineno);};
                                     printf("line %d: term-> lvalue--\n", yylineno);}
                 | primary  {printf("line %d: term->primary\n", yylineno);}
                 ;
 
 assignexpr:     lvalue ASSIGN expr{node *tmp = getSymbolScope($1, symtable, scope);
-                                if (tmp->type == USERFUNC || tmp->type == LIBFUNC) 
+                                if ((tmp!=NULL)&& (tmp->type == USERFUNC || tmp->type == LIBFUNC) )
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1, yylineno);}
                                 printf("line %d: assignexpr->lvalue = expr\n", yylineno);};
 
