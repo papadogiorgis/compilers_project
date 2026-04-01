@@ -9,6 +9,9 @@
     int anonymousCnt = 0;
     char buf[1024]; 
     SymTable_T symtable;
+    char **errors;
+    int funcScope[1024] = {0};
+    int errorsCnt, errorsSize;
     extern int yylex(void);
 
     extern int yylineno;
@@ -100,11 +103,24 @@ primary:        lvalue{printf("line %d: primary->lvalue\n", yylineno);}
                 | const{printf("line %d: primary->const\n", yylineno);}
                 ;
 
-lvalue:         ID{if (scope == 0) {SymTable_put(symtable, $1,$1, GLOBAL, scope, yylineno,0);} else {SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno,0);}; printf("line %d: lvalue->id\n", yylineno);}
-                | LOCAL ID{node *tmp = getSymbol($2, symtable); if(tmp!=NULL && tmp->type == LIBFUNC){printf("Error: can't shadow libfunc\n");}
+lvalue:         ID{node* symbol = getSymbol($1, symtable);
+                    if (symbol == NULL){
+                        if (scope == 0) {
+                            SymTable_put(symtable, $1,$1, GLOBAL, scope, yylineno,0);} 
+                    else {SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno,0);}; 
+                    } else {
+                        if (findScope($1,symtable) != 0 && findScope($1,symtable) != scope && funcScope[scope] != funcScope[findScope($1,symtable)]){
+                            printf("\nError: var not accesible, symbol: %s line: %d\n\n", $1, yylineno);
+                        }
+                    };
+                printf("line %d: lvalue->id\n", yylineno);}
+
+
+                | LOCAL ID{node *tmp = getSymbol($2, symtable); if(tmp!=NULL && tmp->type == LIBFUNC){printf("\nError: func shadows lib func, symbol: %s line: %d\n\n", $2, yylineno);}
                                                                 else {SymTable_put(symtable, $2,$2, LOCALV, scope, yylineno,1);} 
                                                                 printf("line %d: lvalue->local id\n", yylineno);}
-                | DOUBLE_COLON ID{if (findScope($2, symtable) != 0){printf("Error: global var doesnt exist\n");} ;printf("line %d: lvalue-> ::id\n", yylineno);}
+                | DOUBLE_COLON ID{if (findScope($2, symtable) != 0){printf("\nError: global var doesnt exist, symbol: %s line: %d\n\n", $2, yylineno);} 
+                                printf("line %d: lvalue-> ::id\n", yylineno);}
                 | member{printf("line %d: lvalue-> member\n", yylineno);}
                 ;
 
@@ -142,15 +158,15 @@ indexed:        indexedelem{printf("line %d: indexed-> indexedelem\n", yylineno)
 indexedelem:    LEFT_CURL_BR {scope++;} expr COLON expr RIGHT_CURL_BR{scope--; printf("line %d: indexedelem-> {expr:expr}\n", yylineno);}
                 ;
 
-block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;}
-                              else {funcFlag = 0;};} RIGHT_CURL_BR{scope--; printf("line %d: block-> {}\n", yylineno);}
-                | LEFT_CURL_BR {if (funcFlag == 0){scope++;}
-                                else {funcFlag = 0;};} stmts RIGHT_CURL_BR{scope--; printf("line %d: block-> {stmts}\n", yylineno);}
+block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = funcScope[scope-1];}
+                              else {funcFlag = 0;funcScope[scope] = funcScope[scope-1] + 1;};} RIGHT_CURL_BR{scope--; printf("line %d: block-> {}\n", yylineno);}
+                | LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = funcScope[scope-1];}
+                                else {funcFlag = 0;funcScope[scope] = funcScope[scope-1] + 1;};} stmts RIGHT_CURL_BR{scope--; printf("line %d: block-> {stmts}\n", yylineno);}
                 ;
 
-funcdef:        FUNC ID {SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; hideScopeRange(scope);} 
+funcdef:        FUNC ID {checkFunc($2, symtable, scope, yylineno);SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++;} 
                                 idlist RIGHT_PAR block{printf("line %d: funcdef-> function ID(idlist) block\n", yylineno);}
-                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; hideScopeRange(scope);} idlist RIGHT_PAR block{printf("line %d: funcdef-> function (idlist) block\n", yylineno);}
+                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++;} idlist RIGHT_PAR block{printf("line %d: funcdef-> function (idlist) block\n", yylineno);}
                 ;
 
 const:          INT{printf("line %d: const-> int\n", yylineno);}

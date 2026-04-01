@@ -1,11 +1,23 @@
-dalaras = 2;
+dalaras = 2;{
+    x = 10;
+    y =120;
+    function(){
+        x = 1;
+        function(t,t,print){}
+        y++;
+    }
+    x = 4;  
+}
 kurwo = 1;
-function TESTETSTETSSTSTTSSTTS(i, j) {
+/*function TESTETSTETSSTSTTSSTTS(i, j) {
     i + j;
     local i;
     adreas = 10;
     local george = 1;
-    { 
+    { function(){
+        i = 1;
+
+    }
         { 
             { 
                 local dalaras = 1;
@@ -16,7 +28,10 @@ function TESTETSTETSSTSTTSSTTS(i, j) {
     }
 }
 
-function (x) {
+
+function dalaras(){}
+
+function print(x) {
 
 }
 function (x) {
@@ -29,4 +44,4 @@ function (x) {
     
 }function (x) {
     
-}
+}*/

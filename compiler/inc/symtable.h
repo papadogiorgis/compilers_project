@@ -39,7 +39,11 @@ struct symtable{
 	int size;
 };
 
+extern int funcScope[1024];
+
 typedef struct symtable* SymTable_T;
+
+int checkFunc(const char *pcKey, SymTable_T oSymTable, unsigned int scope, int lineno);
 
 void hideScope(unsigned int scope);
 

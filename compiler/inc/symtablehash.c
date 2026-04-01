@@ -237,6 +237,7 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey){
 	return 0;
 }
 
+
 int findScope(const char *pcKey, SymTable_T oSymTable) {
 	node *curr;
 	int max = -1;
@@ -254,11 +255,24 @@ int findScope(const char *pcKey, SymTable_T oSymTable) {
 	return max;
 }
 
+node *getSymbolScope(const char *pcKey, SymTable_T oSymTable, unsigned int scope){
+	node *curr;
+	int index = SymTable_hash(pcKey) % (oSymTable->size);
+	curr = oSymTable->hashtable[index];
+	while (curr) {
+		if (strcmp(curr->key, pcKey) == 0 && curr->isActive == 1 && curr->scope == scope){
+			return curr;
+		}
+		curr = curr->next;
+	}
 
+	return NULL;
+}
 
 node *getSymbol(const char *pcKey, SymTable_T oSymTable) {
 	node *curr;
-	// int index = SymTable_hash(pcKey) % (oSymTable->size);
+	int index = SymTable_hash(pcKey) % (oSymTable->size);
+	curr = oSymTable->hashtable[index];
 	while (curr) {
 		if (strcmp(curr->key, pcKey) == 0 && curr->isActive == 1){
 			return curr;
@@ -266,6 +280,24 @@ node *getSymbol(const char *pcKey, SymTable_T oSymTable) {
 		curr = curr->next;
 	}
 	return NULL;
+}
+
+int checkFunc(const char *pcKey, SymTable_T oSymTable, unsigned int scope, int lineno){
+	node *tmp = getSymbolScope(pcKey, oSymTable, scope);
+	if (tmp != NULL) {
+		if (tmp->type == USERFUNC) {
+			printf("\nError: user func already defined, symbol: %s line: %d\n\n", pcKey, lineno);
+		}
+		else if (tmp->type == LOCALV || tmp->type == GLOBAL) {
+			printf("\nError: func of already defined var cant be used, symbol: %s line: %d\n\n", pcKey, lineno);
+		}
+	}
+	tmp = getSymbolScope(pcKey, oSymTable, 0);
+	if (tmp != NULL && tmp->type == LIBFUNC){
+		printf("\nError: func shadows lib func, symbol: %s line: %d\n\n", pcKey, lineno);
+	}
+
+	return 1;
 }
 
 /*if pcKey doesnt already exist inside the symtable it is inserted*/
@@ -278,6 +310,14 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
 	assert(pcKey != NULL);
 	
 	int find_scope = findScope(pcKey, oSymTable);
+
+	// no need to check getSymbol != NULL, because scope would be == -1
+	if (find_scope == scope && getSymbolScope(pcKey, oSymTable, scope)->type == FORMAL && type == FORMAL){
+		printf("\nError: formal redeclaration, symbol: %s line: %d\n\n", pcKey, line);
+	} 
+	else if (find_scope == 0 && getSymbolScope(pcKey, oSymTable, 0)->type == LIBFUNC && type == FORMAL){
+		printf("\nError: formal shadows lib function, symbol: %s line: %d\n\n", pcKey, line);
+	}
 
 	if ((find_scope != -1 && localKwd == 0 && type!=FORMAL) || (localKwd == 1 && find_scope == scope)){
 		return 1;
