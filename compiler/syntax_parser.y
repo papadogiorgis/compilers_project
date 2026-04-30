@@ -2,6 +2,7 @@
     #include <stdio.h>
     #include "inc/symtable.h"
     #include "inc/quads.h"
+    #include "inc/inter_code.h"
 
     int yyerror (char* yaccProvideMessage);
 
