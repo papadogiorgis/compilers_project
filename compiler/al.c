@@ -4,6 +4,7 @@
 #include "inc/tokens_list.h"
 #include "syntax_parser.h"
 #include "inc/symtable.h"
+#include "inc/quads.h"
 
 extern int yylex(void);
 extern int yyparse(void);

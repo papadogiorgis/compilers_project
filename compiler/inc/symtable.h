@@ -1,13 +1,5 @@
 #ifndef HASHMAP
 #define HASHMAP
-// typedef struct Variable {
-// 	const char *name;
-// } Variable;
-
-// typedef struct Function {
-// 	const char *name;
-// } Function;
-
 enum SymbolType {
 	GLOBAL, LOCALV, FORMAL, USERFUNC, LIBFUNC
 };

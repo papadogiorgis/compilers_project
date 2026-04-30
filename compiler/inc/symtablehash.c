@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include "symtable.h"
+#include "quads.h"
 
 #define HASH_MULTIPLIER 65599
 
@@ -321,7 +322,7 @@ node *SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
 	}
 
 	if ((find_scope != -1 && localKwd == 0 && type!=FORMAL && type != USERFUNC) || (localKwd == 1 && find_scope == scope)){
-		return 1;
+		return NULL; // must check uses of return val here
 	}
 
 
