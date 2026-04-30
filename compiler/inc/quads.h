@@ -1,5 +1,7 @@
-#include "symtable.h"
+#ifndef QUADS_H
+#define QUADS_H
 
+#include "symtable.h"
 
 typedef enum expr_t {
     var_e,
@@ -73,3 +75,5 @@ scopespace_t currscopespace(void);
 unsigned int currscopeoffset(void);
 
 void incurrscopeoffset (void);
+
+#endif

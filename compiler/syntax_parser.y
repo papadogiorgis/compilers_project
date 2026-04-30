@@ -49,7 +49,7 @@
 %token <strval> ID STRING
 %token <intval> INT
 %token <floatval> REAL
-%type <expression> lvalue       
+%type <expression> lvalue expr term assignexpr primary call member callsuffix normcall methodcall const
 %%
 
 program:        stmts{printf("line %d: program -> stmts\n", yylineno);};
@@ -71,12 +71,18 @@ statement:      expr SEMICOLON {printf("line %d: statement->expr;\n", yylineno);
                 ;
 
 
-expr:           assignexpr{printf("line %d: expr->assignexpr\n", yylineno);}
-                | expr PLUS expr{printf("line %d: expr->expr+expr\n", yylineno);}
-                | expr MINUS expr{printf("line %d: expr->exor-expr\n", yylineno);}
-                | expr MULT expr{printf("line %d: expr->expr*expr\n", yylineno);}
-                | expr DIV expr{printf("line %d: expr->expr/expr\n", yylineno);}
-                | expr MOD expr{printf("line %d: expr->expr MOD expr\n", yylineno);}
+expr:           assignexpr{         $$ = $1;
+                                    printf("line %d: expr->assignexpr\n", yylineno);}
+                | expr PLUS expr{   $$ = arithmetic($1, $3, add);
+                                    printf("line %d: expr->expr+expr\n", yylineno);}
+                | expr MINUS expr{  $$ = arithmetic($1, $3, sub);
+                                    printf("line %d: expr->exor-expr\n", yylineno);}
+                | expr MULT expr{   $$ = arithmetic($1, $3, mul);
+                                    printf("line %d: expr->expr*expr\n", yylineno);}
+                | expr DIV expr{    $$ = arithmetic($1, $3, division);
+                                    printf("line %d: expr->expr/expr\n", yylineno);}
+                | expr MOD expr{    $$ = arithmetic($1, $3, mod);
+                                    printf("line %d: expr->expr MOD expr\n", yylineno);}
                 | expr GR_THAN expr{printf("line %d: expr->expr>expr\n", yylineno);}
                 | expr GREQ_THAN expr{printf("line %d: expr->expr >= expr\n", yylineno);}
                 | expr LESS_THAN expr{printf("line %d: expr->expr < expr\n", yylineno);}
@@ -85,7 +91,8 @@ expr:           assignexpr{printf("line %d: expr->assignexpr\n", yylineno);}
                 | expr NOT_EQ expr{printf("line %d: expr->expr != expr\n", yylineno);}
                 | expr AND expr{printf("line %d: expr->expr and expr\n", yylineno);}
                 | expr OR expr{printf("line %d: expr->expr or expr\n", yylineno);}
-                | term{printf("line %d: expr->term\n", yylineno);}
+                | term{             $$ = $1;
+                                    printf("line %d: expr->term\n", yylineno);}
                 ;
 
 term:           LEFT_PAR expr RIGHT_PAR{printf("line %d: term-> (expr)\n", yylineno);}

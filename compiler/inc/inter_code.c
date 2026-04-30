@@ -1,7 +1,5 @@
 #include "inter_code.h"
 
-extern int yylineno;
-
 int is_arith(expr* e){
     if(e->type == programfunc_e ||
     e->type == libraryfunc_e ||
@@ -15,9 +13,10 @@ int is_arith(expr* e){
     return 1;
 }
 
-expr* arithmentic(expr* lval, expr* rval, iopcode op){
+expr* arithmetic(expr* lval, expr* rval, iopcode op){
     if(!is_arith(lval) || !is_arith(rval)){
-        yyerror(op);
+        fprintf(stderr, "ERROR: ILLEGAL ARITHMETIC OPERATION AT LINE %d\n", yylineno);
+        return NULL;
     }
     expr* temp_var = newtemp();
     emit(op, lval, rval, temp_var, 0, yylineno);

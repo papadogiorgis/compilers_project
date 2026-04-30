@@ -1,5 +1,5 @@
-// #ifndef TOKENS
-// #define TOKENS
+#ifndef TOKENS
+#define TOKENS
 
 struct alpha_tok {
     int lineno;
@@ -22,4 +22,4 @@ int remove_token(struct token_list *list, int tokenno);
 // int find_token(struct token_list *list, int tokenno);
 void print_list(struct token_list *list);
 
-// #endif
+#endif

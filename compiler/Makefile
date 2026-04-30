@@ -1,20 +1,23 @@
-CC = gcc
-FLAGS = -g -Wall -I.
-FLEX = scanner.l
-FLEX_C = scanner.c
-SYNTAX = syntax_parser.y
-SYNTAX_C = syntax_parser.c
-TOKENS_C = inc/tokens_list.c
-AL = al.c
+FLAGS = -g -Wall -I. -I./inc
+SOURCE_FILES =  al.c \
+				scanner.c \
+				syntax_parser.c \
+				inc/tokens_list.c \
+				inc/symtablehash.c \
+				inc/quads.c \
+				inc/inter_code.c
 
-all: $(FLEX_C) $(TOKENS_C) $(SYNTAX_C)
-	$(CC) $(FLAGS) $(AL) $(FLEX_C) $(SYNTAX_C) $(TOKENS_C) inc/symtablehash.c inc/quads.c -o parse
 
-$(FLEX_C): $(FLEX)
-	flex --outfile=$(FLEX_C) --header-file=scanner.h $(FLEX) 
+all: parse
 
-$(SYNTAX_C): $(SYNTAX)
-	bison --yacc --defines --output=$(SYNTAX_C) $(SYNTAX)
+parse: syntax_parser.c scanner.c
+	gcc $(FLAGS) $(SOURCE_FILES) -o parse
+
+syntax_parser.c: syntax_parser.y
+	bison -d -v --yacc --output=syntax_parser.c syntax_parser.y
+
+scanner.c: scanner.l syntax_parser.c
+	flex --outfile=scanner.c --header-file=scanner.h scanner.l
 
 clean: 
-	rm -f $(FLEX_C) $(SYNTAX_C) parse
+	rm -f scanner.c syntax_parser.c syntax_parser.output parse
