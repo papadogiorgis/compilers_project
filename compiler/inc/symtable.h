@@ -1,4 +1,5 @@
-
+#ifndef HASHMAP
+#define HASHMAP
 // typedef struct Variable {
 // 	const char *name;
 // } Variable;
@@ -13,10 +14,8 @@ enum SymbolType {
 
 typedef struct node {
 	int isActive;
-	// union {
-	// 	Variable *varVal;
-	// 	Function *funcVal;
-	// } value;
+	unsigned int offset;
+	// unsigned int line;
 	int isVar;
 	enum SymbolType type;
 	char *key;
@@ -62,7 +61,8 @@ void SymTable_free(SymTable_T oSymTable);
 
 unsigned int SymTable_getLength(SymTable_T oSymTable);
 
-int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
+// changed from returning int !
+node *SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
 				, enum SymbolType type, unsigned int scope, unsigned int line, int localKwd);
 
 int SymTable_remove(SymTable_T oSymTable, const char *pcKey);
@@ -76,3 +76,4 @@ void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char *pcKey, void 
 void printScopeList();
 
 int putLibFunctions(SymTable_T symtable);
+#endif

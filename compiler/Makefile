@@ -8,7 +8,7 @@ TOKENS_C = inc/tokens_list.c
 AL = al.c
 
 all: $(FLEX_C) $(TOKENS_C) $(SYNTAX_C)
-	$(CC) $(FLAGS) $(AL) $(FLEX_C) $(SYNTAX_C) $(TOKENS_C) inc/symtablehash.c -o parse
+	$(CC) $(FLAGS) $(AL) $(FLEX_C) $(SYNTAX_C) $(TOKENS_C) inc/symtablehash.c inc/quads.c -o parse
 
 $(FLEX_C): $(FLEX)
 	flex --outfile=$(FLEX_C) --header-file=scanner.h $(FLEX) 

@@ -302,10 +302,10 @@ int checkFunc(const char *pcKey, SymTable_T oSymTable, unsigned int scope, int l
 }
 
 /*if pcKey doesnt already exist inside the symtable it is inserted*/
-int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
+node *SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
 				, enum SymbolType type, unsigned int scope, unsigned int line, int localKwd){
 	int index = SymTable_hash(pcKey) % (oSymTable -> size); /*index of hashtable*/
-	node *new;
+	node *new = NULL;
 
 	assert(oSymTable != NULL);
 	assert(pcKey != NULL);
@@ -344,7 +344,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
 		}
 	}
 	
-	return 1;
+	return new;
 	
 
 }

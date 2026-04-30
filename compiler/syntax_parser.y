@@ -1,6 +1,7 @@
 %{
     #include <stdio.h>
     #include "inc/symtable.h"
+    #include "inc/quads.h"
 
     int yyerror (char* yaccProvideMessage);
 
@@ -25,7 +26,7 @@
     int intval;
     char *strval;
     float floatval;
-
+    struct expr *expression;
 }
 
 
@@ -47,7 +48,7 @@
 %token <strval> ID STRING
 %token <intval> INT
 %token <floatval> REAL
-%type <strval> lvalue       
+%type <expression> lvalue       
 %%
 
 program:        stmts{printf("line %d: program -> stmts\n", yylineno);};
@@ -89,34 +90,34 @@ expr:           assignexpr{printf("line %d: expr->assignexpr\n", yylineno);}
 term:           LEFT_PAR expr RIGHT_PAR{printf("line %d: term-> (expr)\n", yylineno);}
                 | UMINUS expr{printf("line %d: term-> -expr\n", yylineno);}
                 | NOT expr{printf("line %d: term-> not expr\n", yylineno);}
-                | INCR lvalue{ if($2 != NULL){ node *tmp = getSymbol($2, symtable);
+                | INCR lvalue{ if($2->sym != NULL){ node *tmp = getSymbol($2->sym->key, symtable);
                                 if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
-                                    {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2, yylineno);};
+                                    {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);};
                 }
                                 printf("line %d: term-> ++lvalue\n", yylineno);}
-                | lvalue INCR{ if($1 != NULL){ node *tmp = getSymbol($1, symtable);
+                | lvalue INCR{ if($1->sym != NULL){ node *tmp = getSymbol($1->sym->key, symtable);
                                 if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
-                                    {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1, yylineno);}
+                                    {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);}
                 }
                                 printf("line %d: term-> lvalue++\n", yylineno);}
-                | DECR lvalue{ if($2 != NULL){ node *tmp = getSymbol($2, symtable);
+                | DECR lvalue{ if($2->sym != NULL){ node *tmp = getSymbol($2->sym->key, symtable);
                                 if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
-                                    {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2, yylineno);};
+                                    {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);};
                 }
                                 printf("line %d: term-> --lvalue\n", yylineno);}
-                | lvalue DECR{ if($1 != NULL){ node *tmp = getSymbol($1, symtable);
+                | lvalue DECR{ if($1->sym != NULL){ node *tmp = getSymbol($1->sym->key, symtable);
                                 if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
-                                    {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1, yylineno);};
+                                    {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);};
                 }
                                 printf("line %d: term-> lvalue--\n", yylineno);}
                 | primary  {printf("line %d: term->primary\n", yylineno);}
                 ;
 
 assignexpr:     lvalue ASSIGN expr{
-                    if($1 != NULL){
-                        node *tmp = getSymbol($1, symtable);
+                    if($1->sym != NULL){
+                        node *tmp = getSymbol($1->sym->key, symtable);
                         if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
-                                printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1, yylineno);
+                                printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);
                         }
                     }
                     printf("line %d: assignexpr->lvalue = expr\n", yylineno);
@@ -134,11 +135,15 @@ primary:        lvalue{printf("line %d: primary->lvalue\n", yylineno);}
                 | const{printf("line %d: primary->const\n", yylineno);}
                 ;
 
-lvalue:         ID{$$=$1;node* symbol = getSymbol($1, symtable);
+lvalue:         ID{
+                    node* symbol = getSymbol($1, symtable);
                     if (symbol == NULL){
                         if (scope == 0) {
                             SymTable_put(symtable, $1,$1, GLOBAL, scope, yylineno,0);} 
-                    else {SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno,0);}; 
+                    else {symbol = SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno,0);}; 
+                    $$ = newexpr(var_e);
+                    $$->sym = symbol;
+                    // printf("lvalue: %s \n")
                     } else {
                         if (findScope($1,symtable) != 0 && findScope($1,symtable) != scope && funcScope[scope] != funcScope[findScope($1,symtable)]){
                             printf("\nError: var not accesible, symbol: %s line: %d\n\n", $1, yylineno);
@@ -147,10 +152,10 @@ lvalue:         ID{$$=$1;node* symbol = getSymbol($1, symtable);
                 printf("line %d: lvalue->id\n", yylineno);}
 
 
-                | LOCAL ID{$$=$2;node *tmp = getSymbol($2, symtable); if(tmp!=NULL && tmp->type == LIBFUNC){printf("\nError: func shadows lib func, symbol: %s line: %d\n\n", $2, yylineno);}
+                | LOCAL ID{;node *tmp = getSymbol($2, symtable); if(tmp!=NULL && tmp->type == LIBFUNC){printf("\nError: func shadows lib func, symbol: %s line: %d\n\n", $2, yylineno);}
                                                                 else {SymTable_put(symtable, $2,$2, LOCALV, scope, yylineno,1);} 
                                                                 printf("line %d: lvalue->local id\n", yylineno);}
-                | DOUBLE_COLON ID{$$=$2;if (getSymbolScope($2, symtable,0) == NULL){printf("\nError: global var doesnt exist, symbol: %s line: %d\n\n", $2, yylineno);} 
+                | DOUBLE_COLON ID{;if (getSymbolScope($2, symtable,0) == NULL){printf("\nError: global var doesnt exist, symbol: %s line: %d\n\n", $2, yylineno);} 
                                 printf("line %d: lvalue-> ::id\n", yylineno);}
                 | member{$$ = NULL; printf("line %d: lvalue-> member\n", yylineno);}
                 ;
