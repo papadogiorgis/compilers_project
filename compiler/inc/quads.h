@@ -44,5 +44,15 @@ typedef struct quad {
     unsigned int line;
 }quad;
 
+typedef enum scopespace_t {
+    programvar,
+    functionlocal,
+    formalarg
+}scopespace_t;
+
+enum symbol_t {var_s, programfunc_s, libraryfunc_s};
+
+
+
 struct expr *newexpr(expr_t type);
 void emit(iopcode op, expr *arg1, expr *arg2, expr *result, unsigned label, unsigned line);
