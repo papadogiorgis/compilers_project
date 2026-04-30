@@ -2,6 +2,7 @@
 #define QUADS_H
 
 #include "symtable.h"
+#include <stdio.h>
 
 typedef enum expr_t {
     var_e,
@@ -75,5 +76,7 @@ scopespace_t currscopespace(void);
 unsigned int currscopeoffset(void);
 
 void incurrscopeoffset (void);
+
+void give_quads(FILE*);
 
 #endif

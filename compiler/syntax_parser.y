@@ -71,8 +71,7 @@ statement:      expr SEMICOLON {printf("line %d: statement->expr;\n", yylineno);
                 ;
 
 
-expr:           assignexpr{         $$ = $1;
-                                    printf("line %d: expr->assignexpr\n", yylineno);}
+expr:           assignexpr{printf("line %d: expr->assignexpr\n", yylineno);}
                 | expr PLUS expr{   $$ = arithmetic($1, $3, add);
                                     printf("line %d: expr->expr+expr\n", yylineno);}
                 | expr MINUS expr{  $$ = arithmetic($1, $3, sub);
@@ -91,8 +90,7 @@ expr:           assignexpr{         $$ = $1;
                 | expr NOT_EQ expr{printf("line %d: expr->expr != expr\n", yylineno);}
                 | expr AND expr{printf("line %d: expr->expr and expr\n", yylineno);}
                 | expr OR expr{printf("line %d: expr->expr or expr\n", yylineno);}
-                | term{             $$ = $1;
-                                    printf("line %d: expr->term\n", yylineno);}
+                | term{printf("line %d: expr->term\n", yylineno);}
                 ;
 
 term:           LEFT_PAR expr RIGHT_PAR{printf("line %d: term-> (expr)\n", yylineno);}

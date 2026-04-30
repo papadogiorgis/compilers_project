@@ -36,5 +36,12 @@ int main(int argc, char **argv){
     fclose(yyin);
     printScopeList();
 
+    FILE* quad_txt = fopen("all_quads.txt", "w");
+    if(!quad_txt){
+        fprintf(stderr, "Couldn't open file all_quads.txt\n");
+    }else{
+        give_quads(quad_txt);
+    }
+
     return parse_res;
 }

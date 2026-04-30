@@ -97,3 +97,9 @@ expr *newtemp() {
     e->sym = sym;
     return e;
 }
+
+void give_quads(FILE* quads_txt){
+    fprintf(quads_txt, "quad#   opcode          result          arg1            arg2            label \n");
+    fprintf(quads_txt, "------------------------------------------------------------------------------\n");
+
+}
