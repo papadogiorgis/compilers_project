@@ -101,5 +101,8 @@ expr *newtemp() {
 void give_quads(FILE* quads_txt){
     fprintf(quads_txt, "quad#   opcode          result          arg1            arg2            label \n");
     fprintf(quads_txt, "------------------------------------------------------------------------------\n");
-
+    for(int i=1; i<currQuad; i++){
+        fprintf(quads_txt, "%-8d", i);
+        fprintf(quads_txt, "\n");
+    }
 }

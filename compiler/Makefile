@@ -20,4 +20,4 @@ scanner.c: scanner.l syntax_parser.c
 	flex --outfile=scanner.c --header-file=scanner.h scanner.l
 
 clean: 
-	rm -f scanner.c syntax_parser.c syntax_parser.output parse
+	rm -f scanner.c syntax_parser.c syntax_parser.output parse all_quads.txt
