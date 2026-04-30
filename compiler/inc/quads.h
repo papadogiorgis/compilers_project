@@ -55,4 +55,21 @@ enum symbol_t {var_s, programfunc_s, libraryfunc_s};
 
 
 struct expr *newexpr(expr_t type);
+
 void emit(iopcode op, expr *arg1, expr *arg2, expr *result, unsigned label, unsigned line);
+
+expr *newtemp();
+
+void resetFunctionLocalOffset(void);
+
+void resetFormalArgOffset(void);
+
+void enterscopespace();
+
+void exitscopespace(void);
+
+scopespace_t currscopespace(void);
+
+unsigned int currscopeoffset(void);
+
+void incurrscopeoffset (void);

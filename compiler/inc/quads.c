@@ -12,6 +12,7 @@ unsigned int programVarOffset = 0;
 unsigned int functionLocalOffset = 0;
 unsigned int formalArgOffset = 0;
 unsigned int scopeSpaceCounter = 1;
+unsigned int tcount = 0;
 quad *quads = NULL;
 
 void expand(void) {
@@ -78,4 +79,15 @@ void enterscopespace(void){
 void exitscopespace(void){
     assert(scopeSpaceCounter>1);
     --scopeSpaceCounter;
+}
+
+void resetFunctionLocalOffset(void){ functionLocalOffset = 0;}
+
+void resetFormalArgOffset(void) { formalArgOffset = 0;}
+
+expr *newtemp() {
+    char *name = malloc(24);
+    sprintf(name, "_t%d", tcount++);
+    expr *e = newexpr(var_e);
+    return e;
 }
