@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #define EXPAND_SIZE 1024
 #define CURR_SIZE (total *sizeof(quad))
@@ -13,6 +14,9 @@ unsigned int functionLocalOffset = 0;
 unsigned int formalArgOffset = 0;
 unsigned int scopeSpaceCounter = 1;
 unsigned int tcount = 0;
+
+extern SymTable_T symtable;
+extern int yylineno, scope;
 quad *quads = NULL;
 
 void expand(void) {
@@ -88,6 +92,8 @@ void resetFormalArgOffset(void) { formalArgOffset = 0;}
 expr *newtemp() {
     char *name = malloc(24);
     sprintf(name, "_t%d", tcount++);
+    node *sym = SymTable_put(symtable, name, name, LOCALV, scope, yylineno, 0);
     expr *e = newexpr(var_e);
+    e->sym = sym;
     return e;
 }
