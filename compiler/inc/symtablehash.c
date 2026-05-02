@@ -69,18 +69,18 @@ void printScopeList(){
 }
 
 int putLibFunctions(SymTable_T symtable){
-	SymTable_put(symtable, "print", "print", LIBFUNC, 0, 0, 0); 
-	SymTable_put(symtable, "input", "input", LIBFUNC, 0, 0,0 );
-	SymTable_put(symtable, "objectmemberkeys" , "objectmemberkeys", LIBFUNC, 0, 0, 0); 
-	SymTable_put(symtable, "objecttotalmembers", "objecttotalmembers", LIBFUNC, 0, 0, 0);
-	SymTable_put(symtable, "objectcopy", "objectcopy", LIBFUNC, 0, 0, 0);
-	SymTable_put(symtable, "totalarguments", "totalarguments", LIBFUNC, 0, 0, 0);
-	SymTable_put(symtable, "argument", "argument", LIBFUNC, 0, 0, 0);
-	SymTable_put(symtable, "typeof", "typeof", LIBFUNC, 0, 0, 0);
-	SymTable_put(symtable, "strtonum", "strtonum", LIBFUNC, 0, 0, 0);
-	SymTable_put(symtable, "sqrt", "sqrt", LIBFUNC, 0, 0, 0);
-	SymTable_put(symtable, "cos", "cos", LIBFUNC, 0, 0, 0);
-	SymTable_put(symtable, "sin", "sin", LIBFUNC, 0, 0, 0);
+	SymTable_put(symtable, "print", "print", LIBFUNC, 0, 0, 0, 0); 
+	SymTable_put(symtable, "input", "input", LIBFUNC, 0, 0,0 ,0);
+	SymTable_put(symtable, "objectmemberkeys" , "objectmemberkeys", LIBFUNC, 0, 0, 0, 0); 
+	SymTable_put(symtable, "objecttotalmembers", "objecttotalmembers", LIBFUNC, 0, 0, 0, 0);
+	SymTable_put(symtable, "objectcopy", "objectcopy", LIBFUNC, 0, 0, 0, 0);
+	SymTable_put(symtable, "totalarguments", "totalarguments", LIBFUNC, 0, 0, 0, 0);
+	SymTable_put(symtable, "argument", "argument", LIBFUNC, 0, 0, 0, 0);
+	SymTable_put(symtable, "typeof", "typeof", LIBFUNC, 0, 0, 0, 0);
+	SymTable_put(symtable, "strtonum", "strtonum", LIBFUNC, 0, 0, 0, 0);
+	SymTable_put(symtable, "sqrt", "sqrt", LIBFUNC, 0, 0, 0, 0);
+	SymTable_put(symtable, "cos", "cos", LIBFUNC, 0, 0, 0, 0);
+	SymTable_put(symtable, "sin", "sin", LIBFUNC, 0, 0, 0, 0);
 
 	return 1;
 }
@@ -304,7 +304,7 @@ int checkFunc(const char *pcKey, SymTable_T oSymTable, unsigned int scope, int l
 
 /*if pcKey doesnt already exist inside the symtable it is inserted*/
 node *SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
-				, enum SymbolType type, unsigned int scope, unsigned int line, int localKwd){
+				, enum SymbolType type, unsigned int scope, unsigned int line, int localKwd, unsigned int offset){
 	int index = SymTable_hash(pcKey) % (oSymTable -> size); /*index of hashtable*/
 	node *new = NULL;
 
@@ -333,6 +333,7 @@ node *SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
 	new->isActive = 1;
 	new->scope = scope;
 	new->type = type;
+	new->offset = offset;
 	new -> next = oSymTable -> hashtable[index];
 	oSymTable -> hashtable[index] = new;
 	addToScopeList(new);

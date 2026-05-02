@@ -3,6 +3,7 @@
     #include "inc/symtable.h"
     #include "inc/quads.h"
     #include "inc/inter_code.h"
+    #include <string.h>
 
     int yyerror (char* yaccProvideMessage);
 
@@ -94,7 +95,7 @@ expr:           assignexpr{ $$=$1;
                 | term{printf("line %d: expr->term\n", yylineno);}
                 ;
 
-term:           LEFT_PAR expr RIGHT_PAR{printf("line %d: term-> (expr)\n", yylineno);}
+term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n", yylineno);}
                 | UMINUS expr{printf("line %d: term-> -expr\n", yylineno);}
                 | NOT expr{printf("line %d: term-> not expr\n", yylineno);}
                 | INCR lvalue{ if($2->sym != NULL){ node *tmp = getSymbol($2->sym->key, symtable);
@@ -117,7 +118,7 @@ term:           LEFT_PAR expr RIGHT_PAR{printf("line %d: term-> (expr)\n", yylin
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);};
                 }
                                 printf("line %d: term-> lvalue--\n", yylineno);}
-                | primary  {printf("line %d: term->primary\n", yylineno);}
+                | primary  {$$=$1; printf("line %d: term->primary\n", yylineno);}
                 ;
 
 assignexpr:     lvalue ASSIGN expr{
@@ -135,20 +136,20 @@ assignexpr:     lvalue ASSIGN expr{
                 }
                 ;
 
-primary:        lvalue{printf("line %d: primary->lvalue\n", yylineno);}
-                | call{printf("line %d: primary->call\n", yylineno);}
+primary:        lvalue{$$=$1; printf("line %d: primary->lvalue\n", yylineno);}
+                | call{$$=$1; printf("line %d: primary->call\n", yylineno);}
                 | objectdef{printf("line %d: primary->objectdef\n", yylineno);}
                 /* | funcdef {printf("line %d: primary->funcdef\n", yylineno);} // to avoid crashing on foo = function(...){...} case */
                 | LEFT_PAR funcdef RIGHT_PAR{printf("line %d: primary->(funcdef)\n", yylineno);}
-                | const{printf("line %d: primary->const\n", yylineno);}
+                | const{$$=$1; printf("line %d: primary->const\n", yylineno);}
                 ;
 
 lvalue:         ID{
                     node* symbol = getSymbol($1, symtable);
                     if (symbol == NULL){
                         if (scope == 0) {
-                            SymTable_put(symtable, $1,$1, GLOBAL, scope, yylineno,0);} 
-                    else {symbol = SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno,0);}; 
+                            SymTable_put(symtable, $1,$1, GLOBAL, scope, yylineno,0, currscopeoffset());incurrscopeoffset();} 
+                    else {symbol = SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno,0,currscopeoffset());incurrscopeoffset();}; 
                     $$ = newexpr(var_e);
                     $$->sym = symbol;
                     // printf("lvalue: %s \n")
@@ -161,11 +162,11 @@ lvalue:         ID{
 
 
                 | LOCAL ID{;node *tmp = getSymbol($2, symtable); if(tmp!=NULL && tmp->type == LIBFUNC){printf("\nError: func shadows lib func, symbol: %s line: %d\n\n", $2, yylineno);}
-                                                                else {SymTable_put(symtable, $2,$2, LOCALV, scope, yylineno,1);} 
+                                                                else {SymTable_put(symtable, $2,$2, LOCALV, scope, yylineno,1,currscopeoffset());incurrscopeoffset();} 
                                                                 printf("line %d: lvalue->local id\n", yylineno);}
                 | DOUBLE_COLON ID{;if (getSymbolScope($2, symtable,0) == NULL){printf("\nError: global var doesnt exist, symbol: %s line: %d\n\n", $2, yylineno);} 
                                 printf("line %d: lvalue-> ::id\n", yylineno);}
-                | member{$$ = NULL; printf("line %d: lvalue-> member\n", yylineno);}
+                | member{$$ = $1; printf("line %d: lvalue-> member\n", yylineno);}
                 ;
 
 member:         lvalue DOT ID{printf("line %d: member-> lvalue.ID\n", yylineno);}
@@ -209,25 +210,39 @@ block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = func
                                  printf("line %d: block-> {stmts}\n", yylineno);}
                 ;
 
-funcdef:        FUNC ID {checkFunc($2, symtable, scope, yylineno);SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; infunc++; funcScope[scope]=funcScope[scope-1];} 
+funcdef:        FUNC ID {checkFunc($2, symtable, scope, yylineno);SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0, 0);} LEFT_PAR {scope++; funcFlag++; infunc++; funcScope[scope]=funcScope[scope-1];} 
                                 idlist RIGHT_PAR block{infunc--; printf("line %d: funcdef-> function ID(idlist) block\n", yylineno);}
-                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno, 0);} LEFT_PAR {scope++; funcFlag++; infunc++; funcScope[scope]=funcScope[scope-1];} 
+                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno, 0,0);} LEFT_PAR {scope++; funcFlag++; infunc++; funcScope[scope]=funcScope[scope-1];} 
                                 idlist RIGHT_PAR block{infunc--; printf("line %d: funcdef-> function (idlist) block\n", yylineno);}
                 ;
 
 const:          INT{$$ = newexpr(constnum_e);
-                    $$->numConst = $1;
+                    $$->numConst = (float)$1;
                     printf("line %d: const-> int\n", yylineno);}
-                | REAL{printf("line %d: const-> real\n", yylineno);}
-                | STRING {printf("line %d: const-> string\n", yylineno);}
-                | NIL{printf("line %d: const-> nil\n", yylineno);}
-                | TRUE{printf("line %d: const-> true\n", yylineno);}
-                | FALSE{printf("line %d: const-> false\n", yylineno);}
+                | REAL{
+                    $$ = newexpr(constnum_e);
+                    $$->numConst = $1;
+                    printf("line %d: const-> real\n", yylineno);}
+                | STRING {
+                    $$ = newexpr(constnum_e);
+                    $$->strConst = strdup($1);
+                    printf("line %d: const-> string\n", yylineno);}
+                | NIL{
+                    $$ = newexpr(nil_e);
+                    printf("line %d: const-> nil\n", yylineno);}
+                | TRUE{
+                    $$ = newexpr(constnum_e);
+                    $$->boolConst = 1;
+                    printf("line %d: const-> true\n", yylineno);}
+                | FALSE{
+                    $$ = newexpr(constnum_e);
+                    $$->boolConst = 0;
+                    printf("line %d: const-> false\n", yylineno);}
                 // | ENDLINE{;}
                 ;
 
-idlist:         ID {SymTable_put(symtable, $1, $1, FORMAL, scope, yylineno, 0); printf("line %d: idlist-> ID\n", yylineno);}
-                | idlist COMMA ID{SymTable_put(symtable, $3, $3, FORMAL, scope, yylineno, 0); printf("line %d: idlist-> idlist, ID\n", yylineno);}
+idlist:         ID {SymTable_put(symtable, $1, $1, FORMAL, scope, yylineno, 0, currscopeoffset());incurrscopeoffset(); printf("line %d: idlist-> ID\n", yylineno);}
+                | idlist COMMA ID{SymTable_put(symtable, $3, $3, FORMAL, scope, yylineno, 0,currscopeoffset()); incurrscopeoffset(); printf("line %d: idlist-> idlist, ID\n", yylineno);}
                 | {printf("line %d: idlist-> EMPTY RULE\n", yylineno);}
                 ;
 

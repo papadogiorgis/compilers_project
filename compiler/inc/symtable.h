@@ -55,7 +55,7 @@ unsigned int SymTable_getLength(SymTable_T oSymTable);
 
 // changed from returning int !
 node *SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue
-				, enum SymbolType type, unsigned int scope, unsigned int line, int localKwd);
+				, enum SymbolType type, unsigned int scope, unsigned int line, int localKwd, unsigned int offset);
 
 int SymTable_remove(SymTable_T oSymTable, const char *pcKey);
 

@@ -26,12 +26,13 @@ int main(int argc, char **argv){
     else {
         fprintf(stderr, "Give input file\n");
         return -1;
-    }
+    }   
 
     int parse_res = yyparse();
     if(parse_res != 0){
         fprintf(stderr, "\nParsing failed!\n");
     }
+    
 
     fclose(yyin);
     printScopeList();
