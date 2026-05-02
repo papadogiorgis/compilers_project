@@ -6,6 +6,7 @@
 extern int yylineno;
 
 int is_arith(expr* e);
-expr* arithmetic(expr* lval, expr* rval, iopcode op);
+expr* inter_code_assign(expr* lval, expr* rval);
+expr* inter_code_arithmetic(expr* lval, expr* rval, iopcode op);
 
 #endif

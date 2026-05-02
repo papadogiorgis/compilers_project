@@ -71,16 +71,17 @@ statement:      expr SEMICOLON {printf("line %d: statement->expr;\n", yylineno);
                 ;
 
 
-expr:           assignexpr{printf("line %d: expr->assignexpr\n", yylineno);}
-                | expr PLUS expr{   $$ = arithmetic($1, $3, add);
+expr:           assignexpr{ $$=$1;
+                            printf("line %d: expr->assignexpr\n", yylineno);}
+                | expr PLUS expr{   $$ = inter_code_arithmetic($1, $3, add);
                                     printf("line %d: expr->expr+expr\n", yylineno);}
-                | expr MINUS expr{  $$ = arithmetic($1, $3, sub);
+                | expr MINUS expr{  $$ = inter_code_arithmetic($1, $3, sub);
                                     printf("line %d: expr->exor-expr\n", yylineno);}
-                | expr MULT expr{   $$ = arithmetic($1, $3, mul);
+                | expr MULT expr{   $$ = inter_code_arithmetic($1, $3, mul);
                                     printf("line %d: expr->expr*expr\n", yylineno);}
-                | expr DIV expr{    $$ = arithmetic($1, $3, division);
+                | expr DIV expr{    $$ = inter_code_arithmetic($1, $3, division);
                                     printf("line %d: expr->expr/expr\n", yylineno);}
-                | expr MOD expr{    $$ = arithmetic($1, $3, mod);
+                | expr MOD expr{    $$ = inter_code_arithmetic($1, $3, mod);
                                     printf("line %d: expr->expr MOD expr\n", yylineno);}
                 | expr GR_THAN expr{printf("line %d: expr->expr>expr\n", yylineno);}
                 | expr GREQ_THAN expr{printf("line %d: expr->expr >= expr\n", yylineno);}
@@ -126,6 +127,7 @@ assignexpr:     lvalue ASSIGN expr{
                                 printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);
                         }
                     }
+                    $$ = inter_code_assign($1, $3);
                     printf("line %d: assignexpr->lvalue = expr\n", yylineno);
                 }
                 | call ASSIGN expr {
@@ -213,7 +215,9 @@ funcdef:        FUNC ID {checkFunc($2, symtable, scope, yylineno);SymTable_put(s
                                 idlist RIGHT_PAR block{infunc--; printf("line %d: funcdef-> function (idlist) block\n", yylineno);}
                 ;
 
-const:          INT{printf("line %d: const-> int\n", yylineno);}
+const:          INT{$$ = newexpr(constnum_e);
+                    $$->numConst = $1;
+                    printf("line %d: const-> int\n", yylineno);}
                 | REAL{printf("line %d: const-> real\n", yylineno);}
                 | STRING {printf("line %d: const-> string\n", yylineno);}
                 | NIL{printf("line %d: const-> nil\n", yylineno);}

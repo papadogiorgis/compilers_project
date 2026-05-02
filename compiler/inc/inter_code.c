@@ -1,19 +1,34 @@
 #include "inter_code.h"
 
 int is_arith(expr* e){
-    if(e->type == programfunc_e ||
-    e->type == libraryfunc_e ||
-    e->type == boolexpr_e ||
-    e->type == newtable_e ||
-    e->type == constbool_e ||
-    e->type == conststring_e ||
-    e->type == nil_e){
-        return 0;
-    }
-    return 1;
+    // if(e->type == programfunc_e ||
+    // e->type == libraryfunc_e ||
+    // e->type == boolexpr_e ||
+    // e->type == newtable_e ||
+    // e->type == constbool_e ||
+    // e->type == conststring_e ||
+    // e->type == nil_e){
+    //     return 0;
+    // }
+    // return 1;
+    return (e->type == var_e ||
+            e->type == tableitem_e ||
+            e->type == arithexpr_e ||
+            e->type == assignexpr_e ||
+            e->type == constnum_e);
 }
 
-expr* arithmetic(expr* lval, expr* rval, iopcode op){
+expr* inter_code_assign(expr* lval, expr* rval){
+    //  TODO: CHECK FOR TABLE ITEMS
+    expr* temp_var;
+    emit(assign, rval, NULL, lval, 0, yylineno);
+    temp_var = newtemp();
+    temp_var->type = assignexpr_e;
+    emit(assign, lval, NULL, temp_var, 0, yylineno);
+    return temp_var;
+}
+
+expr* inter_code_arithmetic(expr* lval, expr* rval, iopcode op){
     if(!is_arith(lval) || !is_arith(rval)){
         fprintf(stderr, "ERROR: ILLEGAL ARITHMETIC OPERATION AT LINE %d\n", yylineno);
         return NULL;
