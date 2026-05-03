@@ -184,9 +184,8 @@ void give_quads(FILE* quads_txt){
 
         if (q->label > 0) {
             fprintf(quads_txt, "%-6d\n", q->label);
-        }
-        else {
-            fprintf(quads_txt, "%-6s\n", "-");
+        } else {
+            fprintf(quads_txt, "\n");
         }
     }
 }
