@@ -148,16 +148,15 @@ lvalue:         ID{
                     node* symbol = getSymbol($1, symtable);
                     if (symbol == NULL){
                         if (scope == 0) {
-                            SymTable_put(symtable, $1,$1, GLOBAL, scope, yylineno,0, currscopeoffset());incurrscopeoffset();} 
-                    else {symbol = SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno,0,currscopeoffset());incurrscopeoffset();}; 
-                    $$ = newexpr(var_e);
-                    $$->sym = symbol;
-                    // printf("lvalue: %s \n")
+                            symbol = SymTable_put(symtable, $1,$1, GLOBAL, scope, yylineno,0, currscopeoffset());incurrscopeoffset();} 
+                        else {symbol = SymTable_put(symtable, $1,$1, LOCALV, scope, yylineno,0,currscopeoffset());incurrscopeoffset();}; 
                     } else {
                         if (findScope($1,symtable) != 0 && findScope($1,symtable) != scope && funcScope[scope] != funcScope[findScope($1,symtable)]){
                             printf("\nError: var not accesible, symbol: %s line: %d\n\n", $1, yylineno);
                         }
                     };
+                    $$ = newexpr(var_e);
+                    $$->sym = symbol;
                 printf("line %d: lvalue->id\n", yylineno);}
 
 

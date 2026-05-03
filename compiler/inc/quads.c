@@ -1,8 +1,9 @@
-#include "quads.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+#include "quads.h"
 
 #define EXPAND_SIZE 1024
 #define CURR_SIZE (total *sizeof(quad))
@@ -119,6 +120,8 @@ const char *expr_to_str(expr *e){
 
     switch(e->type){
         case var_e: 
+            if (e->sym){
+                return e->sym->key;} 
         case arithexpr_e:
         case assignexpr_e: 
             if (e->sym && e->sym->key) return e->sym->key;
