@@ -95,25 +95,25 @@ expr *newtemp() {
     char *name = malloc(24);
     sprintf(name, "_t%d", tcount++);
 
-    //first, check if there is an existent temp var with this name
-    //in the current scope, so we dont mess the temp vars of
-    //different functions, like in this case:
-    //z = 10 + 10 + sqrt(49);
-    //the function sqrt() will change the _t0 data if we use
-    //the function getSymbol and not getSymbolScope
+    /*first, check if there is an existent temp var with this name
+      in the current scope, so we dont mess the temp vars of
+      different functions, like in this case:
+      z = 10 + 10 + sqrt(49);
+      the function sqrt() will change the _t0 data if we use
+      the function getSymbol and not getSymbolScope*/
     node* sym = getSymbolScope(name, symtable, scope);
 
-    if(sym == NULL){//if there is no temp var
-    //with this name in the current scope
-        //we add one in the symtable
+    if(sym == NULL){/*if there is no temp var
+    with this name in the current scope,
+        we add one in the symtable*/
         sym = SymTable_put(symtable, name, name, LOCALV, scope, yylineno, 0, currscopeoffset());
-        incurrscopeoffset();//the reason we use this is to
-        //allocate a unique memory slot for the new temp var
+        incurrscopeoffset();/*the reason we use this is to
+        allocate a unique memory slot for the new temp var*/
     }
 
-    //then we assign the sym we found with getsymbolscope
-    //(or we created inside the if)
-    //in a new expr, and return it
+    /*then we assign the sym we found with getsymbolscope
+      (or we created inside the if)
+      in a new expr, and return it*/
     expr *e = newexpr(var_e);
     e->sym = sym;
     return e;
