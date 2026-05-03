@@ -94,11 +94,43 @@ void resetFormalArgOffset(void) { formalArgOffset = 0;}
 expr *newtemp() {
     char *name = malloc(24);
     sprintf(name, "_t%d", tcount++);
-    node *sym = SymTable_put(symtable, name, name, LOCALV, scope, yylineno, 0, currscopeoffset());
-    // incurrscopeoffset();  ?????
+
+    //first, check if there is an existent temp var with this name
+    //in the current scope, so we dont mess the temp vars of
+    //different functions, like in this case:
+    //z = 10 + 10 + sqrt(49);
+    //the function sqrt() will change the _t0 data if we use
+    //the function getSymbol and not getSymbolScope
+    node* sym = getSymbolScope(name, symtable, scope);
+
+    if(sym == NULL){//if there is no temp var
+    //with this name in the current scope
+        //we add one in the symtable
+        sym = SymTable_put(symtable, name, name, LOCALV, scope, yylineno, 0, currscopeoffset());
+        incurrscopeoffset();//the reason we use this is to
+        //allocate a unique memory slot for the new temp var
+    }
+
+    //then we assign the sym we found with getsymbolscope
+    //(or we created inside the if)
+    //in a new expr, and return it
     expr *e = newexpr(var_e);
     e->sym = sym;
     return e;
+}
+
+void reset_temp_counter(){
+    tcount = 0;
+}
+
+expr *emit_if_tableitem(expr *ex){
+    if (ex->type != tableitem_e){
+        return ex;
+    }
+    expr *result = newtemp();
+    result->type = var_e;
+    emit(tablegetelem,ex,  ex->index , result, 0, yylineno);
+    return result;
 }
 
 const char *opcode_to_str(iopcode op){
@@ -120,8 +152,8 @@ const char *expr_to_str(expr *e){
 
     switch(e->type){
         case var_e: 
-            if (e->sym){
-                return e->sym->key;} 
+            if (e->sym && e->sym->key) return e->sym->key;
+            return "anonymous_var";
         case arithexpr_e:
         case assignexpr_e: 
             if (e->sym && e->sym->key) return e->sym->key;
@@ -144,18 +176,17 @@ void give_quads(FILE* quads_txt){
     for(int i=1; i<currQuad; i++){
         quad *q = &quads[i];
 
-        fprintf(quads_txt, "%-8d ", i);
-        fprintf(quads_txt, "%-12s ", opcode_to_str(q->op));
-        fprintf(quads_txt, "%-12s ", expr_to_str(q->result));
-        fprintf(quads_txt, "%-12s ", expr_to_str(q->arg1));
-        fprintf(quads_txt, "%-12s ", expr_to_str(q->arg2));
+        fprintf(quads_txt, "%-7d ", i);
+        fprintf(quads_txt, "%-15s ", opcode_to_str(q->op));
+        fprintf(quads_txt, "%-15s ", expr_to_str(q->result));
+        fprintf(quads_txt, "%-15s ", expr_to_str(q->arg1));
+        fprintf(quads_txt, "%-15s ", expr_to_str(q->arg2));
 
         if (q->label > 0) {
-            fprintf(quads_txt, "%-8d\n", q->label);
+            fprintf(quads_txt, "%-6d\n", q->label);
         }
         else {
-            fprintf(quads_txt, "-\n");
+            fprintf(quads_txt, "%-6s\n", "-");
         }
-        fprintf(quads_txt, "\n");
     }
 }

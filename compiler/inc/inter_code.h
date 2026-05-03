@@ -3,6 +3,8 @@
 
 #include "quads.h"
 #include <stdio.h>
+#include <stdlib.h>
+
 extern int yylineno;
 
 int is_arith(expr* e);

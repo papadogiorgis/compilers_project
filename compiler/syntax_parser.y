@@ -59,13 +59,27 @@ stmts:          stmts statement {printf("line %d: stmts->stmts statement\n", yyl
                 | statement{printf("line %d: stmts->statement\n", yylineno);}
                 ;
 
-statement:      expr SEMICOLON {printf("line %d: statement->expr;\n", yylineno);}
-                | ifstmt {printf("line %d: statement->ifstmt\n", yylineno);}
-                | whilestmt {printf("line %d: statement->whilestmt\n", yylineno);}
-                | forstmt {printf("line %d: statement->forstmt\n", yylineno);}
-                | returnstmt {printf("line %d: statement->returnstmt\n", yylineno);}
-                | BREAK SEMICOLON {if (loopFlag == 0){printf("\nError: use of break outside of loop line %d\n\n", yylineno);}printf("line %d: statement->break;\n", yylineno);}
-                | CONTINUE SEMICOLON{if (loopFlag == 0){printf("\nError: use of return outside of loop, line %d\n\n", yylineno);}printf("line %d: statement->continue;\n", yylineno);}
+statement:      expr SEMICOLON {
+                    reset_temp_counter();
+                    printf("line %d: statement->expr;\n", yylineno);}
+                | ifstmt {
+                    reset_temp_counter();
+                    printf("line %d: statement->ifstmt\n", yylineno);}
+                | whilestmt {
+                    reset_temp_counter();
+                    printf("line %d: statement->whilestmt\n", yylineno);}
+                | forstmt {
+                    reset_temp_counter();
+                    printf("line %d: statement->forstmt\n", yylineno);}
+                | returnstmt {
+                    reset_temp_counter();
+                    printf("line %d: statement->returnstmt\n", yylineno);}
+                | BREAK SEMICOLON {
+                    reset_temp_counter();
+                    if (loopFlag == 0){printf("\nError: use of break outside of loop line %d\n\n", yylineno);}printf("line %d: statement->break;\n", yylineno);}
+                | CONTINUE SEMICOLON{
+                    reset_temp_counter();
+                    if (loopFlag == 0){printf("\nError: use of return outside of loop, line %d\n\n", yylineno);}printf("line %d: statement->continue;\n", yylineno);}
                 | block{printf("line %d: statement->block\n", yylineno);}
                 | funcdef{printf("line %d: statement->funcdef\n", yylineno);}
                 | SEMICOLON{printf("line %d: statement->;\n", yylineno);}
@@ -223,7 +237,7 @@ const:          INT{$$ = newexpr(constnum_e);
                     $$->numConst = $1;
                     printf("line %d: const-> real\n", yylineno);}
                 | STRING {
-                    $$ = newexpr(constnum_e);
+                    $$ = newexpr(conststring_e);
                     $$->strConst = strdup($1);
                     printf("line %d: const-> string\n", yylineno);}
                 | NIL{

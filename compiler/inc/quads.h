@@ -63,6 +63,10 @@ void emit(iopcode op, expr *arg1, expr *arg2, expr *result, unsigned label, unsi
 
 expr *newtemp();
 
+void reset_temp_counter(void);
+
+expr *emit_if_tableitem(expr *ex);
+
 void resetFunctionLocalOffset(void);
 
 void resetFormalArgOffset(void);
