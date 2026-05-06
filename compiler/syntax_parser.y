@@ -28,7 +28,9 @@
     int intval;
     char *strval;
     float floatval;
+    unsigned uintval;
     struct expr *expression;
+    struct node *node;
 }
 
 
@@ -51,6 +53,10 @@
 %token <intval> INT
 %token <floatval> REAL
 %type <expression> lvalue expr term assignexpr primary call member callsuffix normcall methodcall const
+%type <node> funcprefix funcdef
+%type <uintval> funcbody
+%type <strval> funcname
+
 %%
 
 program:        stmts{printf("line %d: program -> stmts\n", yylineno);};
@@ -223,11 +229,44 @@ block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = func
                                  printf("line %d: block-> {stmts}\n", yylineno);}
                 ;
 
-funcdef:        FUNC ID {checkFunc($2, symtable, scope, yylineno);SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0, 0);} LEFT_PAR {scope++; funcFlag++; infunc++; funcScope[scope]=funcScope[scope-1];} 
+/* funcdef:        FUNC ID {checkFunc($2, symtable, scope, yylineno);SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0, 0);} LEFT_PAR {scope++; funcFlag++; infunc++; funcScope[scope]=funcScope[scope-1];} 
                                 idlist RIGHT_PAR block{infunc--; printf("line %d: funcdef-> function ID(idlist) block\n", yylineno);}
                 | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno, 0,0);} LEFT_PAR {scope++; funcFlag++; infunc++; funcScope[scope]=funcScope[scope-1];} 
                                 idlist RIGHT_PAR block{infunc--; printf("line %d: funcdef-> function (idlist) block\n", yylineno);}
-                ;
+                ; */
+
+funcname:       ID {$$ = $1;} | 
+                {sprintf(buf, "$%d", anonymousCnt++);
+                $$ = buf;};
+
+funcprefix:     FUNC funcname 
+                {
+                    $$ = SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0, 0);
+                    $$->iaddress = nextquadlabel();
+                    emit(funcstart, lvalue_expr($$), NULL, NULL, 0, yylineno);
+                    // SAVE CURRENT OFFSET IN A STACK
+                    enterscopespace();
+                    resetFormalArgOffset();
+                };
+
+funcargs:       LEFT_PAR idlist RIGHT_PAR
+                {
+                    enterscopespace();
+                    resetFunctionLocalOffset();
+                };
+
+funcbody:       block
+                {
+                    $$ = currscopeoffset();
+                    exitscopespace();
+                };
+
+funcdef:        funcprefix funcargs funcbody
+                {
+                    exitscopespace();
+                    // SAVE TOTAL LOCALS IN SYMVBOL ENTRY
+
+                };
 
 const:          INT{$$ = newexpr(constnum_e);
                     $$->numConst = (float)$1;

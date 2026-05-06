@@ -164,9 +164,11 @@ union YYSTYPE
     int intval;
     char *strval;
     float floatval;
+    unsigned uintval;
     struct expr *expression;
+    struct node *node;
 
-#line 170 "syntax_parser.h"
+#line 172 "syntax_parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

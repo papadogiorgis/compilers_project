@@ -7,6 +7,7 @@ enum SymbolType {
 typedef struct node {
 	int isActive;
 	unsigned int offset;
+	unsigned int iaddress;
 	// unsigned int line;
 	int isVar;
 	enum SymbolType type;
