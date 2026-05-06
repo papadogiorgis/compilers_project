@@ -318,6 +318,15 @@ int checkFunc(const char* pcKey, SymTable_T oSymTable, unsigned int scope, int l
 	return 1;
 }
 
+/* Temporary fix*/
+int isTmp(const char *name)
+{
+	if (name[0] == '_' && name[1] == 't') {
+		return 1;
+	}
+	return 0;
+}
+
 /*if pcKey doesnt already exist inside the symtable it is inserted*/
 node* SymTable_put(SymTable_T oSymTable, const char* pcKey, const void* pvValue, enum SymbolType type, unsigned int scope, unsigned int line, int localKwd, unsigned int offset)
 {
@@ -329,6 +338,11 @@ node* SymTable_put(SymTable_T oSymTable, const char* pcKey, const void* pvValue,
 
 	int find_scope = findScope(pcKey, oSymTable);
 
+	// new for func tmps
+	if (getSymbolScope(pcKey, oSymTable, scope) != NULL){
+		return NULL;
+	}
+
 	// no need to check getSymbol != NULL, because scope would be == -1
 	if (find_scope == scope && getSymbolScope(pcKey, oSymTable, scope)->type == FORMAL && type == FORMAL) {
 		printf("\nError: formal redeclaration, symbol: %s line: %d\n\n", pcKey, line);
@@ -336,7 +350,8 @@ node* SymTable_put(SymTable_T oSymTable, const char* pcKey, const void* pvValue,
 		printf("\nError: formal shadows lib function, symbol: %s line: %d\n\n", pcKey, line);
 	}
 
-	if ((find_scope != -1 && localKwd == 0 && type != FORMAL && type != USERFUNC) || (localKwd == 1 && find_scope == scope)) {
+	// TODO: check the following if to maybe erase it and not use isTmp.
+	if (((find_scope != -1 && localKwd == 0 && type != FORMAL && type != USERFUNC) || (localKwd == 1 && find_scope == scope)) && !isTmp(pcKey)) {
 		return NULL; // must check uses of return val here
 	}
 

@@ -249,8 +249,11 @@ funcprefix:     FUNC funcname
                     $$->iaddress = nextquadlabel();
                     emit(funcstart,  NULL, NULL,lvalue_expr($$), 0, yylineno);
                     stack_push(stack, currscopeoffset());
+                    scope++;
+                    funcFlag = 1;
                     enterscopespace();
                     resetFormalArgOffset();
+                    infunc++;
                 };
 
 funcargs:       LEFT_PAR idlist RIGHT_PAR
@@ -267,6 +270,7 @@ funcbody:       block
 
 funcdef:        funcprefix funcargs funcbody
                 {
+                    infunc--;
                     exitscopespace();
                     $1->totalLocals = $3;
                     int offset = pop_and_top(stack);

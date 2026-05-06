@@ -13,7 +13,7 @@ unsigned stack_pop(stack_t* stack);
 
 int stack_push(stack_t* stack, unsigned scopeoffset);
 
-int pop_and_top(stack_t* stack);
+unsigned pop_and_top(stack_t* stack);
 
 void stack_destroy(stack_t* stack);
 
