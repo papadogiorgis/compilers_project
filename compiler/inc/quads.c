@@ -1,3 +1,7 @@
+/**
+ * Code for quad generation
+ */
+
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -154,9 +158,11 @@ expr* lvalue_expr(node* sym)
 	case var_s:
 		e->type = var_e;
 		break;
+	case USERFUNC:
 	case programfunc_s:
 		e->type = programfunc_e;
 		break;
+	case LIBFUNC:
 	case libraryfunc_s:
 		e->type = libraryfunc_e;
 		break;
@@ -299,6 +305,12 @@ const char* expr_to_str(expr* e)
 		return buf;
 	case nil_e:
 		return "NIL";
+	case programfunc_e:
+		// return "UFUNC";
+		return e->sym->key;
+	case libraryfunc_e:
+		// return "LIBFUNC";
+		return e->sym->key;
 	default:
 		return "???";
 	}

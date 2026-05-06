@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "inc/stack.h"
 #include "scanner.h"
 #include "inc/tokens_list.h"
 #include "syntax_parser.h"
@@ -10,12 +12,15 @@ extern int yylex(void);
 extern int yyparse(void);
 extern FILE* yyin;
 extern SymTable_T symtable;
+extern stack_t* stack;
 
 struct token_list token_list = {NULL};
 
 int main(int argc, char **argv){
     fprintf(stderr, "--------------- Syntax Analysis ---------------\n");
     symtable = SymTable_new();
+    stack = stack_create();
+
     putLibFunctions(symtable);
     if (argc > 1){
         if (!(yyin = fopen(argv[1], "r"))){

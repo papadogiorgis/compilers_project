@@ -5,7 +5,8 @@ SOURCE_FILES =  al.c \
 				inc/tokens_list.c \
 				inc/symtablehash.c \
 				inc/quads.c \
-				inc/inter_code.c
+				inc/inter_code.c \
+				inc/stack.c
 
 
 all: parse

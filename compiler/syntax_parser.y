@@ -1,9 +1,11 @@
 %{
+    #include <string.h>
     #include <stdio.h>
+
     #include "inc/symtable.h"
     #include "inc/quads.h"
     #include "inc/inter_code.h"
-    #include <string.h>
+    #include "inc/stack.h"
 
     int yyerror (char* yaccProvideMessage);
 
@@ -14,9 +16,11 @@
     int anonymousCnt = 0;
     char buf[1024]; 
     SymTable_T symtable;
+    stack_t *stack;
     char **errors;
     int funcScope[1024] = {0};
     int errorsCnt, errorsSize;
+    
     extern int yylex(void);
 
     extern int yylineno;
@@ -243,8 +247,8 @@ funcprefix:     FUNC funcname
                 {
                     $$ = SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0, 0);
                     $$->iaddress = nextquadlabel();
-                    emit(funcstart, lvalue_expr($$), NULL, NULL, 0, yylineno);
-                    // SAVE CURRENT OFFSET IN A STACK
+                    emit(funcstart,  NULL, NULL,lvalue_expr($$), 0, yylineno);
+                    stack_push(stack, currscopeoffset());
                     enterscopespace();
                     resetFormalArgOffset();
                 };
@@ -264,7 +268,11 @@ funcbody:       block
 funcdef:        funcprefix funcargs funcbody
                 {
                     exitscopespace();
-                    // SAVE TOTAL LOCALS IN SYMVBOL ENTRY
+                    $1->totalLocals = $3;
+                    int offset = pop_and_top(stack);
+                    restoreCurrScopeOffset(offset);
+                    $$ = $1;
+                    emit(funcend, NULL, NULL, lvalue_expr($1), 0, yylineno);
 
                 };
 

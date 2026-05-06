@@ -8,13 +8,12 @@ typedef struct node {
 	int isActive;
 	unsigned int offset;
 	unsigned int iaddress;
-	// unsigned int line;
+	unsigned int totalLocals;
 	int isVar;
 	enum SymbolType type;
 	char *key;
 	unsigned int scope;
 	unsigned int line;
-	// void *value;
 	struct node *next; // next for hashtable collisions list
 	struct node *nextScope; // next ptr for scope linked list
 }node;

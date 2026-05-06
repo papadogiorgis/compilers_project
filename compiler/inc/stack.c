@@ -30,7 +30,7 @@ stack_t* stack_create(void)
 
 unsigned stack_pop(stack_t* stack)
 {
-	assert(stack->top != 0); // pre condition for calling this is stack is not empty
+	assert(stack->top != 0); // pre condition for calling pop(), is stack is not empty
     return stack->scopeoffset_buf[--stack->top];
 }
 
@@ -48,6 +48,12 @@ int stack_push(stack_t* stack, unsigned scopeoffset)
 
 	stack->scopeoffset_buf[stack->top++] = scopeoffset;
 	return 1;
+}
+
+unsigned pop_and_top(stack_t *stack)
+{
+    stack_pop(stack);
+    return(stack->top);
 }
 
 void stack_destroy(stack_t* stack)
