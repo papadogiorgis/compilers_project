@@ -316,6 +316,7 @@ void give_quads(FILE* quads_txt)
 		fprintf(quads_txt, "%-15s ", expr_to_str(q->result));
 		fprintf(quads_txt, "%-15s ", expr_to_str(q->arg1));
 		fprintf(quads_txt, "%-15s ", expr_to_str(q->arg2));
+        q->label > 0 ? fprintf(quads_txt, "%-15d ", q->label) : 0;
 
 		if (q->label > 0) {
 			fprintf(quads_txt, "%-6d\n", q->label);
