@@ -96,10 +96,14 @@ statement:      expr SEMICOLON {
                 ;
 
 
-expr:           assignexpr{ $$=$1;
-                            printf("line %d: expr->assignexpr\n", yylineno);}
-                | expr PLUS expr{   $$ = inter_code_arithmetic($1, $3, add);
-                                    printf("line %d: expr->expr+expr\n", yylineno);}
+expr:           assignexpr{ 
+                            $$=$1;
+                            printf("line %d: expr->assignexpr\n", yylineno);
+                        }
+                | expr PLUS expr{   
+                            $$ = inter_code_arithmetic($1, $3, add);
+                            printf("line %d: expr->expr+expr\n", yylineno);
+                        }
                 | expr MINUS expr{  $$ = inter_code_arithmetic($1, $3, sub);
                                     printf("line %d: expr->exor-expr\n", yylineno);}
                 | expr MULT expr{   $$ = inter_code_arithmetic($1, $3, mul);
@@ -108,14 +112,38 @@ expr:           assignexpr{ $$=$1;
                                     printf("line %d: expr->expr/expr\n", yylineno);}
                 | expr MOD expr{    $$ = inter_code_arithmetic($1, $3, mod);
                                     printf("line %d: expr->expr MOD expr\n", yylineno);}
-                | expr GR_THAN expr{printf("line %d: expr->expr>expr\n", yylineno);}
-                | expr GREQ_THAN expr{printf("line %d: expr->expr >= expr\n", yylineno);}
-                | expr LESS_THAN expr{printf("line %d: expr->expr < expr\n", yylineno);}
-                | expr LEQ_THAN expr{printf("line %d: expr->expr <= expr\n", yylineno);}
-                | expr EQ expr{printf("line %d: expr->expr == expr\n", yylineno);}
-                | expr NOT_EQ expr{printf("line %d: expr->expr != expr\n", yylineno);}
-                | expr AND expr{printf("line %d: expr->expr and expr\n", yylineno);}
-                | expr OR expr{printf("line %d: expr->expr or expr\n", yylineno);}
+                | expr GR_THAN expr{
+                    printf("line %d: expr->expr>expr\n", yylineno);
+                    $$ = inter_code_bool($1, $3, if_greater);
+                    }
+                | expr GREQ_THAN expr{
+                        printf("line %d: expr->expr >= expr\n", yylineno);
+                        $$ = inter_code_bool($1, $3, if_greatereq);
+                    }
+                | expr LESS_THAN expr{
+                        printf("line %d: expr->expr < expr\n", yylineno);
+                        $$ = inter_code_bool($1, $3, if_less);
+                    }
+                | expr LEQ_THAN expr{
+                        printf("line %d: expr->expr <= expr\n", yylineno);
+                        $$ = inter_code_bool($1, $3, if_lesseq);
+                    }
+                | expr EQ expr{
+                        printf("line %d: expr->expr == expr\n", yylineno);
+                        $$ = inter_code_bool($1, $3, if_eq);
+                    }
+                | expr NOT_EQ expr{
+                        printf("line %d: expr->expr != expr\n", yylineno);
+                        $$ = inter_code_bool($1, $3, if_noteq);
+                    }
+                | expr AND expr{
+                        printf("line %d: expr->expr and expr\n", yylineno);
+                        $$ = inter_code_bool($1, $3, and_op);
+                    }
+                | expr OR expr{
+                        printf("line %d: expr->expr or expr\n", yylineno);
+                        $$ = inter_code_bool($1, $3, or_op);
+                    }
                 | term{printf("line %d: expr->term\n", yylineno);}
                 ;
 

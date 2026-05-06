@@ -3,6 +3,7 @@
 extern unsigned int tcount;
 extern SymTable_T symtable;
 extern int yylineno, scope;
+extern int currQuad;
 
 int is_arith(expr* e)
 {
@@ -39,4 +40,11 @@ expr* inter_code_arithmetic(expr* lval, expr* rval, iopcode op)
 	expr* temp_var = newtemp();
 	emit(op, lval, rval, temp_var, 0, yylineno);
 	return temp_var;
+}
+
+expr *inter_code_bool (expr *lval, expr* rval, iopcode op)
+{
+	expr *tmp = newtemp();
+	emit(op, lval, rval, tmp, currQuad+2, yylineno);
+	return tmp;
 }
