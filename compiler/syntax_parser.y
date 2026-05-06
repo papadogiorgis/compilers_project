@@ -226,12 +226,15 @@ indexed:        indexedelem{printf("line %d: indexed-> indexedelem\n", yylineno)
 indexedelem:    LEFT_CURL_BR {scope++; funcScope[scope]=funcScope[scope-1];} expr COLON expr RIGHT_CURL_BR{hideScope(scope--); printf("line %d: indexedelem-> {expr:expr}\n", yylineno);}
                 ;
 
-block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = funcScope[scope-1];}
+/* block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = funcScope[scope-1];}
                               else {funcFlag = 0;funcScope[scope] = funcScope[scope-1] + 1;};} RIGHT_CURL_BR{hideScope(scope--); printf("line %d: block-> {}\n", yylineno);}
                 | LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = funcScope[scope-1];}
                                 else {funcFlag = 0;funcScope[scope] = funcScope[scope-1] + 1;};} stmts RIGHT_CURL_BR{hideScope(scope--);
                                  printf("line %d: block-> {stmts}\n", yylineno);}
-                ;
+                ; */
+
+block:          LEFT_CURL_BR {scope++;} RIGHT_CURL_BR {hideScope(scope--); printf("line %d: block-> {}\n", yylineno);} 
+                | LEFT_CURL_BR {scope++;} stmts RIGHT_CURL_BR {hideScope(scope--); printf("line %d: block-> {stmts}\n", yylineno);}
 
 /* funcdef:        FUNC ID {checkFunc($2, symtable, scope, yylineno);SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0, 0);} LEFT_PAR {scope++; funcFlag++; infunc++; funcScope[scope]=funcScope[scope-1];} 
                                 idlist RIGHT_PAR block{infunc--; printf("line %d: funcdef-> function ID(idlist) block\n", yylineno);}
@@ -249,29 +252,29 @@ funcprefix:     FUNC funcname
                     $$->iaddress = nextquadlabel();
                     emit(funcstart,  NULL, NULL,lvalue_expr($$), 0, yylineno);
                     stack_push(stack, currscopeoffset());
-                    scope++;
+                    // scope++;
                     funcFlag = 1;
-                    enterscopespace();
+                    // enterscopespace();
                     resetFormalArgOffset();
                     infunc++;
                 };
 
-funcargs:       LEFT_PAR idlist RIGHT_PAR
+funcargs:       LEFT_PAR {scope++;} idlist {scope--;} RIGHT_PAR
                 {
-                    enterscopespace();
+                    // enterscopespace();
                     resetFunctionLocalOffset();
                 };
 
 funcbody:       block
                 {
                     $$ = currscopeoffset();
-                    exitscopespace();
+                    // exitscopespace();
                 };
 
 funcdef:        funcprefix funcargs funcbody
                 {
                     infunc--;
-                    exitscopespace();
+                    // exitscopespace();
                     $1->totalLocals = $3;
                     int offset = pop_and_top(stack);
                     restoreCurrScopeOffset(offset);
