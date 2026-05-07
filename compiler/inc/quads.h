@@ -82,7 +82,9 @@ struct expr* newexpr(expr_t type);
 
 void emit(iopcode op, expr* arg1, expr* arg2, expr* result, unsigned label, unsigned line);
 
-expr* newtemp();
+expr* newtemp(void);
+
+unsigned nextquad(void);
 
 node* newtempsym();
 
@@ -104,7 +106,7 @@ void patchLabel(unsigned quadNo, unsigned label);
 
 expr* lvalue_expr(node* sym);
 
-void enterscopespace();
+void enterscopespace(void);
 
 void exitscopespace(void);
 
@@ -115,5 +117,6 @@ unsigned int currscopeoffset(void);
 void incurrscopeoffset(void);
 
 void give_quads(FILE*);
+
 
 #endif
