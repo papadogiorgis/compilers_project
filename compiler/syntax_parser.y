@@ -26,6 +26,7 @@
     extern int yylineno;
     extern char* yytext;
     extern FILE* yyin;
+    extern unsigned currQuad;
 %}
 
 %union {
@@ -113,28 +114,52 @@ expr:           assignexpr{
                 | expr MOD expr{    $$ = inter_code_arithmetic($1, $3, mod);
                                     printf("line %d: expr->expr MOD expr\n", yylineno);}
                 | expr GR_THAN expr{
-                    printf("line %d: expr->expr>expr\n", yylineno);
-                    $$ = inter_code_bool($1, $3, if_greater);
+                        printf("line %d: expr->expr>expr\n", yylineno);
+                        $$ = newtemp();
+                        emit(if_greater, $1, $3, $$, nextquadlabel()+3, yylineno);
+                        emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
+                        emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
+                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);
                     }
                 | expr GREQ_THAN expr{
                         printf("line %d: expr->expr >= expr\n", yylineno);
-                        $$ = inter_code_bool($1, $3, if_greatereq);
+                        $$ = newtemp();
+                        emit(if_greatereq, $1, $3, $$, nextquadlabel()+3, yylineno);
+                        emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
+                        emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
+                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);
                     }
                 | expr LESS_THAN expr{
                         printf("line %d: expr->expr < expr\n", yylineno);
-                        $$ = inter_code_bool($1, $3, if_less);
+                        $$ = newtemp();
+                        emit(if_less, $1, $3, $$, nextquadlabel()+3, yylineno);
+                        emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
+                        emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
+                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);
                     }
                 | expr LEQ_THAN expr{
                         printf("line %d: expr->expr <= expr\n", yylineno);
-                        $$ = inter_code_bool($1, $3, if_lesseq);
+                        $$ = newtemp();
+                        emit(if_lesseq, $1, $3, $$, nextquadlabel()+3, yylineno);
+                        emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
+                        emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
+                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);
                     }
                 | expr EQ expr{
                         printf("line %d: expr->expr == expr\n", yylineno);
-                        $$ = inter_code_bool($1, $3, if_eq);
+                        $$ = newtemp();
+                        emit(if_eq, $1, $3, $$, nextquadlabel()+3, yylineno);
+                        emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
+                        emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
+                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);
                     }
                 | expr NOT_EQ expr{
                         printf("line %d: expr->expr != expr\n", yylineno);
-                        $$ = inter_code_bool($1, $3, if_noteq);
+                        $$ = newtemp();
+                        emit(if_noteq, $1, $3, $$, nextquadlabel()+3, yylineno);
+                        emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
+                        emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
+                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);
                     }
                 | expr AND expr{
                         printf("line %d: expr->expr and expr\n", yylineno);

@@ -41,6 +41,7 @@ typedef enum iopcode {
 	and_op,
 	or_op,
 	not_op,
+	jump,
 	if_eq,
 	if_noteq,
 	if_lesseq,
@@ -82,6 +83,10 @@ struct expr* newexpr(expr_t type);
 void emit(iopcode op, expr* arg1, expr* arg2, expr* result, unsigned label, unsigned line);
 
 expr* newtemp();
+
+node* newtempsym();
+
+expr* newexpr_constbool(int val);
 
 void reset_temp_counter(void);
 

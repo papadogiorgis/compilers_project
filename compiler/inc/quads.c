@@ -173,30 +173,44 @@ expr* lvalue_expr(node* sym)
 	return e;
 }
 
+/*node* newtempsym()
+{
+	node* tmp;
+	char* name = malloc(24);
+	sprintf(name, "_t%d", tcount++);
+	tmp = getSymbol(name, symtable);
+	if (!tmp) {
+		tmp = SymTable_put(symtable, name, name, LOCALV, scope, yylineno, 0, currscopeoffset());
+		incurrscopeoffset();
+		return tmp;
+	}
+	return NULL;
+}*/
+
 expr* newtemp()
 {
 	char* name = malloc(24);
 	sprintf(name, "_t%d", tcount++);
 
-	/*first, check if there is an existent temp var with this name
+	/* First, check if there is an existent temp var with this name
 	  in the current scope, so we dont mess the temp vars of
 	  different functions, like in this case:
 	  z = 10 + 10 + sqrt(49);
 	  the function sqrt() will change the _t0 data if we use
-	  the function getSymbol and not getSymbolScope*/
+	  the function getSymbol and not getSymbolScope */
 	node* sym = getSymbolScope(name, symtable, scope);
 
-	if (sym == NULL) { /*if there is no temp var
-	   with this name in the current scope,
-	       we add one in the symtable*/
+	if (sym == NULL) { /* If there is no temp var
+						with this name in the current scope,
+					we add one in the symtable */
 		sym = SymTable_put(symtable, name, name, LOCALV, scope, yylineno, 0, currscopeoffset());
 		incurrscopeoffset(); /*the reason we use this is to
 		 allocate a unique memory slot for the new temp var*/
 	}
 
-	/*then we assign the sym we found with getsymbolscope
+	/* Then we assign the sym we found with getsymbolscope
 	  (or we created inside the if)
-	  in a new expr, and return it*/
+	  in a new expr, and return it. */
 	expr* e = newexpr(var_e);
 	e->sym = sym;
 	return e;
@@ -216,6 +230,19 @@ expr* emit_if_tableitem(expr* ex)
 	result->type = var_e;
 	emit(tablegetelem, ex, ex->index, result, 0, yylineno);
 	return result;
+}
+
+expr* newexpr_constbool(int val)
+{
+	expr* e = newexpr(constbool_e);
+	if (val == 1) {
+		e->boolConst = 1;
+	} else if (val == 0) {
+		e->boolConst = 0;
+	} else {
+		assert(0);
+	}
+	return e;
 }
 
 const char* opcode_to_str(iopcode op)
@@ -241,6 +268,8 @@ const char* opcode_to_str(iopcode op)
 		return "OR";
 	case not_op:
 		return "NOT";
+	case jump:
+		return "JUMP";
 	case if_eq:
 		return "JE"; // jump if equal
 	case if_noteq:
@@ -311,8 +340,14 @@ const char* expr_to_str(expr* e)
 	case libraryfunc_e:
 		// return "LIBFUNC";
 		return e->sym->key;
+	case boolexpr_e:
+		if (e->sym) {
+			return e->sym->key;
+		} else {
+			return 0;
+		}
 	default:
-		return "???";
+		assert(0);
 	}
 }
 
