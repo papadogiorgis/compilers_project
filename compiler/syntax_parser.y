@@ -59,7 +59,7 @@
 %token <floatval> REAL
 %type <expression> lvalue expr term assignexpr primary call member callsuffix normcall methodcall const elist objectdef indexed indexedelem
 %type <node> funcprefix funcdef
-%type <uintval> funcbody
+%type <uintval> funcbody ifprefix elseprefix statement
 %type <strval> funcname
 
 %%
@@ -116,6 +116,7 @@ expr:           assignexpr{
                 | expr GR_THAN expr{
                         printf("line %d: expr->expr>expr\n", yylineno);
                         $$ = newtemp();
+                        $$->type = boolexpr_e;
                         emit(if_greater, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
                         emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
@@ -124,6 +125,7 @@ expr:           assignexpr{
                 | expr GREQ_THAN expr{
                         printf("line %d: expr->expr >= expr\n", yylineno);
                         $$ = newtemp();
+                        $$->type = boolexpr_e;
                         emit(if_greatereq, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
                         emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
@@ -132,6 +134,7 @@ expr:           assignexpr{
                 | expr LESS_THAN expr{
                         printf("line %d: expr->expr < expr\n", yylineno);
                         $$ = newtemp();
+                        $$->type = boolexpr_e;
                         emit(if_less, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
                         emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
@@ -140,6 +143,7 @@ expr:           assignexpr{
                 | expr LEQ_THAN expr{
                         printf("line %d: expr->expr <= expr\n", yylineno);
                         $$ = newtemp();
+                        $$->type = boolexpr_e;
                         emit(if_lesseq, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
                         emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
@@ -148,6 +152,7 @@ expr:           assignexpr{
                 | expr EQ expr{
                         printf("line %d: expr->expr == expr\n", yylineno);
                         $$ = newtemp();
+                        $$->type = boolexpr_e;
                         emit(if_eq, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
                         emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
@@ -156,6 +161,7 @@ expr:           assignexpr{
                 | expr NOT_EQ expr{
                         printf("line %d: expr->expr != expr\n", yylineno);
                         $$ = newtemp();
+                        $$->type = boolexpr_e;
                         emit(if_noteq, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
                         emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
@@ -163,11 +169,16 @@ expr:           assignexpr{
                     }
                 | expr AND expr{
                         printf("line %d: expr->expr and expr\n", yylineno);
-                        $$ = inter_code_bool($1, $3, and_op);
+                        // $$ = inter_code_bool($1, $3, and_op);
+                        $$ = newtemp();
+                        $$->type = boolexpr_e;
+                        emit(and_op, $1, $3, $$, 0, yylineno);
                     }
                 | expr OR expr{
                         printf("line %d: expr->expr or expr\n", yylineno);
-                        $$ = inter_code_bool($1, $3, or_op);
+                        $$ = newtemp();
+                        $$->type = boolexpr_e;
+                        emit(or_op, $1, $3, $$, 0, yylineno);
                     }
                 | term{printf("line %d: expr->term\n", yylineno);}
                 ;
@@ -301,21 +312,9 @@ indexedelem:    LEFT_CURL_BR expr COLON expr RIGHT_CURL_BR{
                     }
                 ;
 
-/* block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = funcScope[scope-1];}
-                              else {funcFlag = 0;funcScope[scope] = funcScope[scope-1] + 1;};} RIGHT_CURL_BR{hideScope(scope--); printf("line %d: block-> {}\n", yylineno);}
-                | LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = funcScope[scope-1];}
-                                else {funcFlag = 0;funcScope[scope] = funcScope[scope-1] + 1;};} stmts RIGHT_CURL_BR{hideScope(scope--);
-                                 printf("line %d: block-> {stmts}\n", yylineno);}
-                ; */
 
 block:          LEFT_CURL_BR {scope++;} RIGHT_CURL_BR {hideScope(scope--); printf("line %d: block-> {}\n", yylineno);} 
                 | LEFT_CURL_BR {scope++;} stmts RIGHT_CURL_BR {hideScope(scope--); printf("line %d: block-> {stmts}\n", yylineno);}
-
-/* funcdef:        FUNC ID {checkFunc($2, symtable, scope, yylineno);SymTable_put(symtable, $2, $2, USERFUNC, scope, yylineno, 0, 0);} LEFT_PAR {scope++; funcFlag++; infunc++; funcScope[scope]=funcScope[scope-1];} 
-                                idlist RIGHT_PAR block{infunc--; printf("line %d: funcdef-> function ID(idlist) block\n", yylineno);}
-                | FUNC {sprintf(buf, "$%d", anonymousCnt++); SymTable_put(symtable, buf, buf, USERFUNC, scope, yylineno, 0,0);} LEFT_PAR {scope++; funcFlag++; infunc++; funcScope[scope]=funcScope[scope-1];} 
-                                idlist RIGHT_PAR block{infunc--; printf("line %d: funcdef-> function (idlist) block\n", yylineno);}
-                ; */
 
 funcname:       ID {$$ = $1;} | 
                 {sprintf(buf, "$%d", anonymousCnt++);
@@ -388,9 +387,35 @@ idlist:         ID {SymTable_put(symtable, $1, $1, FORMAL, scope, yylineno, 0, c
                 | {printf("line %d: idlist-> EMPTY RULE\n", yylineno);}
                 ;
 
-ifstmt:         IF LEFT_PAR expr RIGHT_PAR statement{printf("line %d: ifstmt-> if(expr) statement\n", yylineno);}
+ifprefix:       IF LEFT_PAR expr RIGHT_PAR
+                {
+                    emit(if_eq, $3, NULL,  newexpr_constbool(1), nextquadlabel() + 2,yylineno);
+                    $$ = nextquadlabel();
+                    emit(jump, NULL, NULL, NULL, 0, yylineno);
+                };
+
+/* ifstmt:         IF LEFT_PAR expr RIGHT_PAR statement{printf("line %d: ifstmt-> if(expr) statement\n", yylineno);}
                 | IF LEFT_PAR expr RIGHT_PAR statement ELSE statement{printf("line %d: ifstmt-> if(expr) statement else statement\n", yylineno);}
-                ;
+                ; */
+
+elseprefix:     ELSE
+                {
+                    $$ = nextquadlabel();
+                    emit(jump, NULL, NULL, NULL, 0, yylineno);
+                };
+
+ifstmt:         ifprefix statement
+                {
+                    printf("line %d: ifstmt-> if(expr) statement\n", yylineno);
+                    patchLabel($1, nextquadlabel());
+                } 
+                | ifprefix statement elseprefix statement
+                {
+                    printf("line %d: ifstmt-> if(expr) statement else statement\n", yylineno);
+                    patchLabel($1, $3 + 1);
+                    patchLabel($3, nextquadlabel());
+                };
+
 
 whilestmt:      WHILE {loopFlag = 1;} LEFT_PAR expr RIGHT_PAR statement{loopFlag = 0;printf("line %d: whilestmt-> while(expr) statement\n", yylineno);};
 
