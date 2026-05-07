@@ -13,5 +13,6 @@ expr* inter_code_arithmetic(expr* lval, expr* rval, iopcode op);
 expr *inter_code_bool (expr *lval, expr* rval, iopcode op);
 expr* inter_code_objectdef_elist(expr* e);
 expr* inter_code_objectdef_indexed(expr* e);
+expr* inter_code_member_item(expr* val, expr* index);
 
 #endif

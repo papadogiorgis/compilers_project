@@ -115,6 +115,9 @@ expr:           assignexpr{
                                     printf("line %d: expr->expr MOD expr\n", yylineno);}
                 | expr GR_THAN expr{
                         printf("line %d: expr->expr>expr\n", yylineno);
+                        $1 = emit_if_tableitem($1);
+                        $3 = emit_if_tableitem($3);
+
                         $$ = newtemp();
                         emit(if_greater, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
@@ -123,6 +126,9 @@ expr:           assignexpr{
                     }
                 | expr GREQ_THAN expr{
                         printf("line %d: expr->expr >= expr\n", yylineno);
+                        $1 = emit_if_tableitem($1);
+                        $3 = emit_if_tableitem($3);
+
                         $$ = newtemp();
                         emit(if_greatereq, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
@@ -131,6 +137,9 @@ expr:           assignexpr{
                     }
                 | expr LESS_THAN expr{
                         printf("line %d: expr->expr < expr\n", yylineno);
+                        $1 = emit_if_tableitem($1);
+                        $3 = emit_if_tableitem($3);
+
                         $$ = newtemp();
                         emit(if_less, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
@@ -139,6 +148,9 @@ expr:           assignexpr{
                     }
                 | expr LEQ_THAN expr{
                         printf("line %d: expr->expr <= expr\n", yylineno);
+                        $1 = emit_if_tableitem($1);
+                        $3 = emit_if_tableitem($3);
+
                         $$ = newtemp();
                         emit(if_lesseq, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
@@ -147,6 +159,9 @@ expr:           assignexpr{
                     }
                 | expr EQ expr{
                         printf("line %d: expr->expr == expr\n", yylineno);
+                        $1 = emit_if_tableitem($1);
+                        $3 = emit_if_tableitem($3);
+
                         $$ = newtemp();
                         emit(if_eq, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
@@ -155,6 +170,9 @@ expr:           assignexpr{
                     }
                 | expr NOT_EQ expr{
                         printf("line %d: expr->expr != expr\n", yylineno);
+                        $1 = emit_if_tableitem($1);
+                        $3 = emit_if_tableitem($3);
+
                         $$ = newtemp();
                         emit(if_noteq, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
@@ -245,10 +263,22 @@ lvalue:         ID{
                 | member{$$ = $1; printf("line %d: lvalue-> member\n", yylineno);}
                 ;
 
-member:         lvalue DOT ID{printf("line %d: member-> lvalue.ID\n", yylineno);}
-                | lvalue SQ_BR_LEFT expr SQ_BR_RIGHT{printf("line %d: member-> lvalue{expr}\n", yylineno);}
-                | call DOT ID{printf("line %d: member-> call.ID\n", yylineno);}
-                | call SQ_BR_LEFT expr SQ_BR_RIGHT{printf("line %d: member-> call{expr}\n", yylineno);}
+member:         lvalue DOT ID{
+                    expr* index = newexpr(conststring_e);
+                    index->strConst = strdup($3);
+                    $$ = inter_code_member_item($1, index);
+                    printf("line %d: member-> lvalue.ID\n", yylineno);}
+                | lvalue SQ_BR_LEFT expr SQ_BR_RIGHT{
+                    $$ = inter_code_member_item($1, $3);
+                    printf("line %d: member-> lvalue{expr}\n", yylineno);}
+                | call DOT ID{
+                    expr* index = newexpr(conststring_e);
+                    index->strConst = strdup($3);
+                    $$ = inter_code_member_item($1, index);
+                    printf("line %d: member-> call.ID\n", yylineno);}
+                | call SQ_BR_LEFT expr SQ_BR_RIGHT{
+                    $$ = inter_code_member_item($1, $3);
+                    printf("line %d: member-> call{expr}\n", yylineno);}
                 ;
 
 call:           call LEFT_PAR elist RIGHT_PAR{printf("line %d: call-> call(elist)\n", yylineno);}

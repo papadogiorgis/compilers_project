@@ -324,6 +324,16 @@ const char* expr_to_str(expr* e)
 		if (e->sym && e->sym->key)
 			return e->sym->key;
 		return "anonymous_var";
+    case tableitem_e:
+        if(e->sym && e->sym->key){
+            return e->sym->key;
+        }
+        return "anonymous_var";
+    case newtable_e:
+        if(e->sym && e->sym->key){
+            return e->sym->key;
+        }
+        return "anonymous_var";
 	case constnum_e:
 		sprintf(buf, "%g", e->numConst);
 		return buf;

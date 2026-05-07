@@ -18,6 +18,8 @@ expr* inter_code_assign(expr* lval, expr* rval)
 		temp->type = assignexpr_e;
 		return temp;
 	} else {
+		//if rval is a table, bring its value
+		rval = emit_if_tableitem(rval);
 		// 1st emit assigns the value to the variable
 		emit(assign, rval, NULL, lval, 0, yylineno);
 		// 2nd emit saves the result in a temp var
@@ -37,6 +39,9 @@ expr* inter_code_arithmetic(expr* lval, expr* rval, iopcode op)
 		fprintf(stderr, "ERROR: ILLEGAL ARITHMETIC OPERATION AT LINE %d\n", yylineno);
 		return NULL;
 	}
+	lval = emit_if_tableitem(lval);
+	rval = emit_if_tableitem(rval);
+
 	expr* temp_var = newtemp();
 	emit(op, lval, rval, temp_var, 0, yylineno);
 	return temp_var;
@@ -44,6 +49,9 @@ expr* inter_code_arithmetic(expr* lval, expr* rval, iopcode op)
 
 expr *inter_code_bool (expr *lval, expr* rval, iopcode op)
 {
+	lval = emit_if_tableitem(lval);
+	rval = emit_if_tableitem(rval);
+	
 	expr *tmp = newtemp();
 	emit(op, lval, rval, tmp, currQuad+2, yylineno);
 	return tmp;
@@ -77,4 +85,14 @@ expr* inter_code_objectdef_indexed(expr* e){
 		elist_element = elist_element->next;
 	}
 	return temp;
+}
+
+expr* inter_code_member_item(expr* val, expr* index){
+	/*if val is already a tableitem save its value
+	  in a temp val */
+	val = emit_if_tableitem(val);
+	expr* mem_item = newexpr(tableitem_e);
+	mem_item->sym = val->sym;
+	mem_item->index = index;
+	return mem_item;
 }
