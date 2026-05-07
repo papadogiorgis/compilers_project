@@ -11,5 +11,7 @@ int is_arith(expr* e);
 expr* inter_code_assign(expr* lval, expr* rval);
 expr* inter_code_arithmetic(expr* lval, expr* rval, iopcode op);
 expr *inter_code_bool (expr *lval, expr* rval, iopcode op);
+expr* inter_code_objectdef_elist(expr* e);
+expr* inter_code_objectdef_indexed(expr* e);
 
 #endif

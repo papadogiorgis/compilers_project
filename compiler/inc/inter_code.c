@@ -13,7 +13,7 @@ int is_arith(expr* e)
 expr* inter_code_assign(expr* lval, expr* rval)
 {
 	if (lval->type == tableitem_e) {
-		emit(tablesetelem, lval->index, rval, lval, 0, yylineno);
+		emit(tablesetelem, lval, lval->index, rval, 0, yylineno);
 		expr* temp = emit_if_tableitem(lval);
 		temp->type = assignexpr_e;
 		return temp;
@@ -47,4 +47,34 @@ expr *inter_code_bool (expr *lval, expr* rval, iopcode op)
 	expr *tmp = newtemp();
 	emit(op, lval, rval, tmp, currQuad+2, yylineno);
 	return tmp;
+}
+
+expr* inter_code_objectdef_elist(expr* e){
+	expr* temp = newtemp();
+	temp->type = newtable_e;
+	emit(tablecreate, temp, NULL, NULL, 0, yylineno);
+
+	int i = 0;
+	expr* elist_element = e;
+	while(elist_element != NULL){
+		expr* arith = newexpr(constnum_e);
+		arith->numConst = i;
+		emit(tablesetelem, temp, arith, elist_element, 0, yylineno);
+		elist_element = elist_element->next;
+		i++;
+	}
+	return temp;
+}
+
+expr* inter_code_objectdef_indexed(expr* e){
+	expr* temp = newtemp();
+	temp->type = newtable_e;
+	emit(tablecreate, temp, NULL, NULL, 0, yylineno);
+
+	expr* elist_element = e;
+	while(elist_element != NULL){
+		emit(tablesetelem, temp, elist_element, elist_element->index, 0, yylineno);
+		elist_element = elist_element->next;
+	}
+	return temp;
 }

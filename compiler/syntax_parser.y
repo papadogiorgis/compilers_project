@@ -57,7 +57,7 @@
 %token <strval> ID STRING
 %token <intval> INT
 %token <floatval> REAL
-%type <expression> lvalue expr term assignexpr primary call member callsuffix normcall methodcall const
+%type <expression> lvalue expr term assignexpr primary call member callsuffix normcall methodcall const elist objectdef indexed indexedelem
 %type <node> funcprefix funcdef
 %type <uintval> funcbody
 %type <strval> funcname
@@ -263,20 +263,42 @@ callsuffix:     normcall{printf("line %d: callsuffix-> normcall\n", yylineno);}
 normcall:       LEFT_PAR elist RIGHT_PAR{printf("line %d: normcall-> (elist)\n", yylineno);};
 methodcall:     DOTDOT ID LEFT_PAR elist RIGHT_PAR {printf("line %d: methodcall-> ..ID(elist)\n", yylineno);};
 
-elist:          expr{printf("line %d: elist-> expr\n", yylineno);}
-                | expr COMMA elist{printf("line %d: elist-> expr,elist\n", yylineno);}
-                | {printf("line %d: elist-> EMPTY RULE\n", yylineno);}
+elist:          expr{
+                    $1->next = NULL;
+                    $$=$1;
+                    printf("line %d: elist-> expr\n", yylineno);}
+                | expr COMMA elist{
+                    $1->next = $3;
+                    $$ = $1;
+                    printf("line %d: elist-> expr,elist\n", yylineno);}
+                | { $$ = NULL;
+                    printf("line %d: elist-> EMPTY RULE\n", yylineno);}
                 ;
 
-objectdef:      SQ_BR_LEFT elist SQ_BR_RIGHT{printf("line %d: objectdef-> [elist]\n", yylineno);}
-                | SQ_BR_LEFT indexed SQ_BR_RIGHT{printf("line %d: objectdef-> [indexed]\n", yylineno);}
+objectdef:      SQ_BR_LEFT elist SQ_BR_RIGHT{
+                    $$ = inter_code_objectdef_elist($2);
+                    printf("line %d: objectdef-> [elist]\n", yylineno);}
+                | SQ_BR_LEFT indexed SQ_BR_RIGHT{
+                    $$ = inter_code_objectdef_indexed($2);
+                    printf("line %d: objectdef-> [indexed]\n", yylineno);}
                 ;
             
-indexed:        indexedelem{printf("line %d: indexed-> indexedelem\n", yylineno);}
-                | indexedelem COMMA indexed{printf("line %d: indexed-> indexedelem,indexed\n", yylineno);}
+indexed:        indexedelem{
+                    $1->next = NULL;
+                    $$=$1;
+                    printf("line %d: indexed-> indexedelem\n", yylineno);}
+                | indexedelem COMMA indexed{
+                    $1->next = $3;
+                    $$ = $1;
+                    printf("line %d: indexed-> indexedelem,indexed\n", yylineno);}
                 ;
 
-indexedelem:    LEFT_CURL_BR {scope++; funcScope[scope]=funcScope[scope-1];} expr COLON expr RIGHT_CURL_BR{hideScope(scope--); printf("line %d: indexedelem-> {expr:expr}\n", yylineno);}
+indexedelem:    LEFT_CURL_BR expr COLON expr RIGHT_CURL_BR{
+                    $$ = $2;
+                    $$->index = $4;
+                    $$->next = NULL;
+                    printf("line %d: indexedelem-> {expr:expr}\n", yylineno);
+                    }
                 ;
 
 /* block:          LEFT_CURL_BR {if (funcFlag == 0){scope++;funcScope[scope] = funcScope[scope-1];}
