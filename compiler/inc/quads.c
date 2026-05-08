@@ -213,20 +213,6 @@ expr* lvalue_expr(node* sym)
 	return e;
 }
 
-/*node* newtempsym()
-{
-	node* tmp;
-	char* name = malloc(24);
-	sprintf(name, "_t%d", tcount++);
-	tmp = getSymbol(name, symtable);
-	if (!tmp) {
-		tmp = SymTable_put(symtable, name, name, LOCALV, scope, yylineno, 0, currscopeoffset());
-		incurrscopeoffset();
-		return tmp;
-	}
-	return NULL;
-}*/
-
 expr* newtemp()
 {
 	char* name = malloc(24);
@@ -405,7 +391,7 @@ void give_quads(FILE* quads_txt)
 {
 	fprintf(quads_txt, "quad#   opcode          result          arg1            arg2            label \n");
 	fprintf(quads_txt, "------------------------------------------------------------------------------\n");
-	for (int i = 1; i < currQuad; i++) {
+	for (unsigned i = 1; i < currQuad; i++) {
 		quad* q = &quads[i];
 
 		fprintf(quads_txt, "%-7d ", i);

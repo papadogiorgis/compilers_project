@@ -65,7 +65,7 @@ void printNodeInfo(node* curr)
 void printScopeList()
 {
 	node* curr;
-	for (int i = 0; i < slists->size; i++) {
+	for (unsigned int i = 0; i < slists->size; i++) {
 		curr = slists->lists[i];
 		if (curr != NULL) {
 			printf("\n\n-----------   Scope #%d   -----------\n", curr->scope);
@@ -107,7 +107,7 @@ void hideScope(unsigned int scope)
 
 void hideScopeRange(unsigned int scope)
 {
-	for (int i = 1; i < scope; i++) {
+	for (unsigned i = 1; i < scope; i++) {
 		hideScope(i);
 	}
 }
@@ -205,7 +205,7 @@ SymTable_T SymTable_new(void)
 /*frees all memory allcoated by oSymTable*/
 void SymTable_free(SymTable_T oSymTable)
 {
-	int i = 0;
+	unsigned i = 0;
 	node* curr;
 	node* next;
 
@@ -344,14 +344,14 @@ node* SymTable_put(SymTable_T oSymTable, const char* pcKey, const void* pvValue,
 	}
 
 	// no need to check getSymbol != NULL, because scope would be == -1
-	if (find_scope == scope && getSymbolScope(pcKey, oSymTable, scope)->type == FORMAL && type == FORMAL) {
+	if (find_scope == (int)scope && getSymbolScope(pcKey, oSymTable, scope)->type == FORMAL && type == FORMAL) {
 		printf("\nError: formal redeclaration, symbol: %s line: %d\n\n", pcKey, line);
 	} else if (find_scope == 0 && getSymbolScope(pcKey, oSymTable, 0)->type == LIBFUNC && type == FORMAL) {
 		printf("\nError: formal shadows lib function, symbol: %s line: %d\n\n", pcKey, line);
 	}
 
 	// TODO: check the following if to maybe erase it and not use isTmp.
-	if (((find_scope != -1 && localKwd == 0 && type != FORMAL && type != USERFUNC) || (localKwd == 1 && find_scope == scope)) && !isTmp(pcKey)) {
+	if (((find_scope != -1 && localKwd == 0 && type != FORMAL && type != USERFUNC) || (localKwd == 1 && find_scope == (int)scope)) && !isTmp(pcKey)) {
 		return NULL; // must check uses of return val here
 	}
 

@@ -27,7 +27,7 @@ typedef struct ScopeLists {
 struct symtable{
 	node **hashtable;
 	unsigned int bindings;
-	int size;
+	unsigned int size;
 };
 
 extern int funcScope[1024];

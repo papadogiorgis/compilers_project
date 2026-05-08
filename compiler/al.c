@@ -13,6 +13,7 @@ extern int yyparse(void);
 extern FILE* yyin;
 extern SymTable_T symtable;
 extern stack_t* stack;
+extern lc_stack_t *lcs_top, *lcs_bot;
 
 struct token_list token_list = {NULL};
 
@@ -20,6 +21,7 @@ int main(int argc, char **argv){
     fprintf(stderr, "--------------- Syntax Analysis ---------------\n");
     symtable = SymTable_new();
     stack = stack_create();
+    push_loopcounter();
 
     putLibFunctions(symtable);
     if (argc > 1){

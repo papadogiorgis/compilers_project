@@ -7,11 +7,14 @@
     #include "inc/inter_code.h"
     #include "inc/stack.h"
 
+    #define loopcounter (lcs_top->cnt)
+
     int yyerror (char* yaccProvideMessage);
 
     int scope = 0;
     int funcFlag = 0;
     int loopFlag = 0;
+    // int loopcounter = 0;
     int infunc=0;
     int anonymousCnt = 0;
     char buf[1024]; 
@@ -20,6 +23,8 @@
     char **errors;
     int funcScope[1024] = {0};
     int errorsCnt, errorsSize;
+    lc_stack_t *lcs_top = NULL;
+    lc_stack_t* lcs_bot = NULL;
     
     extern int yylex(void);
 
@@ -37,6 +42,7 @@
     struct expr *expression;
     struct node *node;
     struct stmt_t *stmt;
+    struct forprefix *forprefix;
 }
 
 
@@ -60,42 +66,71 @@
 %token <floatval> REAL
 %type <expression> lvalue expr term assignexpr primary call member callsuffix normcall methodcall const elist objectdef indexed indexedelem
 %type <node> funcprefix funcdef
-%type <uintval> funcbody ifprefix elseprefix statement whilestart whilecond
+%type <uintval> funcbody ifprefix elseprefix  whilestart whilecond N M
 %type <strval> funcname
-%type <stmt> stmts
+%type <stmt> stmts statement ifstmt whilestmt forstmt loopstmt
+%type <forprefix> forprefix
 
 %%
 
 program:        stmts{printf("line %d: program -> stmts\n", yylineno);};
 
-stmts:          stmts statement {printf("line %d: stmts->stmts statement\n", yylineno);}
-                | statement{printf("line %d: stmts->statement\n", yylineno);}
+stmts:          stmts statement 
+                    {
+                        printf("line %d: stmts->stmts statement\n", yylineno);
+                        $1->breaklist = mergelist($1->breaklist, $2->breaklist);
+                        $1->contlist = mergelist($1->contlist, $2->contlist);
+                    }
+                | statement
+                    {
+                        printf("line %d: stmts->statement\n", yylineno);\
+                        $$ = $1;
+                    }
                 ;
 
 statement:      expr SEMICOLON {
                     reset_temp_counter();
+                    $$ = (void *) 0;
                     printf("line %d: statement->expr;\n", yylineno);}
                 | ifstmt {
                     reset_temp_counter();
+                    $$ = $1;
                     printf("line %d: statement->ifstmt\n", yylineno);}
                 | whilestmt {
                     reset_temp_counter();
+                    $$ = $1;
                     printf("line %d: statement->whilestmt\n", yylineno);}
                 | forstmt {
                     reset_temp_counter();
+                    $$ = (void *)0;
                     printf("line %d: statement->forstmt\n", yylineno);}
                 | returnstmt {
                     reset_temp_counter();
+                    $$ = (void *)0;
                     printf("line %d: statement->returnstmt\n", yylineno);}
                 | BREAK SEMICOLON {
                     reset_temp_counter();
-                    if (loopFlag == 0){printf("\nError: use of break outside of loop line %d\n\n", yylineno);}printf("line %d: statement->break;\n", yylineno);}
+                    if (!$$){ $$ = malloc(sizeof(stmt_t));}
+                    make_stmt($$);
+                    $$->breaklist = newlist(nextquadlabel());
+                    emit(jump, NULL, NULL, NULL, 0, yylineno);
+                    if (lcs_top && loopcounter == 0){printf("\nError: use of break outside of loop line %d\n\n", yylineno);}printf("line %d: statement->break;\n", yylineno);}
                 | CONTINUE SEMICOLON{
                     reset_temp_counter();
-                    if (loopFlag == 0){printf("\nError: use of return outside of loop, line %d\n\n", yylineno);}printf("line %d: statement->continue;\n", yylineno);}
-                | block{printf("line %d: statement->block\n", yylineno);}
-                | funcdef{printf("line %d: statement->funcdef\n", yylineno);}
-                | SEMICOLON{printf("line %d: statement->;\n", yylineno);}
+                    if (!$$) {$$ = malloc(sizeof(stmt_t));}
+                    make_stmt($$);
+                    $$->contlist = newlist(nextquadlabel());
+                    emit(jump, NULL, NULL, NULL, 0 , yylineno);
+                    if (lcs_top && loopcounter == 0){printf("\nError: use of continue outside of loop, line %d\n\n", yylineno);}printf("line %d: statement->continue;\n", yylineno);}
+                | block{printf("line %d: statement->block\n", yylineno);
+                    $$ = (void *)0;
+                }
+                | funcdef{printf("line %d: statement->funcdef\n", yylineno);
+                    $$ = (void *)0;
+                }
+                | SEMICOLON{printf("line %d: statement->;\n", yylineno);
+                    $$ = (void *)0;
+                }
                 ;
 
 
@@ -371,11 +406,15 @@ funcargs:       LEFT_PAR {scope++;} idlist {scope--;} RIGHT_PAR
                     resetFunctionLocalOffset();
                 };
 
-funcbody:       block
+funcbody:       funcblockstart block funcblockend
                 {
                     $$ = currscopeoffset();
                     // exitscopespace();
                 };
+
+funcblockstart: {push_loopcounter();};
+
+funcblockend:   {pop_loopcounter();};
 
 funcdef:        funcprefix funcargs funcbody
                 {
@@ -389,28 +428,41 @@ funcdef:        funcprefix funcargs funcbody
 
                 };
 
-const:          INT{$$ = newexpr(constnum_e);
-                    $$->numConst = (float)$1;
-                    printf("line %d: const-> int\n", yylineno);}
-                | REAL{
-                    $$ = newexpr(constnum_e);
-                    $$->numConst = $1;
-                    printf("line %d: const-> real\n", yylineno);}
-                | STRING {
-                    $$ = newexpr(conststring_e);
-                    $$->strConst = strdup($1);
-                    printf("line %d: const-> string\n", yylineno);}
-                | NIL{
-                    $$ = newexpr(nil_e);
-                    printf("line %d: const-> nil\n", yylineno);}
-                | TRUE{
-                    $$ = newexpr(constnum_e);
-                    $$->boolConst = 1;
-                    printf("line %d: const-> true\n", yylineno);}
-                | FALSE{
-                    $$ = newexpr(constnum_e);
-                    $$->boolConst = 0;
-                    printf("line %d: const-> false\n", yylineno);}
+const:          INT
+                    {
+                        $$ = newexpr(constnum_e);
+                        $$->numConst = (float)$1;
+                        printf("line %d: const-> int\n", yylineno);
+                    }
+                | REAL
+                    {
+                        $$ = newexpr(constnum_e);
+                        $$->numConst = $1;
+                        printf("line %d: const-> real\n", yylineno);
+                    }
+                | STRING 
+                    {
+                        $$ = newexpr(conststring_e);
+                        $$->strConst = strdup($1);
+                        printf("line %d: const-> string\n", yylineno);
+                    }
+                | NIL
+                    {
+                        $$ = newexpr(nil_e);
+                        printf("line %d: const-> nil\n", yylineno);
+                    }
+                | TRUE
+                    {
+                        $$ = newexpr(constnum_e);
+                        $$->boolConst = 1;
+                        printf("line %d: const-> true\n", yylineno);
+                    }
+                | FALSE
+                    {
+                        $$ = newexpr(constnum_e);
+                        $$->boolConst = 0;
+                        printf("line %d: const-> false\n", yylineno);
+                    }
                 // | ENDLINE{;}
                 ;
 
@@ -436,13 +488,33 @@ ifstmt:         ifprefix statement
                 {
                     printf("line %d: ifstmt-> if(expr) statement\n", yylineno);
                     patchLabel($1, nextquadlabel());
+                    $$ = $2;
                 } 
                 | ifprefix statement elseprefix statement
                 {
                     printf("line %d: ifstmt-> if(expr) statement else statement\n", yylineno);
                     patchLabel($1, $3 + 1);
                     patchLabel($3, nextquadlabel());
+
+                    /* For the ifstmt, create a new statement that will contain the merged
+                        break and continue lists of the statements that are inside the if/else,
+                        so that if there are conditional breaks/continues the jump quad that 
+                        is emitted can be back patched. 
+
+                        for example in the cases of: if (b) break; / if (c) continue;
+                     */
+                    stmt_t *new_stmt = malloc(sizeof(stmt_t));
+                    make_stmt(new_stmt);
+                    new_stmt->breaklist = mergelist(($2? $2->breaklist : 0), $4? $4->breaklist : 0);
+                    new_stmt->contlist = mergelist(($2? $2->contlist : 0), $4? $4->contlist : 0);
+                    $$ = new_stmt;
                 };
+
+loopstart:      {if(lcs_top){++loopcounter;}};
+
+loopend:        {if(lcs_top){--loopcounter;}};
+
+loopstmt:       loopstart stmts loopend {$$ = $2;};
 
 whilestart:     WHILE 
                 {
@@ -458,15 +530,43 @@ whilecond:      LEFT_PAR expr RIGHT_PAR
 
 /* whilestmt:      WHILE {loopFlag = 1;} LEFT_PAR expr RIGHT_PAR statement{loopFlag = 0;printf("line %d: whilestmt-> while(expr) statement\n", yylineno);}; */
 
-whilestmt:      whilestart whilecond stmts
+/* whilestmt:      whilestart whilecond stmts */
+whilestmt:      whilestart whilecond loopstmt
                 {
-                    emit(jump, NULL, NULL, NULL, 0, yylineno);
+                    emit(jump, NULL, NULL, NULL, $1, yylineno);
                     patchLabel($2, nextquadlabel());
-                    patchlist($stmts->breaklist, nextquadlabel());
-                    patchlist($stmts->contlist, $1);
+                    if ($3){
+                        patchlist($3->breaklist, nextquadlabel());
+                        patchlist($3->contlist, $1);
+                    }
                 };
 
-forstmt:        FOR {loopFlag = 1;} LEFT_PAR elist SEMICOLON expr SEMICOLON elist RIGHT_PAR statement{loopFlag = 0;printf("line %d: forstmt-> for(elist;expr;elist) statement\n", yylineno);};
+N:              {$$ = nextquadlabel(); emit(jump,NULL, NULL, NULL, 0, yylineno);};
+
+M:              {$$ = nextquadlabel();}
+
+forprefix:      FOR LEFT_PAR elist SEMICOLON M expr SEMICOLON
+                {
+                    $$ = malloc(sizeof(forprefix));
+                    $$->test = $5;
+                    $$->enter = nextquadlabel();
+                    emit(if_eq, newexpr_constbool(1), $6, NULL, 0, yylineno);
+
+                };
+
+/* forstmt:        FOR {loopFlag = 1;} LEFT_PAR elist SEMICOLON expr SEMICOLON elist RIGHT_PAR statement{loopFlag = 0;printf("line %d: forstmt-> for(elist;expr;elist) statement\n", yylineno);}; */
+
+forstmt:        forprefix N elist RIGHT_PAR N loopstmt N
+                {
+                    patchLabel($1 ? $1->enter : 0, $5 + 1);
+                    patchLabel($2, nextquadlabel());
+                    patchLabel($5, $1 ? $1->test : 0);
+                    patchLabel($7, $2 + 1);
+
+                    
+                    patchlist($6 ? $6->breaklist: 0, nextquadlabel());
+                    patchlist($6 ? $6->contlist: 0, $2 + 1);
+                };
 
 returnstmt:     RETURN SEMICOLON{if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}printf("line %d: returnstmt-> return;\n", yylineno);}
                 | RETURN expr SEMICOLON{if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}printf("line %d: returnstmt-> return expr;\n", yylineno);}

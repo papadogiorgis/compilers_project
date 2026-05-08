@@ -1,4 +1,4 @@
-FLAGS = -g -Wall -I. -I./inc
+FLAGS = -g -Wall  -I. -I./inc
 SOURCE_FILES =  al.c \
 				scanner.c \
 				syntax_parser.c \

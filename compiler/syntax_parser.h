@@ -159,7 +159,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 32 "syntax_parser.y"
+#line 37 "syntax_parser.y"
 
     int intval;
     char *strval;
@@ -168,8 +168,9 @@ union YYSTYPE
     struct expr *expression;
     struct node *node;
     struct stmt_t *stmt;
+    struct forprefix *forprefix;
 
-#line 173 "syntax_parser.h"
+#line 174 "syntax_parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

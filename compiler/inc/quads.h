@@ -82,6 +82,11 @@ enum symbol_t { var_s,
 	programfunc_s,
 	libraryfunc_s };
 
+typedef struct forprefix {
+	unsigned test;
+	unsigned enter;
+} forprefix;
+
 struct expr* newexpr(expr_t type);
 
 void emit(iopcode op, expr* arg1, expr* arg2, expr* result, unsigned label, unsigned line);
@@ -89,8 +94,6 @@ void emit(iopcode op, expr* arg1, expr* arg2, expr* result, unsigned label, unsi
 expr* newtemp(void);
 
 void patchlist(int list, int label);
-
-unsigned nextquad(void);
 
 node* newtempsym();
 
@@ -123,6 +126,12 @@ unsigned int currscopeoffset(void);
 void incurrscopeoffset(void);
 
 void give_quads(FILE*);
+
+int mergelist (int l1, int l2);
+
+int newlist(int i);
+
+void make_stmt (stmt_t* s);
 
 
 #endif

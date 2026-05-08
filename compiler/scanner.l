@@ -200,7 +200,7 @@ new_line \n
     unsigned int bufsize = 1024;
     char *buf = malloc(sizeof(char) * bufsize);
     int stringEnded = 0;
-    int currBufSize = -1;  
+    unsigned int currBufSize = -1;  
     int breakFlag = 0; // will use it to continue from while if i have already written in buf a special char
 
     while (!stringEnded){

@@ -1,6 +1,7 @@
 /**
  * Stack implenentation for storing scope offsets,
- * used for intermediate code generation of functions.
+ * used for intermediate code generation of functions
+ * & stack for loopcounter, to verify break/continue uses. 
  */
 
 #include <assert.h>
@@ -8,6 +9,8 @@
 #include <stdlib.h>
 
 #include "stack.h"
+
+extern lc_stack_t *lcs_top, *lcs_bot;
 
 stack_t* stack_create(void)
 {
@@ -61,4 +64,39 @@ void stack_destroy(stack_t* stack)
 	assert(stack);
 	free(stack->scopeoffset_buf);
 	free(stack);
+}
+
+/* BOT() <- () <- () TOP*/
+
+void push_loopcounter(void)
+{
+	lc_stack_t *node = malloc(sizeof(lc_stack_t));
+	node->cnt = 0;
+	node->next = lcs_top;
+	lcs_top = node;
+	// if (lcs_bot == NULL && lcs_top == NULL){
+	// 	lcs_bot = node;
+	// 	lcs_top = node;
+	// 	node->next = NULL;
+	// }
+	// else {
+	// 	node->next = lcs_top;
+	// 	lcs_top = node;
+	// }
+
+	if (lcs_bot == NULL){
+		lcs_bot = node;
+	}
+
+}
+
+void pop_loopcounter(void)
+{
+	lc_stack_t *tmp = lcs_top;
+	assert(lcs_top);
+	lcs_top = lcs_top->next;
+	if (lcs_top == NULL){
+		lcs_bot = NULL;
+	}
+	free(tmp);
 }
