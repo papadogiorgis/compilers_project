@@ -1,4 +1,5 @@
 #include "inter_code.h"
+#include <string.h>
 
 extern unsigned int tcount;
 extern SymTable_T symtable;
@@ -95,4 +96,56 @@ expr* inter_code_member_item(expr* val, expr* index){
 	mem_item->sym = val->sym;
 	mem_item->index = index;
 	return mem_item;
+}
+
+expr* inter_code_call(expr* lval, expr* elist){
+	expr* f = emit_if_tableitem(lval);
+	if(lval->sym && lval->sym->type == USERFUNC){
+		f->type = programfunc_e;
+	}else if(lval->sym && lval->sym->type == LIBFUNC){
+		f->type = libraryfunc_e;
+	}else{
+		f->type = var_e;
+	}
+	//reeverese elist
+	expr* rev = NULL;
+	expr* cur = elist;
+	while(cur != NULL){
+		expr* next = cur->next;
+		cur->next = rev;
+		rev = cur;
+		cur = next;
+	}
+	//now the elist is reversed and stored in expr* rev
+	while(rev != NULL){
+		emit(param, rev, NULL, NULL, 0, yylineno);
+		rev = rev->next;
+	}
+	//make call
+	emit(call, f, NULL, NULL, 0, yylineno);
+	//save return value in a temp var
+	expr* res = newtemp();
+	emit(getretval, NULL, NULL, res, 0, yylineno);
+	return res;
+}
+
+expr* inter_code_callsuffix(expr* lval, call_struct* callsuffix){
+	if(callsuffix->method){
+		//bring table
+		lval = emit_if_tableitem(lval);
+		//take func from table
+		expr* f = newtemp();
+		expr* index = newexpr(conststring_e);
+		index->strConst = strdup(callsuffix->name);
+		emit(tablegetelem, lval, index, f, 0, yylineno);
+		//add lval as the first argument in elist
+		lval->next = callsuffix->elist;
+		callsuffix->elist = lval;
+		//call the function
+		return inter_code_call(f, callsuffix->elist);
+	}else{
+		//its a normal func, so we call it
+		return inter_code_call(lval, callsuffix->elist);
+	}
+
 }
