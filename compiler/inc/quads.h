@@ -20,6 +20,10 @@ typedef enum expr_t {
 	nil_e,
 } expr_t;
 
+typedef struct stmt_t{
+	int breaklist, contlist;
+} stmt_t;
+
 typedef struct expr {
 	expr_t type;
 	node* sym; // symbol
@@ -83,6 +87,8 @@ struct expr* newexpr(expr_t type);
 void emit(iopcode op, expr* arg1, expr* arg2, expr* result, unsigned label, unsigned line);
 
 expr* newtemp(void);
+
+void patchlist(int list, int label);
 
 unsigned nextquad(void);
 

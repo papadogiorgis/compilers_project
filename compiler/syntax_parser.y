@@ -36,6 +36,7 @@
     unsigned uintval;
     struct expr *expression;
     struct node *node;
+    struct stmt_t *stmt;
 }
 
 
@@ -59,8 +60,9 @@
 %token <floatval> REAL
 %type <expression> lvalue expr term assignexpr primary call member callsuffix normcall methodcall const elist objectdef indexed indexedelem
 %type <node> funcprefix funcdef
-%type <uintval> funcbody ifprefix elseprefix statement
+%type <uintval> funcbody ifprefix elseprefix statement whilestart whilecond
 %type <strval> funcname
+%type <stmt> stmts
 
 %%
 
@@ -424,10 +426,6 @@ ifprefix:       IF LEFT_PAR expr RIGHT_PAR
                     emit(jump, NULL, NULL, NULL, 0, yylineno);
                 };
 
-/* ifstmt:         IF LEFT_PAR expr RIGHT_PAR statement{printf("line %d: ifstmt-> if(expr) statement\n", yylineno);}
-                | IF LEFT_PAR expr RIGHT_PAR statement ELSE statement{printf("line %d: ifstmt-> if(expr) statement else statement\n", yylineno);}
-                ; */
-
 elseprefix:     ELSE
                 {
                     $$ = nextquadlabel();
@@ -446,8 +444,27 @@ ifstmt:         ifprefix statement
                     patchLabel($3, nextquadlabel());
                 };
 
+whilestart:     WHILE 
+                {
+                    $$ = nextquadlabel();
+                };
 
-whilestmt:      WHILE {loopFlag = 1;} LEFT_PAR expr RIGHT_PAR statement{loopFlag = 0;printf("line %d: whilestmt-> while(expr) statement\n", yylineno);};
+whilecond:      LEFT_PAR expr RIGHT_PAR
+                {
+                    emit(if_eq, $2, NULL, newexpr_constbool(1), nextquadlabel() + 2, yylineno);
+                    $$ = nextquadlabel();
+                    emit(jump, NULL, NULL, NULL, 0 ,yylineno);
+                };
+
+/* whilestmt:      WHILE {loopFlag = 1;} LEFT_PAR expr RIGHT_PAR statement{loopFlag = 0;printf("line %d: whilestmt-> while(expr) statement\n", yylineno);}; */
+
+whilestmt:      whilestart whilecond stmts
+                {
+                    emit(jump, NULL, NULL, NULL, 0, yylineno);
+                    patchLabel($2, nextquadlabel());
+                    patchlist($stmts->breaklist, nextquadlabel());
+                    patchlist($stmts->contlist, $1);
+                };
 
 forstmt:        FOR {loopFlag = 1;} LEFT_PAR elist SEMICOLON expr SEMICOLON elist RIGHT_PAR statement{loopFlag = 0;printf("line %d: forstmt-> for(elist;expr;elist) statement\n", yylineno);};
 

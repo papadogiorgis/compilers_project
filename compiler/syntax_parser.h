@@ -167,8 +167,9 @@ union YYSTYPE
     unsigned uintval;
     struct expr *expression;
     struct node *node;
+    struct stmt_t *stmt;
 
-#line 172 "syntax_parser.h"
+#line 173 "syntax_parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
