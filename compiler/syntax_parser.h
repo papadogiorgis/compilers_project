@@ -169,8 +169,9 @@ union YYSTYPE
     struct node *node;
     struct stmt_t *stmt;
     struct forprefix *forprefix;
+    struct call_struct* call_s;
 
-#line 174 "syntax_parser.h"
+#line 175 "syntax_parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

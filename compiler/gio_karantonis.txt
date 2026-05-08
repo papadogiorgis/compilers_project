@@ -33,3 +33,11 @@ c = t2.z[0];
 t2.z[1] = 99;
 
 t2.w = t1[2] + a;
+
+/*
+//TEST FOR FUNCTION CALLS AND ARGUMENTS
+print("Hello", 123);
+x = myfunc(a, b);
+player..move(10, 20);
+actions[0]();
+*/
