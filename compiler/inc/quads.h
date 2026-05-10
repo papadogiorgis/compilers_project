@@ -87,6 +87,12 @@ typedef struct forprefix {
 	unsigned enter;
 } forprefix;
 
+typedef struct call_struct{
+	expr* elist;
+	unsigned char method;
+	char* name;
+}call_struct;
+
 struct expr* newexpr(expr_t type);
 
 void emit(iopcode op, expr* arg1, expr* arg2, expr* result, unsigned label, unsigned line);

@@ -24,6 +24,25 @@ else
     else
         x = x-z;*/
 
-/*for (i = 0; i < n; i++)
-    x = i;
+t1 = [ 100, 200, 300 ];
+
+t2 = [ {"x" : 10}, {"y" : 20}, {"z" : [1, 2]} ];
+
+t1[0] = 500;
+t2.x = 15;
+
+a = t1[1];
+b = t2.y;
+
+c = t2.z[0];
+t2.z[1] = 99;
+
+t2.w = t1[2] + a;
+
+/*
+//TEST FOR FUNCTION CALLS AND ARGUMENTS
+print("Hello", 123);
+x = myfunc(a, b);
+player..move(10, 20);
+actions[0]();
 */

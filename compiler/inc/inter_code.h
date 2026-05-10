@@ -14,5 +14,7 @@ expr *inter_code_bool (expr *lval, expr* rval, iopcode op);
 expr* inter_code_objectdef_elist(expr* e);
 expr* inter_code_objectdef_indexed(expr* e);
 expr* inter_code_member_item(expr* val, expr* index);
+expr* inter_code_call(expr* lval, expr* elist);
+expr* inter_code_callsuffix(expr* lval, call_struct* callsuffix);
 
 #endif

@@ -43,6 +43,7 @@
     struct node *node;
     struct stmt_t *stmt;
     struct forprefix *forprefix;
+    struct call_struct* call_s;
 }
 
 
@@ -64,12 +65,13 @@
 %token <strval> ID STRING
 %token <intval> INT
 %token <floatval> REAL
-%type <expression> lvalue expr term assignexpr primary call member callsuffix normcall methodcall const elist objectdef indexed indexedelem
+%type <expression> lvalue expr term assignexpr primary call member const elist objectdef indexed indexedelem
 %type <node> funcprefix funcdef
 %type <uintval> funcbody ifprefix elseprefix  whilestart whilecond N M
 %type <strval> funcname
 %type <stmt> stmts statement ifstmt whilestmt forstmt loopstmt block
 %type <forprefix> forprefix
+%type <call_s> callsuffix normcall methodcall
 
 %%
 
@@ -351,17 +353,40 @@ member:         lvalue DOT ID{
                     printf("line %d: member-> call{expr}\n", yylineno);}
                 ;
 
-call:           call LEFT_PAR elist RIGHT_PAR{printf("line %d: call-> call(elist)\n", yylineno);}
-                | lvalue callsuffix{printf("line %d: call-> lvalue callsuffix\n", yylineno);}
-                | LEFT_PAR funcdef RIGHT_PAR LEFT_PAR elist RIGHT_PAR{printf("line %d: call-> (funcdef)(elist)\n", yylineno);}
+call:           call LEFT_PAR elist RIGHT_PAR{
+                    $$ = inter_code_call($1, $3);
+                    printf("line %d: call-> call(elist)\n", yylineno);}
+                | lvalue callsuffix{
+                    $$ = inter_code_callsuffix($1, $2);
+                    printf("line %d: call-> lvalue callsuffix\n", yylineno);}
+                | LEFT_PAR funcdef RIGHT_PAR LEFT_PAR elist RIGHT_PAR{
+                    expr* f = newexpr(programfunc_e);
+                    f->sym = $2;
+                    $$ = inter_code_call(f, $5);
+                    printf("line %d: call-> (funcdef)(elist)\n", yylineno);}
                 ;
 
-callsuffix:     normcall{printf("line %d: callsuffix-> normcall\n", yylineno);}
-                | methodcall{printf("line %d: callsuffix-> methodcall\n", yylineno);}
+callsuffix:     normcall{
+                    $$ = $1;
+                    printf("line %d: callsuffix-> normcall\n", yylineno);}
+                | methodcall{
+                    $$ = $1;
+                    printf("line %d: callsuffix-> methodcall\n", yylineno);}
                 ;
 
-normcall:       LEFT_PAR elist RIGHT_PAR{printf("line %d: normcall-> (elist)\n", yylineno);};
-methodcall:     DOTDOT ID LEFT_PAR elist RIGHT_PAR {printf("line %d: methodcall-> ..ID(elist)\n", yylineno);};
+normcall:       LEFT_PAR elist RIGHT_PAR{
+                    $$ = malloc(sizeof(call_struct));
+                    $$->elist = $2;
+                    $$->method = 0;
+                    $$->name = NULL;
+                    printf("line %d: normcall-> (elist)\n", yylineno);};
+
+methodcall:     DOTDOT ID LEFT_PAR elist RIGHT_PAR {
+                    $$ = malloc(sizeof(call_struct));
+                    $$->elist = $4;
+                    $$->method = 1;
+                    $$->name = strdup($2);
+                    printf("line %d: methodcall-> ..ID(elist)\n", yylineno);};
 
 elist:          expr{
                     $1->next = NULL;
