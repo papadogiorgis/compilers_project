@@ -32,6 +32,10 @@ typedef struct expr {
 	char* strConst;
 	unsigned char boolConst;
 	struct expr* next;
+
+	//used for short-circuit eval
+	int richtig_list;
+	int falsch_list;
 } expr;
 
 typedef enum iopcode {

@@ -149,3 +149,44 @@ expr* inter_code_callsuffix(expr* lval, call_struct* callsuffix){
 	}
 
 }
+
+expr* inter_code_uminus(expr* e){
+	e = emit_if_tableitem(e);
+	if(!is_arith(e)){
+		return NULL;
+	}
+	expr* temp = newexpr(arithexpr_e);
+	temp->sym = newtemp()->sym;
+	emit(uminus, e, NULL, temp, 0, yylineno);
+	return temp;
+}
+
+//-----for short-circuit eval-----
+void inter_code_boolean_comparison(expr* lval, expr* arg1, expr* arg2, iopcode op){
+	lval->sym = newtemp()->sym;
+
+	//i make true jump and add it to the truelist
+	emit(op, arg1, arg2, NULL, 0, yylineno);
+	lval->richtig_list = newlist(nextquadlabel() - 1);
+
+	//i make false jump and add it to the falselist
+	emit(jump, NULL, NULL, NULL, 0, yylineno);
+	lval->falsch_list = newlist(nextquadlabel() - 1);
+}
+
+void inter_make_bool_expr(expr* e){
+	//if expr e is already boolexpr, do nothing
+	if(e->type == boolexpr_e){
+		return;
+	}
+	//if its not, i make the jumps
+	//if its true goto...
+	emit(if_eq, e, newexpr_constbool(1), NULL, 0, yylineno);
+	e->richtig_list = newlist(nextquadlabel() - 1);
+	//if its false goto...
+	emit(jump, NULL, NULL, NULL, 0, yylineno);
+	e->falsch_list = newlist(nextquadlabel() - 1);
+	//change e type so we know it has true and false listsnow
+	e->type = boolexpr_e;
+}
+//--------------------------------
