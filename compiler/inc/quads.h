@@ -89,6 +89,7 @@ enum symbol_t { var_s,
 typedef struct forprefix {
 	unsigned test;
 	unsigned enter;
+	int falselist;
 } forprefix;
 
 typedef struct call_struct{

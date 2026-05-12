@@ -92,6 +92,7 @@ expr* inter_code_member_item(expr* val, expr* index){
 	/*if val is already a tableitem save its value
 	  in a temp val */
 	val = emit_if_tableitem(val);
+	index = inter_code_bool_to_val(index);
 	expr* mem_item = newexpr(tableitem_e);
 	mem_item->sym = val->sym;
 	mem_item->index = index;
@@ -188,5 +189,22 @@ void inter_make_bool_expr(expr* e){
 	e->falsch_list = newlist(nextquadlabel() - 1);
 	//change e type so we know it has true and false listsnow
 	e->type = boolexpr_e;
+}
+
+expr* inter_code_bool_to_val(expr* e){
+	if(e->type != boolexpr_e){
+		return e;
+	}
+	//if its true assign 1
+	patchlist(e->richtig_list, nextquadlabel());
+	emit(assign, newexpr_constbool(1), NULL, e, 0, yylineno);
+	emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
+	//if its false assign 0
+	patchlist(e->falsch_list, nextquadlabel());
+	emit(assign, newexpr_constbool(0), NULL, e, 0, yylineno);
+
+	e->type = var_e;
+	return e;
+
 }
 //--------------------------------

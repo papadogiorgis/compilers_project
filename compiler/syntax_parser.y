@@ -69,7 +69,7 @@
 %type <node> funcprefix funcdef
 %type <uintval> funcbody ifprefix elseprefix  whilestart whilecond N M
 %type <strval> funcname
-%type <stmt> stmts statement ifstmt whilestmt forstmt loopstmt
+%type <stmt> stmts statement ifstmt whilestmt forstmt loopstmt block
 %type <forprefix> forprefix
 %type <call_s> callsuffix normcall methodcall
 
@@ -80,8 +80,15 @@ program:        stmts{printf("line %d: program -> stmts\n", yylineno);};
 stmts:          stmts statement 
                     {
                         printf("line %d: stmts->stmts statement\n", yylineno);
-                        $1->breaklist = mergelist($1->breaklist, $2->breaklist);
-                        $1->contlist = mergelist($1->contlist, $2->contlist);
+                        if($1==NULL && $2==NULL){
+                            $$=NULL;
+                        }else{
+                            $$ = malloc(sizeof(stmt_t));
+                            make_stmt($$);
+                            $1->breaklist = mergelist(($1 ? $1->breaklist : 0), ($2 ? $2->breaklist : 0));
+                            $1->contlist = mergelist(($1 ? $1->contlist : 0), ($2 ? $2->contlist : 0));
+                        }
+                        
                     }
                 | statement
                     {
@@ -125,7 +132,8 @@ statement:      expr SEMICOLON {
                     emit(jump, NULL, NULL, NULL, 0 , yylineno);
                     if (lcs_top && loopcounter == 0){printf("\nError: use of continue outside of loop, line %d\n\n", yylineno);}printf("line %d: statement->continue;\n", yylineno);}
                 | block{printf("line %d: statement->block\n", yylineno);
-                    $$ = (void *)0;
+                    //$$ = (void *)0;
+                    $$ = $1; //block lists are bubbled up
                 }
                 | funcdef{printf("line %d: statement->funcdef\n", yylineno);
                     $$ = (void *)0;
@@ -415,10 +423,12 @@ methodcall:     DOTDOT ID LEFT_PAR elist RIGHT_PAR {
                     printf("line %d: methodcall-> ..ID(elist)\n", yylineno);};
 
 elist:          expr{
+                    $1 = inter_code_bool_to_val($1);
                     $1->next = NULL;
                     $$=$1;
                     printf("line %d: elist-> expr\n", yylineno);}
                 | expr COMMA elist{
+                    $1 = inter_code_bool_to_val($1);
                     $1->next = $3;
                     $$ = $1;
                     printf("line %d: elist-> expr,elist\n", yylineno);}
@@ -445,16 +455,19 @@ indexed:        indexedelem{
                 ;
 
 indexedelem:    LEFT_CURL_BR expr COLON expr RIGHT_CURL_BR{
-                    $$ = $2;
-                    $$->index = $4;
+                    $$ = inter_code_bool_to_val($2);
+                    $$->index = inter_code_bool_to_val($4);
+                    /*$$ = $2;
+                    $$->index = $4;*/
                     $$->next = NULL;
                     printf("line %d: indexedelem-> {expr:expr}\n", yylineno);
                     }
                 ;
 
 
-block:          LEFT_CURL_BR {scope++;} RIGHT_CURL_BR {hideScope(scope--); printf("line %d: block-> {}\n", yylineno);} 
-                | LEFT_CURL_BR {scope++;} stmts RIGHT_CURL_BR {hideScope(scope--); printf("line %d: block-> {stmts}\n", yylineno);}
+block:          LEFT_CURL_BR {scope++;} RIGHT_CURL_BR {hideScope(scope--); printf("line %d: block-> {}\n", yylineno); $$=NULL;} 
+                | LEFT_CURL_BR {scope++;} stmts RIGHT_CURL_BR {hideScope(scope--); printf("line %d: block-> {stmts}\n", yylineno); 
+                                                                $$=$3; /*pass stmts block upwards*/}
 
 funcname:       ID {$$ = $1;} | 
                 {sprintf(buf, "$%d", anonymousCnt++);
@@ -558,21 +571,25 @@ ifprefix:       IF LEFT_PAR expr RIGHT_PAR
 
 elseprefix:     ELSE
                 {
-                    $$ = nextquadlabel();
+                    // $$ = nextquadlabel();
+                    $$ = newlist(nextquadlabel());
                     emit(jump, NULL, NULL, NULL, 0, yylineno);
                 };
 
 ifstmt:         ifprefix statement
                 {
                     printf("line %d: ifstmt-> if(expr) statement\n", yylineno);
-                    patchLabel($1, nextquadlabel());
+                    //patchLabel($1, nextquadlabel()); its changed with patchlist
+                    patchlist($1, nextquadlabel());
                     $$ = $2;
                 } 
                 | ifprefix statement elseprefix statement
                 {
                     printf("line %d: ifstmt-> if(expr) statement else statement\n", yylineno);
-                    patchLabel($1, $3 + 1);
-                    patchLabel($3, nextquadlabel());
+                    /*patchLabel($1, $3 + 1);
+                    patchLabel($3, nextquadlabel()); this line and the above line are changed to patchedlist*/
+                    patchlist($1, $3 + 1);
+                    patchlist($3, nextquadlabel());
 
                     /* For the ifstmt, create a new statement that will contain the merged
                         break and continue lists of the statements that are inside the if/else,
@@ -618,11 +635,13 @@ whilecond:      LEFT_PAR expr RIGHT_PAR
 whilestmt:      whilestart whilecond loopstmt
                 {
                     emit(jump, NULL, NULL, NULL, $1, yylineno);
-                    patchLabel($2, nextquadlabel());
+                    // patchLabel($2, nextquadlabel()); changed to patchedlist
+                    patchlist($2, nextquadlabel());
                     if ($3){
                         patchlist($3->breaklist, nextquadlabel());
                         patchlist($3->contlist, $1);
                     }
+                    $$ = NULL; // prevent return unitialized pointer
                 };
 
 N:              {$$ = nextquadlabel(); emit(jump,NULL, NULL, NULL, 0, yylineno);};
@@ -633,8 +652,12 @@ forprefix:      FOR LEFT_PAR elist SEMICOLON M expr SEMICOLON
                 {
                     $$ = malloc(sizeof(forprefix));
                     $$->test = $5;
+                    //we make lists
+                    inter_make_bool_expr($6);
                     $$->enter = nextquadlabel();
-                    emit(if_eq, newexpr_constbool(1), $6, NULL, 0, yylineno);
+                    // emit(if_eq, newexpr_constbool(1), $6, NULL, 0, yylineno);
+                    patchlist($6->richtig_list, $$->enter);
+                    $$->falselist = $6->falsch_list;
 
                 };
 
@@ -642,14 +665,19 @@ forprefix:      FOR LEFT_PAR elist SEMICOLON M expr SEMICOLON
 
 forstmt:        forprefix N elist RIGHT_PAR N loopstmt N
                 {
-                    patchLabel($1 ? $1->enter : 0, $5 + 1);
+                    /*patchLabel($1 ? $1->enter : 0, $5 + 1);
                     patchLabel($2, nextquadlabel());
                     patchLabel($5, $1 ? $1->test : 0);
-                    patchLabel($7, $2 + 1);
+                    patchLabel($7, $2 + 1); we replace them with patchlists*/
+                    patchlist($2, $1->enter);
+                    patchlist($5, $1->test);
+                    patchlist($7, $2 + 1);
+                    patchlist($1->falselist, nextquadlabel());
 
                     
                     patchlist($6 ? $6->breaklist: 0, nextquadlabel());
                     patchlist($6 ? $6->contlist: 0, $2 + 1);
+                    $$ = NULL; // prevent return unitialized pointer
                 };
 
 returnstmt:     RETURN SEMICOLON{if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}printf("line %d: returnstmt-> return;\n", yylineno);}

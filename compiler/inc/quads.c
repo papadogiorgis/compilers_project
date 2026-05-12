@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "quads.h"
+#include "inter_code.h"
 
 #define EXPAND_SIZE 1024
 #define CURR_SIZE (total * sizeof(quad))
@@ -53,6 +54,7 @@ void emit(iopcode op, expr* arg1, expr* arg2, expr* result, unsigned label, unsi
 expr* newexpr(expr_t type)
 {
 	expr* tmp = malloc(sizeof(expr));
+	memset(tmp, 0, sizeof(expr)); //zero-init struct
 	tmp->type = type;
 	return tmp;
 }
@@ -249,6 +251,7 @@ void reset_temp_counter()
 
 expr* emit_if_tableitem(expr* ex)
 {
+	ex = inter_code_bool_to_val(ex);
 	if (ex->type != tableitem_e) {
 		return ex;
 	}
