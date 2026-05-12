@@ -1,12 +1,17 @@
-/*function (x,y){
-    z = 20 * x - y;
-    function nested(her){
-        j = 12+34+12;
-        if (x > y) {
-            x = x+1;
+
+while(x){
+    {
+        
+        while(x){
+            continue;
+            break;
+            if (x + y)
+                break;
         }
     }
-}*/
+    continue;
+}
+
 
 /*if (a || b)
     x = y;
@@ -15,7 +20,7 @@ else
 
 /*while (x-y > z-w)
     if(b)
-        b = 1;
+        continue;
     else
         x = x-z;*/
 

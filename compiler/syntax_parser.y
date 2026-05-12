@@ -88,7 +88,16 @@ stmts:          stmts statement
                             $1->breaklist = mergelist(($1 ? $1->breaklist : 0), ($2 ? $2->breaklist : 0));
                             $1->contlist = mergelist(($1 ? $1->contlist : 0), ($2 ? $2->contlist : 0));
                         }
-                        
+                        /*
+                        $$ = malloc(sizeof(stmt_t));
+                        make_stmt($$);
+                        // printf("DEBUG: $1 is %p, $2 is %p\n", (void *)$1, (void*)$2);
+                        int b1 = $1 ? $1->breaklist : 0;
+                        int b2 = $2 ? $2->breaklist : 0;
+                        int c1 = $1 ? $1->contlist : 0;
+                        int c2 = $2 ? $2->contlist : 0;
+                        $$->breaklist = mergelist(b1 , b2);
+                        $$->contlist = mergelist(c1, c2);*/
                     }
                 | statement
                     {
@@ -99,7 +108,9 @@ stmts:          stmts statement
 
 statement:      expr SEMICOLON {
                     reset_temp_counter();
-                    $$ = (void *) 0;
+                    $$ = malloc(sizeof(stmt_t));
+                    $$->breaklist = 0;
+                    $$->contlist = 0;
                     printf("line %d: statement->expr;\n", yylineno);}
                 | ifstmt {
                     reset_temp_counter();
@@ -107,7 +118,8 @@ statement:      expr SEMICOLON {
                     printf("line %d: statement->ifstmt\n", yylineno);}
                 | whilestmt {
                     reset_temp_counter();
-                    $$ = $1;
+                    // $$ = $1;
+                    $$ = 0;
                     printf("line %d: statement->whilestmt\n", yylineno);}
                 | forstmt {
                     reset_temp_counter();
@@ -119,27 +131,40 @@ statement:      expr SEMICOLON {
                     printf("line %d: statement->returnstmt\n", yylineno);}
                 | BREAK SEMICOLON {
                     reset_temp_counter();
-                    if (!$$){ $$ = malloc(sizeof(stmt_t));}
+                    // if (!$$){ $$ = malloc(sizeof(stmt_t));}
+                    if (lcs_top && loopcounter == 0){printf("\nError: use of break outside of loop line %d\n\n", yylineno);}printf("line %d: statement->break;\n", yylineno);
+                    $$ = malloc(sizeof(stmt_t));
                     make_stmt($$);
                     $$->breaklist = newlist(nextquadlabel());
                     emit(jump, NULL, NULL, NULL, 0, yylineno);
-                    if (lcs_top && loopcounter == 0){printf("\nError: use of break outside of loop line %d\n\n", yylineno);}printf("line %d: statement->break;\n", yylineno);}
+                    }
                 | CONTINUE SEMICOLON{
                     reset_temp_counter();
-                    if (!$$) {$$ = malloc(sizeof(stmt_t));}
+                    // if (!$$) {$$ = malloc(sizeof(stmt_t));}
+                    if (lcs_top && loopcounter == 0){printf("\nError: use of continue outside of loop, line %d\n\n", yylineno);}printf("line %d: statement->continue;\n", yylineno);
+                    $$ = malloc(sizeof(stmt_t));
                     make_stmt($$);
                     $$->contlist = newlist(nextquadlabel());
                     emit(jump, NULL, NULL, NULL, 0 , yylineno);
-                    if (lcs_top && loopcounter == 0){printf("\nError: use of continue outside of loop, line %d\n\n", yylineno);}printf("line %d: statement->continue;\n", yylineno);}
+                    }
                 | block{printf("line %d: statement->block\n", yylineno);
                     //$$ = (void *)0;
                     $$ = $1; //block lists are bubbled up
+                    // $$ = malloc(sizeof(stmt_t));
+                    // make_stmt($$);
+                    // $$ = $1;
                 }
                 | funcdef{printf("line %d: statement->funcdef\n", yylineno);
-                    $$ = (void *)0;
+                    // $$ = (void *)0;
+                    // $$ = malloc(sizeof(stmt_t));
+                    // make_stmt($$);
+                    $$ = NULL;
                 }
                 | SEMICOLON{printf("line %d: statement->;\n", yylineno);
-                    $$ = (void *)0;
+                    // $$ = (void *)0;
+                    $$ = malloc(sizeof(stmt_t));
+                    make_stmt($$);
+                    $$ = 0;
                 }
                 ;
 
@@ -468,6 +493,8 @@ indexedelem:    LEFT_CURL_BR expr COLON expr RIGHT_CURL_BR{
 block:          LEFT_CURL_BR {scope++;} RIGHT_CURL_BR {hideScope(scope--); printf("line %d: block-> {}\n", yylineno); $$=NULL;} 
                 | LEFT_CURL_BR {scope++;} stmts RIGHT_CURL_BR {hideScope(scope--); printf("line %d: block-> {stmts}\n", yylineno); 
                                                                 $$=$3; /*pass stmts block upwards*/}
+/*block:          LEFT_CURL_BR {scope++;} RIGHT_CURL_BR {hideScope(scope--); printf("line %d: block-> {}\n", yylineno);} 
+                | LEFT_CURL_BR {scope++;} stmts RIGHT_CURL_BR {$$ = $3; hideScope(scope--); printf("line %d: block-> {stmts}\n", yylineno);}*/
 
 funcname:       ID {$$ = $1;} | 
                 {sprintf(buf, "$%d", anonymousCnt++);
@@ -600,8 +627,15 @@ ifstmt:         ifprefix statement
                      */
                     stmt_t *new_stmt = malloc(sizeof(stmt_t));
                     make_stmt(new_stmt);
-                    new_stmt->breaklist = mergelist(($2? $2->breaklist : 0), $4? $4->breaklist : 0);
-                    new_stmt->contlist = mergelist(($2? $2->contlist : 0), $4? $4->contlist : 0);
+
+                    int b1 = $2 ? $2->breaklist : 0;
+                    int b2 = $4 ? $4->breaklist : 0;
+                    int c1 = $2 ? $2->contlist : 0;
+                    int c2 = $4 ? $4->contlist : 0;
+
+
+                    new_stmt->breaklist = mergelist(b1, b2);
+                    new_stmt->contlist = mergelist(c1, c2);
                     $$ = new_stmt;
                 };
 
@@ -627,9 +661,12 @@ whilecond:      LEFT_PAR expr RIGHT_PAR
                     patchlist($2->richtig_list, nextquadlabel());
                     //false will get us out of the loop
                     $$ = $2->falsch_list; 
+                    /*
+                    emit(if_eq, $2, newexpr_constbool(1), NULL, nextquadlabel() + 2, yylineno);
+                    int nquad = nextquadlabel();
+                    emit(jump, NULL, NULL, NULL, 0 ,yylineno);
+                    $$ = nquad;   */
                 };
-
-/* whilestmt:      WHILE {loopFlag = 1;} LEFT_PAR expr RIGHT_PAR statement{loopFlag = 0;printf("line %d: whilestmt-> while(expr) statement\n", yylineno);}; */
 
 /* whilestmt:      whilestart whilecond stmts */
 whilestmt:      whilestart whilecond loopstmt
