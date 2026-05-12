@@ -80,15 +80,6 @@ program:        stmts{printf("line %d: program -> stmts\n", yylineno);};
 stmts:          stmts statement 
                     {
                         printf("line %d: stmts->stmts statement\n", yylineno);
-                        if($1==NULL && $2==NULL){
-                            $$=NULL;
-                        }else{
-                            $$ = malloc(sizeof(stmt_t));
-                            make_stmt($$);
-                            $1->breaklist = mergelist(($1 ? $1->breaklist : 0), ($2 ? $2->breaklist : 0));
-                            $1->contlist = mergelist(($1 ? $1->contlist : 0), ($2 ? $2->contlist : 0));
-                        }
-                        /*
                         $$ = malloc(sizeof(stmt_t));
                         make_stmt($$);
                         // printf("DEBUG: $1 is %p, $2 is %p\n", (void *)$1, (void*)$2);
@@ -97,7 +88,7 @@ stmts:          stmts statement
                         int c1 = $1 ? $1->contlist : 0;
                         int c2 = $2 ? $2->contlist : 0;
                         $$->breaklist = mergelist(b1 , b2);
-                        $$->contlist = mergelist(c1, c2);*/
+                        $$->contlist = mergelist(c1, c2);
                     }
                 | statement
                     {
