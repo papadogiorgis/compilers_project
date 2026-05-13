@@ -179,92 +179,126 @@ expr:           assignexpr{
                         $1 = emit_if_tableitem($1);
                         $3 = emit_if_tableitem($3);
 
-                        $$ = newtemp();
+                        $$ = newexpr(boolexpr_e);
+                        inter_code_boolean_comparison($$, $1, $3, if_greater);
+                        /*$$ = newtemp();
                         $$->type = boolexpr_e;
                         emit(if_greater, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
                         emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
-                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);
+                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);*/
                     }
                 | expr GREQ_THAN expr{
                         printf("line %d: expr->expr >= expr\n", yylineno);
                         $1 = emit_if_tableitem($1);
                         $3 = emit_if_tableitem($3);
 
-                        $$ = newtemp();
+                        $$ = newexpr(boolexpr_e);
+                        inter_code_boolean_comparison($$, $1, $3, if_greatereq);
+                        /*$$ = newtemp();
                         $$->type = boolexpr_e;
                         emit(if_greatereq, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
                         emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
-                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);
+                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);*/
                     }
                 | expr LESS_THAN expr{
                         printf("line %d: expr->expr < expr\n", yylineno);
                         $1 = emit_if_tableitem($1);
                         $3 = emit_if_tableitem($3);
 
-                        $$ = newtemp();
+                        $$ = newexpr(boolexpr_e);
+                        inter_code_boolean_comparison($$, $1, $3, if_less);
+                        /*$$ = newtemp();
                         $$->type = boolexpr_e;
                         emit(if_less, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
                         emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
-                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);
+                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);*/
                     }
                 | expr LEQ_THAN expr{
                         printf("line %d: expr->expr <= expr\n", yylineno);
                         $1 = emit_if_tableitem($1);
                         $3 = emit_if_tableitem($3);
 
-                        $$ = newtemp();
+                        $$ = newexpr(boolexpr_e);
+                        inter_code_boolean_comparison($$, $1, $3, if_lesseq);
+                        /*$$ = newtemp();
                         $$->type = boolexpr_e;
                         emit(if_lesseq, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
                         emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
-                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);
+                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);*/
                     }
                 | expr EQ expr{
                         printf("line %d: expr->expr == expr\n", yylineno);
                         $1 = emit_if_tableitem($1);
                         $3 = emit_if_tableitem($3);
 
-                        $$ = newtemp();
+                        $$ = newexpr(boolexpr_e);
+                        inter_code_boolean_comparison($$, $1, $3, if_eq);
+                        /*$$ = newtemp();
                         $$->type = boolexpr_e;
                         emit(if_eq, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
                         emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
-                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);
+                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);*/
                     }
                 | expr NOT_EQ expr{
                         printf("line %d: expr->expr != expr\n", yylineno);
                         $1 = emit_if_tableitem($1);
                         $3 = emit_if_tableitem($3);
 
-                        $$ = newtemp();
+                        $$ = newexpr(boolexpr_e);
+                        inter_code_boolean_comparison($$, $1, $3, if_noteq);
+                        /*$$ = newtemp();
                         $$->type = boolexpr_e;
                         emit(if_noteq, $1, $3, $$, nextquadlabel()+3, yylineno);
                         emit(assign, newexpr_constbool(0), NULL, $$, 0, yylineno);
                         emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
-                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);
+                        emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);*/
                     }
-                | expr AND expr{
+                | expr AND M expr{
                         printf("line %d: expr->expr and expr\n", yylineno);
                         // $$ = inter_code_bool($1, $3, and_op);
-                        $$ = newtemp();
+                        /*$$ = newtemp();
                         $$->type = boolexpr_e;
-                        emit(and_op, $1, $3, $$, 0, yylineno);
+                        emit(and_op, $1, $3, $$, 0, yylineno);*/
+
+                        inter_make_bool_expr($1);
+                        inter_make_bool_expr($4);
+                        patchlist($1->richtig_list, $3);
+                        $$ = newexpr(boolexpr_e);
+                        $$->richtig_list = $4->richtig_list;
+                        $$->falsch_list = mergelist($1->falsch_list, $4->falsch_list);
                     }
-                | expr OR expr{
+                | expr OR M expr{
                         printf("line %d: expr->expr or expr\n", yylineno);
-                        $$ = newtemp();
+                        /*$$ = newtemp();
                         $$->type = boolexpr_e;
-                        emit(or_op, $1, $3, $$, 0, yylineno);
+                        emit(or_op, $1, $3, $$, 0, yylineno);*/
+
+                        inter_make_bool_expr($1);
+                        inter_make_bool_expr($4);
+                        patchlist($1->falsch_list, $3);
+                        $$ = newexpr(boolexpr_e);
+                        $$->richtig_list = mergelist($1->richtig_list, $4->richtig_list);
+                        $$->falsch_list = $4->falsch_list;
                     }
                 | term{printf("line %d: expr->term\n", yylineno);}
                 ;
 
 term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n", yylineno);}
-                | UMINUS expr{printf("line %d: term-> -expr\n", yylineno);}
-                | NOT expr{printf("line %d: term-> not expr\n", yylineno);}
+                | UMINUS expr{
+                    printf("line %d: term-> -expr\n", yylineno);
+                    $$ = inter_code_uminus($2);}
+                | NOT expr{
+                    printf("line %d: term-> not expr\n", yylineno);
+
+                    inter_make_bool_expr($2);
+                    $$ = newexpr(boolexpr_e);
+                    $$->richtig_list = $2->richtig_list;
+                    $$->falsch_list = $2->falsch_list;}
                 | INCR lvalue{ if($2->sym != NULL){ node *tmp = getSymbol($2->sym->key, symtable);
                                 if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);};
@@ -520,9 +554,13 @@ idlist:         ID {SymTable_put(symtable, $1, $1, FORMAL, scope, yylineno, 0, c
 
 ifprefix:       IF LEFT_PAR expr RIGHT_PAR
                 {
-                    emit(if_eq, $3, NULL,  newexpr_constbool(1), nextquadlabel() + 2,yylineno);
+                    /*emit(if_eq, $3, NULL,  newexpr_constbool(1), nextquadlabel() + 2,yylineno);
                     $$ = nextquadlabel();
-                    emit(jump, NULL, NULL, NULL, 0, yylineno);
+                    emit(jump, NULL, NULL, NULL, 0, yylineno);*/
+
+                    inter_make_bool_expr($3);
+                    patchlist($3->richtig_list, nextquadlabel());
+                    $$ = $3->falsch_list;
                 };
 
 elseprefix:     ELSE
@@ -534,13 +572,15 @@ elseprefix:     ELSE
 ifstmt:         ifprefix statement
                 {
                     printf("line %d: ifstmt-> if(expr) statement\n", yylineno);
-                    patchLabel($1, nextquadlabel());
+                    //patchLabel($1, nextquadlabel());
+                    patchlist($1, nextquadlabel());
                     $$ = $2;
                 } 
                 | ifprefix statement elseprefix statement
                 {
                     printf("line %d: ifstmt-> if(expr) statement else statement\n", yylineno);
-                    patchLabel($1, $3 + 1);
+                    //patchLabel($1, $3 + 1);
+                    patchlist($1, $3 + 1);
                     patchLabel($3, nextquadlabel());
 
                     /* For the ifstmt, create a new statement that will contain the merged
@@ -577,17 +617,22 @@ whilestart:     WHILE
 
 whilecond:      LEFT_PAR expr RIGHT_PAR
                 {
-                    emit(if_eq, $2, newexpr_constbool(1), NULL, nextquadlabel() + 2, yylineno);
+                    /*emit(if_eq, $2, newexpr_constbool(1), NULL, nextquadlabel() + 2, yylineno);
                     int nquad = nextquadlabel();
                     emit(jump, NULL, NULL, NULL, 0 ,yylineno);
-                    $$ = nquad;   
+                    $$ = nquad;   */
+
+                    inter_make_bool_expr($2);
+                    patchlist($2->richtig_list, nextquadlabel());
+                    $$ = $2->falsch_list;
                 };
 
 /* whilestmt:      whilestart whilecond stmts */
 whilestmt:      whilestart whilecond loopstmt
                 {
                     emit(jump, NULL, NULL, NULL, $1, yylineno);
-                    patchLabel($2, nextquadlabel());
+                    //patchLabel($2, nextquadlabel());
+                    patchlist($2, nextquadlabel());
                     if ($3){
                         patchlist($3->breaklist, nextquadlabel());
                         patchlist($3->contlist, $1);
@@ -602,8 +647,12 @@ forprefix:      FOR LEFT_PAR elist SEMICOLON M expr SEMICOLON
                 {
                     $$ = malloc(sizeof(forprefix));
                     $$->test = $5;
-                    $$->enter = nextquadlabel();
-                    emit(if_eq, newexpr_constbool(1), $6, NULL, 0, yylineno);
+                    /*$$->enter = nextquadlabel();
+                    emit(if_eq, newexpr_constbool(1), $6, NULL, 0, yylineno);*/
+
+                    inter_make_bool_expr($6);
+                    $$->falselist = $6->falsch_list;
+                    $$->enter = $6->richtig_list;
 
                 };
 
@@ -611,12 +660,14 @@ forprefix:      FOR LEFT_PAR elist SEMICOLON M expr SEMICOLON
 
 forstmt:        forprefix N elist RIGHT_PAR N loopstmt N
                 {
-                    patchLabel($1 ? $1->enter : 0, $5 + 1);
+                    //patchLabel($1 ? $1->enter : 0, $5 + 1);
+                    patchlist($1 ? $1->enter : 0, $5 + 1);
                     patchLabel($2, nextquadlabel());
                     patchLabel($5, $1 ? $1->test : 0);
                     patchLabel($7, $2 + 1);
 
-                    
+                    patchlist($1 ? $1->falselist : 0, nextquadlabel());
+
                     patchlist($6 ? $6->breaklist: 0, nextquadlabel());
                     patchlist($6 ? $6->contlist: 0, $2 + 1);
                 };
