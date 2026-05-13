@@ -339,9 +339,14 @@ assignexpr:     lvalue ASSIGN expr{
 
 primary:        lvalue{$$=$1; printf("line %d: primary->lvalue\n", yylineno);}
                 | call{$$=$1; printf("line %d: primary->call\n", yylineno);}
-                | objectdef{printf("line %d: primary->objectdef\n", yylineno);}
+                | objectdef{
+                    $$ = $1;
+                    printf("line %d: primary->objectdef\n", yylineno);}
                 /* | funcdef {printf("line %d: primary->funcdef\n", yylineno);} // to avoid crashing on foo = function(...){...} case */
-                | LEFT_PAR funcdef RIGHT_PAR{printf("line %d: primary->(funcdef)\n", yylineno);}
+                | LEFT_PAR funcdef RIGHT_PAR{
+                    $$ = lvalue_expr($2);
+                    $$->type = programfunc_e;
+                    printf("line %d: primary->(funcdef)\n", yylineno);}
                 | const{$$=$1; printf("line %d: primary->const\n", yylineno);}
                 ;
 
@@ -534,13 +539,13 @@ const:          INT
                     }
                 | TRUE
                     {
-                        $$ = newexpr(constnum_e);
+                        $$ = newexpr(constbool_e);
                         $$->boolConst = 1;
                         printf("line %d: const-> true\n", yylineno);
                     }
                 | FALSE
                     {
-                        $$ = newexpr(constnum_e);
+                        $$ = newexpr(constbool_e);
                         $$->boolConst = 0;
                         printf("line %d: const-> false\n", yylineno);
                     }
