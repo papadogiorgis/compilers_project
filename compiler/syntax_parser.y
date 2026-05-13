@@ -554,13 +554,11 @@ idlist:         ID {SymTable_put(symtable, $1, $1, FORMAL, scope, yylineno, 0, c
 
 ifprefix:       IF LEFT_PAR expr RIGHT_PAR
                 {
-                    /*emit(if_eq, $3, NULL,  newexpr_constbool(1), nextquadlabel() + 2,yylineno);
+                    //emit(if_eq, $3, NULL,  newexpr_constbool(1), nextquadlabel() + 2,yylineno);
+                    expr* cond = inter_code_bool_to_val($3);
+                    emit(if_eq, cond, newexpr_constbool(1), NULL, nextquadlabel() + 2, yylineno);
                     $$ = nextquadlabel();
-                    emit(jump, NULL, NULL, NULL, 0, yylineno);*/
-
-                    inter_make_bool_expr($3);
-                    patchlist($3->richtig_list, nextquadlabel());
-                    $$ = $3->falsch_list;
+                    emit(jump, NULL, NULL, NULL, 0, yylineno);
                 };
 
 elseprefix:     ELSE
@@ -572,15 +570,13 @@ elseprefix:     ELSE
 ifstmt:         ifprefix statement
                 {
                     printf("line %d: ifstmt-> if(expr) statement\n", yylineno);
-                    //patchLabel($1, nextquadlabel());
-                    patchlist($1, nextquadlabel());
+                    patchLabel($1, nextquadlabel());
                     $$ = $2;
                 } 
                 | ifprefix statement elseprefix statement
                 {
                     printf("line %d: ifstmt-> if(expr) statement else statement\n", yylineno);
-                    //patchLabel($1, $3 + 1);
-                    patchlist($1, $3 + 1);
+                    patchLabel($1, $3 + 1);
                     patchLabel($3, nextquadlabel());
 
                     /* For the ifstmt, create a new statement that will contain the merged
@@ -617,22 +613,18 @@ whilestart:     WHILE
 
 whilecond:      LEFT_PAR expr RIGHT_PAR
                 {
-                    /*emit(if_eq, $2, newexpr_constbool(1), NULL, nextquadlabel() + 2, yylineno);
-                    int nquad = nextquadlabel();
+                    //emit(if_eq, $2, newexpr_constbool(1), NULL, nextquadlabel() + 2, yylineno);
+                    expr* cond = inter_code_bool_to_val($2);
+                    emit(if_eq, cond, newexpr_constbool(1), NULL, nextquadlabel() + 2, yylineno);
+                    $$ = nextquadlabel();
                     emit(jump, NULL, NULL, NULL, 0 ,yylineno);
-                    $$ = nquad;   */
-
-                    inter_make_bool_expr($2);
-                    patchlist($2->richtig_list, nextquadlabel());
-                    $$ = $2->falsch_list;
                 };
 
 /* whilestmt:      whilestart whilecond stmts */
 whilestmt:      whilestart whilecond loopstmt
                 {
                     emit(jump, NULL, NULL, NULL, $1, yylineno);
-                    //patchLabel($2, nextquadlabel());
-                    patchlist($2, nextquadlabel());
+                    patchLabel($2, nextquadlabel());
                     if ($3){
                         patchlist($3->breaklist, nextquadlabel());
                         patchlist($3->contlist, $1);
@@ -647,26 +639,24 @@ forprefix:      FOR LEFT_PAR elist SEMICOLON M expr SEMICOLON
                 {
                     $$ = malloc(sizeof(forprefix));
                     $$->test = $5;
-                    /*$$->enter = nextquadlabel();
-                    emit(if_eq, newexpr_constbool(1), $6, NULL, 0, yylineno);*/
-
-                    inter_make_bool_expr($6);
-                    $$->falselist = $6->falsch_list;
-                    $$->enter = $6->richtig_list;
-
+                    $$->enter = nextquadlabel();
+                    expr* cond = inter_code_bool_to_val($6);
+                    emit(if_eq, cond, newexpr_constbool(1), NULL, 0, yylineno);
+                    //emit(if_eq, newexpr_constbool(1), $6, NULL, 0, yylineno);
+                    $$->falselist = nextquadlabel();
+                    emit(jump, NULL, NULL, NULL, 0, yylineno);
                 };
 
 /* forstmt:        FOR {loopFlag = 1;} LEFT_PAR elist SEMICOLON expr SEMICOLON elist RIGHT_PAR statement{loopFlag = 0;printf("line %d: forstmt-> for(elist;expr;elist) statement\n", yylineno);}; */
 
 forstmt:        forprefix N elist RIGHT_PAR N loopstmt N
                 {
-                    //patchLabel($1 ? $1->enter : 0, $5 + 1);
-                    patchlist($1 ? $1->enter : 0, $5 + 1);
+                    patchLabel($1 ? $1->enter : 0, $5 + 1);
                     patchLabel($2, nextquadlabel());
                     patchLabel($5, $1 ? $1->test : 0);
                     patchLabel($7, $2 + 1);
 
-                    patchlist($1 ? $1->falselist : 0, nextquadlabel());
+                    patchLabel($1 ? $1->falselist : 0, nextquadlabel());
 
                     patchlist($6 ? $6->breaklist: 0, nextquadlabel());
                     patchlist($6 ? $6->contlist: 0, $2 + 1);
