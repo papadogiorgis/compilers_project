@@ -195,16 +195,17 @@ expr* inter_code_bool_to_val(expr* e){
 	if(e->type != boolexpr_e){
 		return e;
 	}
+	expr* res = newtemp();
+	res->type = var_e;
 	//if its true assign 1
 	patchlist(e->richtig_list, nextquadlabel());
-	emit(assign, newexpr_constbool(1), NULL, e, 0, yylineno);
+	emit(assign, newexpr_constbool(1), NULL, res, 0, yylineno);
 	emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
 	//if its false assign 0
 	patchlist(e->falsch_list, nextquadlabel());
-	emit(assign, newexpr_constbool(0), NULL, e, 0, yylineno);
+	emit(assign, newexpr_constbool(0), NULL, res, 0, yylineno);
 
-	e->type = var_e;
-	return e;
+	return res;
 
 }
 //--------------------------------

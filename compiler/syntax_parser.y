@@ -268,6 +268,7 @@ expr:           assignexpr{
                         inter_make_bool_expr($5);
                         patchlist($1->richtig_list, $4);
                         $$ = newexpr(boolexpr_e);
+                        $$->sym = newtemp()->sym;
                         $$->richtig_list = $5->richtig_list;
                         $$->falsch_list = mergelist($1->falsch_list, $5->falsch_list);
                     }
@@ -280,6 +281,7 @@ expr:           assignexpr{
                         inter_make_bool_expr($5);
                         patchlist($1->falsch_list, $4);
                         $$ = newexpr(boolexpr_e);
+                        $$->sym = newtemp()->sym;
                         $$->richtig_list = mergelist($1->richtig_list, $5->richtig_list);
                         $$->falsch_list = $5->falsch_list;
                     }
