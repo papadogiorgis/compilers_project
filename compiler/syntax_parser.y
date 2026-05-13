@@ -258,32 +258,30 @@ expr:           assignexpr{
                         emit(jump, NULL, NULL, NULL, nextquadlabel()+2, yylineno);
                         emit(assign, newexpr_constbool(1), NULL, $$, 0, yylineno);*/
                     }
-                | expr AND M expr{
+                | expr AND {inter_make_bool_expr($1);} M expr{
                         printf("line %d: expr->expr and expr\n", yylineno);
                         // $$ = inter_code_bool($1, $3, and_op);
                         /*$$ = newtemp();
                         $$->type = boolexpr_e;
                         emit(and_op, $1, $3, $$, 0, yylineno);*/
 
-                        inter_make_bool_expr($1);
-                        inter_make_bool_expr($4);
-                        patchlist($1->richtig_list, $3);
+                        inter_make_bool_expr($5);
+                        patchlist($1->richtig_list, $4);
                         $$ = newexpr(boolexpr_e);
-                        $$->richtig_list = $4->richtig_list;
-                        $$->falsch_list = mergelist($1->falsch_list, $4->falsch_list);
+                        $$->richtig_list = $5->richtig_list;
+                        $$->falsch_list = mergelist($1->falsch_list, $5->falsch_list);
                     }
-                | expr OR M expr{
+                | expr OR {inter_make_bool_expr($1);} M expr{
                         printf("line %d: expr->expr or expr\n", yylineno);
                         /*$$ = newtemp();
                         $$->type = boolexpr_e;
                         emit(or_op, $1, $3, $$, 0, yylineno);*/
 
-                        inter_make_bool_expr($1);
-                        inter_make_bool_expr($4);
-                        patchlist($1->falsch_list, $3);
+                        inter_make_bool_expr($5);
+                        patchlist($1->falsch_list, $4);
                         $$ = newexpr(boolexpr_e);
-                        $$->richtig_list = mergelist($1->richtig_list, $4->richtig_list);
-                        $$->falsch_list = $4->falsch_list;
+                        $$->richtig_list = mergelist($1->richtig_list, $5->richtig_list);
+                        $$->falsch_list = $5->falsch_list;
                     }
                 | term{printf("line %d: expr->term\n", yylineno);}
                 ;
@@ -297,8 +295,8 @@ term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n"
 
                     inter_make_bool_expr($2);
                     $$ = newexpr(boolexpr_e);
-                    $$->richtig_list = $2->richtig_list;
-                    $$->falsch_list = $2->falsch_list;}
+                    $$->richtig_list = $2->falsch_list;
+                    $$->falsch_list = $2->richtig_list;}
                 | INCR lvalue{ if($2->sym != NULL){ node *tmp = getSymbol($2->sym->key, symtable);
                                 if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);};
