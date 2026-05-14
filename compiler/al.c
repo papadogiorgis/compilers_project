@@ -14,6 +14,7 @@ extern FILE* yyin;
 extern SymTable_T symtable;
 extern stack_t* stack;
 extern lc_stack_t *lcs_top, *lcs_bot;
+extern int err_count;
 
 struct token_list token_list = {NULL};
 
@@ -48,7 +49,9 @@ int main(int argc, char **argv){
     if(!quad_txt){
         fprintf(stderr, "Couldn't open file all_quads.txt\n");
     }else{
-        give_quads(quad_txt);
+        if(err_count == 0){
+            give_quads(quad_txt);
+        }
     }
 
     return parse_res;

@@ -22,9 +22,10 @@
     stack_t *stack;
     char **errors;
     int funcScope[1024] = {0};
-    int errorsCnt, errorsSize;
+    int errorsSize;
     lc_stack_t *lcs_top = NULL;
     lc_stack_t* lcs_bot = NULL;
+    int err_count = 0;
     
     extern int yylex(void);
 
@@ -124,7 +125,11 @@ statement:      expr SEMICOLON {
                 | BREAK SEMICOLON {
                     reset_temp_counter();
                     // if (!$$){ $$ = malloc(sizeof(stmt_t));}
-                    if (lcs_top && loopcounter == 0){printf("\nError: use of break outside of loop line %d\n\n", yylineno);}printf("line %d: statement->break;\n", yylineno);
+                    if (lcs_top && loopcounter == 0){
+                        printf("\nError: use of break outside of loop line %d\n\n", yylineno);
+                        err_count++;
+                    }
+                    printf("line %d: statement->break;\n", yylineno);
                     $$ = malloc(sizeof(stmt_t));
                     make_stmt($$);
                     $$->breaklist = newlist(nextquadlabel());
@@ -133,7 +138,11 @@ statement:      expr SEMICOLON {
                 | CONTINUE SEMICOLON{
                     reset_temp_counter();
                     // if (!$$) {$$ = malloc(sizeof(stmt_t));}
-                    if (lcs_top && loopcounter == 0){printf("\nError: use of continue outside of loop, line %d\n\n", yylineno);}printf("line %d: statement->continue;\n", yylineno);
+                    if (lcs_top && loopcounter == 0){
+                        printf("\nError: use of continue outside of loop, line %d\n\n", yylineno);
+                        err_count++;
+                    }
+                    printf("line %d: statement->continue;\n", yylineno);
                     $$ = malloc(sizeof(stmt_t));
                     make_stmt($$);
                     $$->contlist = newlist(nextquadlabel());
@@ -305,6 +314,7 @@ term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n"
                         node *tmp = getSymbol($2->sym->key, symtable);
                         if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) {
                             printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);
+                            err_count++;
                         }
                     }
                     expr* lval = emit_if_tableitem($2);
@@ -321,6 +331,7 @@ term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n"
                         node *tmp = getSymbol($1->sym->key, symtable);
                         if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
                             printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);
+                            err_count++;
                         }
                     }
                     expr* old = newtemp();
@@ -339,6 +350,7 @@ term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n"
                         node *tmp = getSymbol($2->sym->key, symtable);
                         if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
                             printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);
+                            err_count++;
                         }
                     }
                     expr* lval = emit_if_tableitem($2);
@@ -355,6 +367,7 @@ term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n"
                         node *tmp = getSymbol($1->sym->key, symtable);
                         if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
                             printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);
+                            err_count++;
                         }
                     }
                     expr* old = newtemp();
@@ -376,6 +389,7 @@ assignexpr:     lvalue ASSIGN expr{
                         node *tmp = getSymbol($1->sym->key, symtable);
                         if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
                                 printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);
+                                err_count++;
                         }
                     }
                     $$ = inter_code_assign($1, $3);
@@ -383,6 +397,8 @@ assignexpr:     lvalue ASSIGN expr{
                 }
                 | call ASSIGN expr {
                     printf("\nError: function call is not lvalue, line:%d\n\n", yylineno);
+                    err_count++;
+                    $$ = newexpr(nil_e);
                 }
                 ;
 
@@ -408,6 +424,7 @@ lvalue:         ID{
                     } else {
                         if (findScope($1,symtable) != 0 && findScope($1,symtable) != scope && funcScope[scope] != funcScope[findScope($1,symtable)]){
                             printf("\nError: var not accesible, symbol: %s line: %d\n\n", $1, yylineno);
+                            err_count++;
                         }
                     };
                     $$ = newexpr(var_e);
@@ -415,11 +432,27 @@ lvalue:         ID{
                 printf("line %d: lvalue->id\n", yylineno);}
 
 
-                | LOCAL ID{;node *tmp = getSymbol($2, symtable); if(tmp!=NULL && tmp->type == LIBFUNC){printf("\nError: func shadows lib func, symbol: %s line: %d\n\n", $2, yylineno);}
-                                                                else {SymTable_put(symtable, $2,$2, LOCALV, scope, yylineno,1,currscopeoffset());incurrscopeoffset();} 
-                                                                printf("line %d: lvalue->local id\n", yylineno);}
-                | DOUBLE_COLON ID{;if (getSymbolScope($2, symtable,0) == NULL){printf("\nError: global var doesnt exist, symbol: %s line: %d\n\n", $2, yylineno);} 
-                                printf("line %d: lvalue-> ::id\n", yylineno);}
+                | LOCAL ID{
+                    node *tmp = getSymbol($2, symtable);
+                    if(tmp!=NULL && tmp->type == LIBFUNC){
+                        printf("\nError: func shadows lib func, symbol: %s line: %d\n\n", $2, yylineno);
+                        err_count++;
+                    }else{
+                        tmp = SymTable_put(symtable, $2,$2, LOCALV, scope, yylineno,1,currscopeoffset());
+                        incurrscopeoffset();
+                    }
+                    $$ = newexpr(var_e);
+                    $$->sym = tmp;
+                    printf("line %d: lvalue->local id\n", yylineno);}
+                | DOUBLE_COLON ID{
+                    node* tmp = getSymbolScope($2, symtable, 0);
+                    if (tmp == NULL){
+                        printf("\nError: global var doesnt exist, symbol: %s line: %d\n\n", $2, yylineno);
+                        err_count++;
+                    }
+                    $$ = newexpr(var_e);
+                    $$->sym = tmp;
+                    printf("line %d: lvalue-> ::id\n", yylineno);}
                 | member{$$ = $1; printf("line %d: lvalue-> member\n", yylineno);}
                 ;
 
@@ -722,6 +755,7 @@ forstmt:        forprefix N elist RIGHT_PAR N loopstmt N
 returnstmt:     RETURN SEMICOLON{
                     if (infunc == 0){
                         printf("\nError: use of return outside of function, line %d\n", yylineno);
+                        err_count++;
                     }
                     emit(ret, NULL, NULL, NULL, 0, yylineno);
                     //emit(jump, NULL, NULL, NULL, 0, yylineno);
@@ -729,6 +763,7 @@ returnstmt:     RETURN SEMICOLON{
                 | RETURN expr SEMICOLON{
                     if (infunc == 0){
                         printf("\nError: use of return outside of function, line %d\n", yylineno);
+                        err_count++;
                     }
                     expr* retval = emit_if_tableitem($2);
                     emit(ret, retval, NULL, NULL, 0, yylineno);
