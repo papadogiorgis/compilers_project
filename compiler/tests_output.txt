@@ -6,13 +6,13 @@ quad#   opcode          result          arg1            arg2            label
 ------------------------------------------------------------------------------
 1       JE                              a               true            3         
 2       JUMP                                                            7         
-3       JE                              (null)          true            7         
+3       JE                                              true            7         
 4       JUMP                                                            5         
-5       ASSIGN          _t1             true                            
+5       ASSIGN          _t2             true                            
 6       JUMP                                                            8         
-7       ASSIGN          _t1             false                           
-8       ASSIGN          x               _t1                             
-9       ASSIGN          _t2             x  
+7       ASSIGN          _t2             false                           
+8       ASSIGN          x               _t2                             
+9       ASSIGN          _t3             x
 
 -->backpatch0.asc SIMULATOR'S QUADS
 1: if_eq a 'true' 3 [line 1]
@@ -47,7 +47,7 @@ quad#   opcode          result          arg1            arg2            label
 12      PARAM                           "..."                           
 13      CALL                            print                           
 14      RETVAL          _t3                                             
-15      JUMP              
+15      JUMP                                                            1
 
 -->backpatch1.asc SIMULATOR'S QUADS
 1: if_eq a 'true' 7 [line 1]
@@ -85,7 +85,7 @@ quad#   opcode          result          arg1            arg2            label
 9       JUMP                                                            13        
 10      PARAM                           "?"                             
 11      CALL                            print                           
-12      RETVAL          _t3                
+12      RETVAL          _t3
 
 --> SIMULATOR'S QUADS
 1: if_eq a 'true' 5 [line 1]
@@ -153,28 +153,28 @@ quad#   opcode          result          arg1            arg2            label
 27      JUMP                                                            28        
 28      JE                              a               true            30        
 29      JUMP                                                            32        
-30      ASSIGN          _t2             true                            
+30      ASSIGN          _t3             true                            
 31      JUMP                                                            33        
-32      ASSIGN          _t2             false                           
-33      ASSIGN          y               _t2                             
-34      ASSIGN          _t3             y                               
+32      ASSIGN          _t3             false                           
+33      ASSIGN          y               _t3                             
+34      ASSIGN          _t4             y                               
 35      JE                              x               true            37        
-36      JUMP                                                            44        
-37      FUNCSTART       $0                                              
-38      FUNCEND         $0                                              
-39      PARAM                           2                               
-40      CALL                            $0                              
-41      RETVAL          _t0                                             
-42      JE                              _t0             true            48        
-43      JUMP                                                            44        
-44      FUNCSTART       $1                                              
-45      FUNCEND         $1                                              
-46      JE                              $1              true            48        
-47      JUMP                                                            50        
-48      ASSIGN          _t1             true                            
-49      JUMP                                                            51        
-50      ASSIGN          _t1             false                           
-51      ASSIGN          x               _t1                             
+36      JUMP                                                            46        
+37      JUMP                                                            41        
+38      FUNCSTART       $0                                              
+39      RET                             false                           
+40      FUNCEND         $0                                              
+41      PARAM                           2                               
+42      CALL                            $0                              
+43      RETVAL          _t0                                             
+44      JE                              _t0             true            52        
+45      JUMP                                                            46        
+46      JUMP                                                            50        
+47      FUNCSTART       $1                                              
+48      RET                             true                            
+49      FUNCEND         $1                                              
+50      JE                              $1              true            52        
+51      JUMP                                                            54
 ASSERION `0` FAILED. ABORTED!
 
 -->backpatch3.asc SIMULATOR'S QUADS
@@ -317,7 +317,7 @@ quad#   opcode          result          arg1            arg2            label
 11      ASSIGN          b               _t0                             
 12      ASSIGN          _t1             b                               
 13      ASSIGN          a               _t1                             
-14      ASSIGN          _t2             a  
+14      ASSIGN          _t2             a
 
 -->p3t_assignments_complex.asc SIMULATOR'S QUADS
 1: assign a 3 [line 1]
@@ -360,39 +360,39 @@ a.x = a[1] = a["r"] = 5;
 -->p3t_assignments_objects.asc OUR QUADS
 quad#   opcode          result          arg1            arg2            label 
 ------------------------------------------------------------------------------
-1       TABSETEL        3               a               3               
+1       TABSETEL        a               3               3               
 2       TABGETEL        _t0             a               3               
 3       TABGETEL        _t0             a               3               
-4       TABSETEL        a               _t0             4               
+4       TABSETEL        _t0             a               4               
 5       TABGETEL        _t1             _t0             4               
 6       TABGETEL        _t0             a               3               
 7       TABGETEL        _t1             _t0             4               
 8       TABGETEL        _t2             _t1             4               
-9       TABSETEL        _t2             a               "r"             
+9       TABSETEL        a               _t2             "r"             
 10      TABGETEL        _t3             a               "r"             
 11      TABSETEL        a               a               "r"             
 12      TABGETEL        _t0             a               "r"             
 13      TABGETEL        _t0             a               "r"             
 14      TABGETEL        _t1             a               "r"             
-15      TABSETEL        _t1             _t0             "q"             
+15      TABSETEL        _t0             _t1             "q"             
 16      TABGETEL        _t2             _t0             "q"             
 17      TABGETEL        _t0             a               "r"             
 18      TABGETEL        _t1             _t0             "q"             
 19      TABGETEL        _t2             _t1             "r"             
 20      TABGETEL        _t3             _t2             "s"             
-21      TABSETEL        12              _t3             3               
+21      TABSETEL        _t3             12              3               
 22      TABGETEL        _t4             _t3             3               
 23      TABGETEL        _t0             a               "3"             
 24      TABGETEL        _t1             _t0             "q"             
 25      TABGETEL        _t2             _t1             4               
 26      CALL                            _t2                             
 27      RETVAL          _t3                                             
-28      TABSETEL        5               a               "r"             
+28      TABSETEL        a               5               "r"             
 29      TABGETEL        _t0             a               "r"             
-30      TABSETEL        _t0             a               1               
+30      TABSETEL        a               _t0             1               
 31      TABGETEL        _t1             a               1               
-32      TABSETEL        _t1             a               "x"             
-33      TABGETEL        _t2             a               "x" 
+32      TABSETEL        a               _t1             "x"             
+33      TABGETEL        _t2             a               "x"
 
 -->p3t_assignments_objects.asc SIMULATOR'S QUADS
 1: tablesetelem a 3 3 [line 1]
@@ -452,7 +452,7 @@ quad#   opcode          result          arg1            arg2            label
 7       ASSIGN          _t0             b                               
 8       ADD             _t0             a               b               
 9       ASSIGN          a               _t0                             
-10      ASSIGN          _t1             a    
+10      ASSIGN          _t1             a
 
 -->p3t_assignments_simple.asc SIMULATOR'S QUADS
 1: assign a 4 [line 1]
@@ -502,7 +502,7 @@ quad#   opcode          result          arg1            arg2            label
 15      ADD             _t1             b               _t0             
 16      ADD             _t2             a               _t1             
 17      ASSIGN          e               _t2                             
-18      ASSIGN          _t3             e             
+18      ASSIGN          _t3             e
 
 -->p3t_basic_expr.asc SIMULATOR'S QUADS
 1: assign a 4 [line 1]
@@ -619,20 +619,21 @@ quad#   opcode          result          arg1            arg2            label
 26      PARAM                           a                               
 27      CALL                            _t0                             
 28      RETVAL          _t3                                             
-29      FUNCSTART       $0                                              
-30      CALL                            b                               
-31      RETVAL          _t0                                             
-32      FUNCEND         $0                                              
-33      CALL                            a                               
-34      RETVAL          _t0                                             
-35      CALL                            b                               
-36      RETVAL          _t1                                             
-37      CALL                            _t1                             
-38      RETVAL          _t2                                             
-39      PARAM                           _t2                             
-40      PARAM                           _t0                             
-41      CALL                            $0                              
-42      RETVAL          _t3        
+29      JUMP                                                            34        
+30      FUNCSTART       $0                                              
+31      CALL                            b                               
+32      RETVAL          _t0                                             
+33      FUNCEND         $0                                              
+34      CALL                            a                               
+35      RETVAL          _t0                                             
+36      CALL                            b                               
+37      RETVAL          _t1                                             
+38      CALL                            _t1                             
+39      RETVAL          _t2                                             
+40      PARAM                           _t2                             
+41      PARAM                           _t0                             
+42      CALL                            $0                              
+43      RETVAL          _t3
 
 -->p3t_calls.asc SIMULATOR'S QUADS
 1: assign e 'false' [line 1]
@@ -694,7 +695,7 @@ quad#   opcode          result          arg1            arg2            label
 2       MUL             _t0             6               8               
 3       SUB             _t0             4               9               
 4       DIV             _t0             3               1               
-5       MOD             _t0             0               3      
+5       MOD             _t0             0               3
 
 -->p3t_const_maths.asc SIMULATOR'S QUADS
 1: add ^0 4 5 [line 1]
@@ -718,12 +719,14 @@ IT PRINTED THE ERRORS IN SYMBOLS (PHASE 2) BUT IT ALSO PRINTED QUADS (PHASE3)
 quad#   opcode          result          arg1            arg2            label 
 ------------------------------------------------------------------------------
 1       JE                              true            true            3         
-2       JUMP                                                            8         
-3       FUNCSTART       $0                                              
-4       JUMP                                                            
+2       JUMP                                                            10        
+3       JUMP                                                            8         
+4       FUNCSTART       $0                                              
 5       JUMP                                                            
-6       FUNCEND         $0                                              
-7       JUMP                                                            1
+6       JUMP                                                            
+7       FUNCEND         $0                                              
+8       RET                                                             
+9       JUMP                                                            1
 
 -->p3t_flow_control_error.asc SIMULATOR'S QUADS
 IT DIDNT PRINT ANY QUADS(PHASE 3) OR SYMBOLS(PHASE 2)
@@ -892,28 +895,36 @@ function(){ function() { iamafunction(3,4); } }
 -->p3t_funcdecl.asc OUR QUADS
 quad#   opcode          result          arg1            arg2            label 
 ------------------------------------------------------------------------------
-1       FUNCSTART       iamafunction                                    
-2       ADD             _t0             a               b               
-3       SUB             _t0             9               0               
-4       FUNCEND         iamafunction                                    
-5       FUNCSTART       iamnothing                                      
-6       FUNCEND         iamnothing                                      
-7       FUNCSTART       $0                                              
-8       SUB             _t0             10              0               
-9       SUB             _t0             11              0               
-10      FUNCEND         $0                                              
-11      ASSIGN          ihavenoname     $0                              
-12      ASSIGN          _t0             ihavenoname                     
-13      FUNCSTART       $1                                              
-14      FUNCEND         $1                                              
-15      FUNCSTART       $2                                              
-16      FUNCSTART       $3                                              
-17      PARAM                           4                               
-18      PARAM                           3                               
-19      CALL                            iamafunction                    
-20      RETVAL          _t0                                             
-21      FUNCEND         $3                                              
-22      FUNCEND         $2 
+1       JUMP                                                            7         
+2       FUNCSTART       iamafunction                                    
+3       ADD             _t0             a               b               
+4       RET                             8                               
+5       SUB             _t0             9               0               
+6       FUNCEND         iamafunction                                    
+7       JUMP                                                            10        
+8       FUNCSTART       iamnothing                                      
+9       FUNCEND         iamnothing                                      
+10      JUMP                                                            16        
+11      FUNCSTART       $0                                              
+12      SUB             _t0             10              0               
+13      RET                             12                              
+14      SUB             _t0             11              0               
+15      FUNCEND         $0                                              
+16      ASSIGN          ihavenoname     $0                              
+17      ASSIGN          _t0             ihavenoname                     
+18      JUMP                                                            21        
+19      FUNCSTART       $1                                              
+20      FUNCEND         $1                                              
+21      JUMP                                                            31        
+22      FUNCSTART       $2                                              
+23      JUMP                                                            30        
+24      FUNCSTART       $3                                              
+25      PARAM                           4                               
+26      PARAM                           3                               
+27      CALL                            iamafunction                    
+28      RETVAL          _t0                                             
+29      FUNCEND         $3                                              
+30      FUNCEND         $2
 
 -->p3t_funcdecl.asc SIMULATOR'S QUADS
 1: jump 18 [line 1]
@@ -1124,52 +1135,54 @@ quad#   opcode          result          arg1            arg2            label
 -->p3t_object_creation_expr.asc OUR QUADS
 quad#   opcode          result          arg1            arg2            label 
 ------------------------------------------------------------------------------
-1       TABCREATE                       _t0                             
-2       TABCREATE                       _t0                             
-3       TABSETEL        1               _t0             0               
-4       TABSETEL        2               _t0             1               
-5       TABSETEL        3               _t0             2               
-6       TABCREATE                       _t0                             
-7       TABCREATE                       _t1                             
-8       TABSETEL        "hello"         _t1             0               
-9       TABSETEL        "lol"           _t1             1               
-10      TABCREATE                       _t2                             
-11      TABCREATE                       _t3                             
-12      TABSETEL        false           _t3             0               
-13      TABSETEL        true            _t3             1               
-14      TABSETEL        _t0             _t3             2               
-15      TABSETEL        5               _t3             3               
-16      TABSETEL        _t1             _t3             4               
-17      TABSETEL        _t2             _t3             5               
-18      FUNCSTART       $0                                              
-19      TABCREATE                       _t0                             
-20      FUNCEND         $0                                              
-21      TABCREATE                       _t0                             
-22      TABSETEL        1               _t0             0               
-23      TABSETEL        2               _t0             1               
-24      TABSETEL        3               _t0             2               
-25      TABCREATE                       _t1                             
-26      TABSETEL        2               _t1             1               
-27      TABSETEL        false           _t1             "bool"          
-28      TABSETEL        print           _t1             5               
-29      TABCREATE                       _t2                             
-30      TABSETEL        5               _t2             4               
-31      TABSETEL        18              _t2             2               
-32      TABSETEL        $0              _t2             "lulz"          
-33      TABSETEL        _t0             _t2             "wot"           
-34      TABSETEL        _t1             _t2             "wut"           
-35      FUNCSTART       four                                            
-36      ASSIGN          four            4                               
-37      ASSIGN          _t0             four                            
-38      FUNCEND         four                                            
-39      TABCREATE                       _t0                             
-40      TABSETEL        four            _t0             4               
-41      TABCREATE                       _t1                             
-42      TABSETEL        _t0             _t1             4               
-43      TABCREATE                       _t2                             
-44      TABSETEL        _t1             _t2             4               
-45      TABCREATE                       _t3                             
-46      TABSETEL        _t2             _t3             4
+1       TABCREATE       _t0                                             
+2       TABCREATE       _t0                                             
+3       TABSETEL        _t0             1               0               
+4       TABSETEL        _t0             2               1               
+5       TABSETEL        _t0             3               2               
+6       TABCREATE       _t0                                             
+7       TABCREATE       _t1                                             
+8       TABSETEL        _t1             "hello"         0               
+9       TABSETEL        _t1             "lol"           1               
+10      TABCREATE       _t2                                             
+11      TABCREATE       _t3                                             
+12      TABSETEL        _t3             false           0               
+13      TABSETEL        _t3             true            1               
+14      TABSETEL        _t3             _t0             2               
+15      TABSETEL        _t3             5               3               
+16      TABSETEL        _t3             _t1             4               
+17      TABSETEL        _t3             _t2             5               
+18      JUMP                                                            22        
+19      FUNCSTART       $0                                              
+20      TABCREATE       _t0                                             
+21      FUNCEND         $0                                              
+22      TABCREATE       _t0                                             
+23      TABSETEL        _t0             1               0               
+24      TABSETEL        _t0             2               1               
+25      TABSETEL        _t0             3               2               
+26      TABCREATE       _t1                                             
+27      TABSETEL        _t1             1               2               
+28      TABSETEL        _t1             "bool"          false           
+29      TABSETEL        _t1             5               print           
+30      TABCREATE       _t2                                             
+31      TABSETEL        _t2             4               5               
+32      TABSETEL        _t2             2               18              
+33      TABSETEL        _t2             "lulz"          $0              
+34      TABSETEL        _t2             "wot"           _t0             
+35      TABSETEL        _t2             "wut"           _t1             
+36      JUMP                                                            41        
+37      FUNCSTART       four                                            
+38      ASSIGN          four            4                               
+39      ASSIGN          _t0             four                            
+40      FUNCEND         four                                            
+41      TABCREATE       _t0                                             
+42      TABSETEL        _t0             4               four            
+43      TABCREATE       _t1                                             
+44      TABSETEL        _t1             4               _t0             
+45      TABCREATE       _t2                                             
+46      TABSETEL        _t2             4               _t1             
+47      TABCREATE       _t3                                             
+48      TABSETEL        _t3             4               _t2
 
 -->p3t_object_creation_expr.asc SIMULATOR'S QUADS
 1: tablecreate ^0 [line 1]
@@ -1253,28 +1266,31 @@ quad#   opcode          result          arg1            arg2            label
 22      ASSIGN          _t10            b                               
 23      ASSIGN          a               _t10                            
 24      ASSIGN          _t11            a                               
-25      JG                              a               b               29        
+25      JG                              a               b               47        
 26      JUMP                                                            27        
 27      JL                              c               d               29        
 28      JUMP                                                            31        
-29      JGE                             e               f               38        
+29      JGE                             e               f               47        
 30      JUMP                                                            31        
 31      JLE                             g               h               33        
 32      JUMP                                                            40        
 33      JE                              i               true            37        
 34      JUMP                                                            35        
-35      ASSIGN          _t6             true                            
+35      ASSIGN          _t7             true                            
 36      JUMP                                                            38        
-37      ASSIGN          _t6             false                           
-38      JE                              _t6             j               45        
+37      ASSIGN          _t7             false                           
+38      JE                              _t7             j               47        
 39      JUMP                                                            40        
 40      JE                              k               true            44        
 41      JUMP                                                            42        
-42      ASSIGN          _t10            true                            
+42      ASSIGN          _t12            true                            
 43      JUMP                                                            45        
-44      ASSIGN          _t10            false                           
-45      JNE                             _t10            l               
-46      JUMP
+44      ASSIGN          _t12            false                           
+45      JNE                             _t12            l               47        
+46      JUMP                                                            49        
+47      ASSIGN          _t15            true                            
+48      JUMP                                                            50        
+49      ASSIGN          _t15            false
 
 -->p3t_relational SIMULATOR'S QUADS
 1: assign l 0 [line 1]

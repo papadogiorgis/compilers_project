@@ -385,7 +385,7 @@ const char* expr_to_str(expr* e)
 		if (e->sym) {
 			return e->sym->key;
 		} else {
-			return 0;
+			return "";
 		}
 	default:
 		assert(0);
