@@ -13,14 +13,14 @@ int is_arith(expr* e)
 
 expr* inter_code_assign(expr* lval, expr* rval)
 {
+	//if rval is a table, bring its value
+	rval = emit_if_tableitem(rval);
 	if (lval->type == tableitem_e) {
 		emit(tablesetelem, rval, lval->index, lval, 0, yylineno);
 		expr* temp = emit_if_tableitem(lval);
 		temp->type = assignexpr_e;
 		return temp;
 	} else {
-		//if rval is a table, bring its value
-		rval = emit_if_tableitem(rval);
 		// 1st emit assigns the value to the variable
 		emit(assign, rval, NULL, lval, 0, yylineno);
 		// 2nd emit saves the result in a temp var
@@ -68,7 +68,8 @@ expr* inter_code_objectdef_elist(expr* e){
 	while(elist_element != NULL){
 		expr* arith = newexpr(constnum_e);
 		arith->numConst = i;
-		emit(tablesetelem, elist_element, arith, temp, 0, yylineno);
+		expr* val = emit_if_tableitem(elist_element);
+		emit(tablesetelem, val, arith, temp, 0, yylineno);
 		elist_element = elist_element->next;
 		i++;
 	}
@@ -82,7 +83,9 @@ expr* inter_code_objectdef_indexed(expr* e){
 
 	expr* elist_element = e;
 	while(elist_element != NULL){
-		emit(tablesetelem, elist_element, elist_element->index, temp, 0, yylineno);
+		expr* val = emit_if_tableitem(elist_element);
+		expr* idx = emit_if_tableitem(elist_element->index);
+		emit(tablesetelem, val, idx, temp, 0, yylineno);
 		elist_element = elist_element->next;
 	}
 	return temp;
@@ -119,7 +122,8 @@ expr* inter_code_call(expr* lval, expr* elist){
 	}
 	//now the elist is reversed and stored in expr* rev
 	while(rev != NULL){
-		emit(param, rev, NULL, NULL, 0, yylineno);
+		expr* val = emit_if_tableitem(rev);
+		emit(param, val, NULL, NULL, 0, yylineno);
 		rev = rev->next;
 	}
 	//make call
@@ -180,15 +184,17 @@ void inter_make_bool_expr(expr* e){
 	if(e->type == boolexpr_e){
 		return;
 	}
+	expr* val = emit_if_tableitem(e);
 	//if its not, i make the jumps
 	//if its true goto...
-	emit(if_eq, e, newexpr_constbool(1), NULL, 0, yylineno);
+	emit(if_eq, val, newexpr_constbool(1), NULL, 0, yylineno);
 	e->richtig_list = newlist(nextquadlabel() - 1);
 	//if its false goto...
 	emit(jump, NULL, NULL, NULL, 0, yylineno);
 	e->falsch_list = newlist(nextquadlabel() - 1);
 	//change e type so we know it has true and false listsnow
 	e->type = boolexpr_e;
+	e->sym = val->sym;
 }
 
 expr* inter_code_bool_to_val(expr* e){

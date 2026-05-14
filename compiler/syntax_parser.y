@@ -299,7 +299,7 @@ expr:           assignexpr{
                 ;
 
 term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n", yylineno);}
-                | UMINUS expr{
+                | MINUS expr %prec UMINUS{
                     printf("line %d: term-> -expr\n", yylineno);
                     $$ = inter_code_uminus($2);}
                 | NOT expr{
@@ -776,5 +776,6 @@ returnstmt:     RETURN SEMICOLON{
 int yyerror (char* yaccProvideMessage){
     fprintf(stderr, "%s: at line %d before token: %s\n", yaccProvideMessage, yylineno, yytext);
     fprintf(stderr, "Input not valid!\n");
+    err_count++;
     return 0;
 }

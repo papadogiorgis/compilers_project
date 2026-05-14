@@ -216,21 +216,24 @@ quad#   opcode          result          arg1            arg2            label
 90      CALL                            print                           
 91      RETVAL          _t0                                             
 92      JUMP                                                            82        
-93      JUMP                                                            108       
+93      JUMP                                                            111       
 94      JE                              y               true            98        
 95      JUMP                                                            96        
 96      ASSIGN          _t1             true                            
 97      JUMP                                                            99        
 98      ASSIGN          _t1             false                           
 99      JE                              _t1             true            101       
-100     JUMP                                                            108       
-101     JE                              y               true            
-102     JUMP                                                            
-103     PARAM                           _t2                             
-104     CALL                            print                           
-105     RETVAL          _t3                                             
-106     JUMP                                                            108       
-107     JUMP                                                            94
+100     JUMP                                                            111       
+101     JE                              y               true            105       
+102     JUMP                                                            103       
+103     ASSIGN          _t3             true                            
+104     JUMP                                                            106       
+105     ASSIGN          _t3             false                           
+106     PARAM                           _t3                             
+107     CALL                            print                           
+108     RETVAL          _t4                                             
+109     JUMP                                                            111       
+110     JUMP                                                            94
 
 -->backpatch3.asc SIMULATOR'S QUADS
 1: assign f 1 [line 1]
@@ -372,7 +375,18 @@ quad#   opcode          result          arg1            arg2            label
 11      ASSIGN          b               _t0                             
 12      ASSIGN          _t1             b                               
 13      ASSIGN          a               _t1                             
-14      ASSIGN          _t2             a
+14      ASSIGN          _t2             a                               
+15      ADD             _t0             c               d               
+16      UMINUS          _t1             _t0                             
+17      SUB             _t2             a               b               
+18      MUL             _t3             _t1             _t2             
+19      UMINUS          _t4             _t3                             
+20      UMINUS          _t5             b                               
+21      MOD             _t6             _t4             _t5             
+22      ASSIGN          b               _t6                             
+23      ASSIGN          _t7             b                               
+24      ASSIGN          a               _t7                             
+25      ASSIGN          _t8             a
 
 -->p3t_assignments_complex.asc SIMULATOR'S QUADS
 1: assign a 3 [line 1]
@@ -418,36 +432,40 @@ quad#   opcode          result          arg1            arg2            label
 1       TABSETEL        a               3               3               
 2       TABGETEL        _t0             a               3               
 3       TABGETEL        _t0             a               3               
-4       TABSETEL        _t0             a               4               
-5       TABGETEL        _t1             _t0             4               
-6       TABGETEL        _t0             a               3               
-7       TABGETEL        _t1             _t0             4               
-8       TABGETEL        _t2             _t1             4               
-9       TABSETEL        a               _t2             "r"             
-10      TABGETEL        _t3             a               "r"             
-11      TABSETEL        a               a               "r"             
-12      TABGETEL        _t0             a               "r"             
+4       TABGETEL        _t1             a               3               
+5       TABSETEL        _t0             _t1             4               
+6       TABGETEL        _t2             _t0             4               
+7       TABGETEL        _t0             a               3               
+8       TABGETEL        _t1             _t0             4               
+9       TABGETEL        _t2             _t1             4               
+10      TABGETEL        _t3             _t2             4               
+11      TABSETEL        a               _t3             "r"             
+12      TABGETEL        _t4             a               "r"             
 13      TABGETEL        _t0             a               "r"             
-14      TABGETEL        _t1             a               "r"             
-15      TABSETEL        _t0             _t1             "q"             
-16      TABGETEL        _t2             _t0             "q"             
-17      TABGETEL        _t0             a               "r"             
-18      TABGETEL        _t1             _t0             "q"             
-19      TABGETEL        _t2             _t1             "r"             
-20      TABGETEL        _t3             _t2             "s"             
-21      TABSETEL        _t3             12              3               
-22      TABGETEL        _t4             _t3             3               
-23      TABGETEL        _t0             a               "3"             
-24      TABGETEL        _t1             _t0             "q"             
-25      TABGETEL        _t2             _t1             4               
-26      CALL                            _t2                             
-27      RETVAL          _t3                                             
-28      TABSETEL        a               5               "r"             
-29      TABGETEL        _t0             a               "r"             
-30      TABSETEL        a               _t0             1               
-31      TABGETEL        _t1             a               1               
-32      TABSETEL        a               _t1             "x"             
-33      TABGETEL        _t2             a               "x"
+14      TABSETEL        a               _t0             "r"             
+15      TABGETEL        _t1             a               "r"             
+16      TABGETEL        _t0             a               "r"             
+17      TABGETEL        _t1             a               "r"             
+18      TABGETEL        _t2             _t1             "q"             
+19      TABSETEL        _t0             _t2             "q"             
+20      TABGETEL        _t3             _t0             "q"             
+21      TABGETEL        _t0             a               "r"             
+22      TABGETEL        _t1             _t0             "q"             
+23      TABGETEL        _t2             _t1             "r"             
+24      TABGETEL        _t3             _t2             "s"             
+25      TABSETEL        _t3             12              3               
+26      TABGETEL        _t4             _t3             3               
+27      TABGETEL        _t0             a               "3"             
+28      TABGETEL        _t1             _t0             "q"             
+29      TABGETEL        _t2             _t1             4               
+30      CALL                            _t2                             
+31      RETVAL          _t3                                             
+32      TABSETEL        a               5               "r"             
+33      TABGETEL        _t0             a               "r"             
+34      TABSETEL        a               _t0             1               
+35      TABGETEL        _t1             a               1               
+36      TABSETEL        a               _t1             "x"             
+37      TABGETEL        _t2             a               "x"
 
 -->p3t_assignments_objects.asc SIMULATOR'S QUADS
 1: tablesetelem a 3 3 [line 1]
@@ -557,7 +575,62 @@ quad#   opcode          result          arg1            arg2            label
 15      ADD             _t1             b               _t0             
 16      ADD             _t2             a               _t1             
 17      ASSIGN          e               _t2                             
-18      ASSIGN          _t3             e
+18      ASSIGN          _t3             e                               
+19      UMINUS          _t0             a                               
+20      ADD             _t1             _t0             b               
+21      ASSIGN          e               _t1                             
+22      ASSIGN          _t2             e                               
+23      ADD             _t0             a               b               
+24      UMINUS          _t1             _t0                             
+25      ASSIGN          e               _t1                             
+26      ASSIGN          _t2             e                               
+27      MUL             _t0             a               b               
+28      DIV             _t1             c               d               
+29      MOD             _t2             _t1             e               
+30      SUB             _t3             _t0             _t2             
+31      ASSIGN          e               _t3                             
+32      ASSIGN          _t4             e                               
+33      MOD             _t0             d               e               
+34      DIV             _t1             c               _t0             
+35      SUB             _t2             b               _t1             
+36      MUL             _t3             a               _t2             
+37      ASSIGN          e               _t3                             
+38      ASSIGN          _t4             e                               
+39      ADD             _t0             a               b               
+40      UMINUS          _t1             _t0                             
+41      ADD             _t2             c               d               
+42      UMINUS          _t3             _t2                             
+43      DIV             _t4             _t1             _t3             
+44      UMINUS          _t5             _t4                             
+45      MOD             _t6             _t5             e               
+46      ASSIGN          e               _t6                             
+47      ASSIGN          _t7             e                               
+48      ASSIGN          _t0             a                               
+49      SUB             a               a               1               
+50      ADD             b               b               1               
+51      SUB             _t1             _t0             b               
+52      SUB             c               c               1               
+53      ADD             _t2             _t1             c               
+54      ASSIGN          _t3             d                               
+55      ADD             d               d               1               
+56      SUB             _t4             _t2             _t3             
+57      TABGETEL        _t1             t               "x"             
+58      ASSIGN          _t0             _t1                             
+59      SUB             _t1             _t1             1               
+60      TABSETEL        t               _t1             "x"             
+61      TABGETEL        _t2             t               3               
+62      ADD             _t2             _t2             1               
+63      TABSETEL        t               _t2             3               
+64      SUB             _t3             _t0             _t2             
+65      TABGETEL        _t4             t               "a"             
+66      SUB             _t4             _t4             1               
+67      TABSETEL        t               _t4             "a"             
+68      ADD             _t5             _t3             _t4             
+69      TABGETEL        _t7             t               "z"             
+70      ASSIGN          _t6             _t7                             
+71      ADD             _t7             _t7             1               
+72      TABSETEL        t               _t7             "z"             
+73      SUB             _t8             _t5             _t6
 
 -->p3t_basic_expr.asc SIMULATOR'S QUADS
 1: assign a 4 [line 1]
