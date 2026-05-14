@@ -694,7 +694,7 @@ loopstart:      {if(lcs_top){++loopcounter;}};
 
 loopend:        {if(lcs_top){--loopcounter;}};
 
-loopstmt:       loopstart stmts loopend {$$ = $2;};
+loopstmt:       loopstart statement loopend {$$ = $2;};
 
 whilestart:     WHILE 
                 {
@@ -758,7 +758,7 @@ returnstmt:     RETURN SEMICOLON{
                         err_count++;
                     }
                     emit(ret, NULL, NULL, NULL, 0, yylineno);
-                    //emit(jump, NULL, NULL, NULL, 0, yylineno);
+                    emit(jump, NULL, NULL, NULL, 0, yylineno);
                     printf("line %d: returnstmt-> return;\n", yylineno);}
                 | RETURN expr SEMICOLON{
                     if (infunc == 0){
@@ -767,7 +767,7 @@ returnstmt:     RETURN SEMICOLON{
                     }
                     expr* retval = emit_if_tableitem($2);
                     emit(ret, retval, NULL, NULL, 0, yylineno);
-                    //emit(jump, NULL, NULL, NULL, 0, yylineno);
+                    emit(jump, NULL, NULL, NULL, 0, yylineno);
                     printf("line %d: returnstmt-> return expr;\n", yylineno);}
                 ;
 

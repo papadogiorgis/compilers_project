@@ -159,81 +159,83 @@ quad#   opcode          result          arg1            arg2            label
 33      ASSIGN          y               _t3                             
 34      ASSIGN          _t4             y                               
 35      JE                              x               true            37        
-36      JUMP                                                            46        
-37      JUMP                                                            41        
+36      JUMP                                                            47        
+37      JUMP                                                            42        
 38      FUNCSTART       $0                                              
 39      RET                             false                           
-40      FUNCEND         $0                                              
-41      PARAM                           2                               
-42      CALL                            $0                              
-43      RETVAL          _t0                                             
-44      JE                              _t0             true            52        
-45      JUMP                                                            46        
-46      JUMP                                                            50        
-47      FUNCSTART       $1                                              
-48      RET                             true                            
-49      FUNCEND         $1                                              
-50      JE                              $1              true            52        
-51      JUMP                                                            54        
-52      ASSIGN          _t1             true                            
-53      JUMP                                                            55        
-54      ASSIGN          _t1             false                           
-55      ASSIGN          x               _t1                             
-56      ASSIGN          _t2             x                               
-57      JE                              a               true            65        
-58      JUMP                                                            59        
-59      JE                              b               true            65        
+40      JUMP                                                            
+41      FUNCEND         $0                                              
+42      PARAM                           2                               
+43      CALL                            $0                              
+44      RETVAL          _t0                                             
+45      JE                              _t0             true            54        
+46      JUMP                                                            47        
+47      JUMP                                                            52        
+48      FUNCSTART       $1                                              
+49      RET                             true                            
+50      JUMP                                                            
+51      FUNCEND         $1                                              
+52      JE                              $1              true            54        
+53      JUMP                                                            56        
+54      ASSIGN          _t1             true                            
+55      JUMP                                                            57        
+56      ASSIGN          _t1             false                           
+57      ASSIGN          x               _t1                             
+58      ASSIGN          _t2             x                               
+59      JE                              a               true            67        
 60      JUMP                                                            61        
-61      ASSIGN          y               x                               
-62      ASSIGN          _t1             y                               
-63      JE                              _t1             true            65        
-64      JUMP                                                            67        
-65      ASSIGN          _t3             true                            
-66      JUMP                                                            68        
-67      ASSIGN          _t3             false                           
-68      JE                              _t3             true            70        
-69      JUMP                                                            94        
-70      ASSIGN          i               0                               
-71      ASSIGN          _t4             i                               
-72      JL                              i               5               74        
-73      JUMP                                                            78        
-74      JE                              a               true            76        
-75      JUMP                                                            78        
-76      ASSIGN          _t7             true                            84        
-77      JUMP                                                            79        
-78      ASSIGN          _t7             false                           
-79      JE                              _t7             true            
-80      JUMP                                                            93        
-81      JUMP                                                            93        
-82      ADD             i               i               1               
-83      JUMP                                                            72        
-84      PARAM                           i                               
-85      CALL                            print                           
-86      RETVAL          _t8                                             
-87      JUMP                                                            82        
-88      ADD             i               i               1               
-89      PARAM                           y                               
-90      CALL                            print                           
-91      RETVAL          _t0                                             
-92      JUMP                                                            82        
-93      JUMP                                                            111       
-94      JE                              y               true            98        
-95      JUMP                                                            96        
-96      ASSIGN          _t1             true                            
-97      JUMP                                                            99        
-98      ASSIGN          _t1             false                           
-99      JE                              _t1             true            101       
-100     JUMP                                                            111       
-101     JE                              y               true            105       
-102     JUMP                                                            103       
-103     ASSIGN          _t3             true                            
-104     JUMP                                                            106       
-105     ASSIGN          _t3             false                           
-106     PARAM                           _t3                             
-107     CALL                            print                           
-108     RETVAL          _t4                                             
-109     JUMP                                                            111       
-110     JUMP                                                            94
+61      JE                              b               true            67        
+62      JUMP                                                            63        
+63      ASSIGN          y               x                               
+64      ASSIGN          _t1             y                               
+65      JE                              _t1             true            67        
+66      JUMP                                                            69        
+67      ASSIGN          _t3             true                            
+68      JUMP                                                            70        
+69      ASSIGN          _t3             false                           
+70      JE                              _t3             true            72        
+71      JUMP                                                            96        
+72      ASSIGN          i               0                               
+73      ASSIGN          _t4             i                               
+74      JL                              i               5               76        
+75      JUMP                                                            80        
+76      JE                              a               true            78        
+77      JUMP                                                            80        
+78      ASSIGN          _t7             true                            86        
+79      JUMP                                                            81        
+80      ASSIGN          _t7             false                           
+81      JE                              _t7             true            
+82      JUMP                                                            92        
+83      JUMP                                                            92        
+84      ADD             i               i               1               
+85      JUMP                                                            74        
+86      PARAM                           i                               
+87      CALL                            print                           
+88      RETVAL          _t8                                             
+89      JUMP                                                            84        
+90      ADD             i               i               1               
+91      JUMP                                                            84        
+92      PARAM                           y                               
+93      CALL                            print                           
+94      RETVAL          _t0                                             
+95      JUMP                                                            113       
+96      JE                              y               true            100       
+97      JUMP                                                            98        
+98      ASSIGN          _t1             true                            
+99      JUMP                                                            101       
+100     ASSIGN          _t1             false                           
+101     JE                              _t1             true            103       
+102     JUMP                                                            113       
+103     JE                              y               true            107       
+104     JUMP                                                            105       
+105     ASSIGN          _t3             true                            
+106     JUMP                                                            108       
+107     ASSIGN          _t3             false                           
+108     PARAM                           _t3                             
+109     CALL                            print                           
+110     RETVAL          _t4                                             
+111     JUMP                                                            113       
+112     JUMP                                                            96
 
 -->backpatch3.asc SIMULATOR'S QUADS
 1: assign f 1 [line 1]
@@ -882,62 +884,62 @@ quad#   opcode          result          arg1            arg2            label
 1       ASSIGN          a               1                               
 2       ASSIGN          _t0             a                               
 3       JE                              _t0             true            5         
-4       JUMP                                                            60        
+4       JUMP                                                            10        
 5       SUB             _t1             2               0               
-6       JUMP                                                            60        
+6       JUMP                                                            10        
 7       SUB             _t0             3               0               
 8       JUMP                                                            1         
-9       JE                              4               true            11        
-10      JUMP                                                            59        
-11      JE                              5               true            13        
-12      JUMP                                                            58        
-13      JE                              6               true            15        
-14      JUMP                                                            57        
-15      JE                              7               true            17        
-16      JUMP                                                            56        
-17      JE                              8               true            19        
-18      JUMP                                                            21        
-19      SUB             _t0             9               0               
-20      JUMP                                                            22        
-21      SUB             _t0             10              0               
-22      JE                              11              true            24        
-23      JUMP                                                            55        
-24      SUB             _t0             12              0               
-25      JE                              13              true            30        
-26      JUMP                                                            54        
-27      JUMP                                                            54        
-28      SUB             _t1             14              0               
-29      JUMP                                                            25        
-30      JE                              15              true            32        
-31      JUMP                                                            34        
-32      SUB             _t2             16              0               
-33      JUMP                                                            39        
-34      JE                              17              true            36        
-35      JUMP                                                            38        
-36      SUB             _t0             18              0               
-37      JUMP                                                            39        
-38      SUB             _t0             19              0               
-39      JUMP                                                            54        
-40      JUMP                                                            28        
-41      SUB             _t0             20              0               
-42      JE                              21              true            47        
-43      JUMP                                                            53        
-44      JUMP                                                            53        
-45      SUB             _t1             22              0               
-46      JUMP                                                            42        
-47      JE                              23              true            49        
-48      JUMP                                                            52        
-49      JUMP                                                            52        
-50      JUMP                                                            47        
-51      JUMP                                                            47        
-52      JUMP                                                            45        
-53      JUMP                                                            28        
-54      JUMP                                                            22        
-55      JUMP                                                            15        
-56      JUMP                                                            13        
-57      JUMP                                                            11        
-58      JUMP                                                            9         
-59      JUMP                                                            1
+9       JUMP                                                            1         
+10      JE                              4               true            12        
+11      JUMP                                                            19        
+12      JE                              5               true            14        
+13      JUMP                                                            18        
+14      JE                              6               true            16        
+15      JUMP                                                            17        
+16      JUMP                                                            14        
+17      JUMP                                                            12        
+18      JUMP                                                            10        
+19      JE                              7               true            21        
+20      JUMP                                                            27        
+21      JE                              8               true            23        
+22      JUMP                                                            25        
+23      SUB             _t0             9               0               
+24      JUMP                                                            26        
+25      SUB             _t0             10              0               
+26      JUMP                                                            19        
+27      JE                              11              true            29        
+28      JUMP                                                            48        
+29      SUB             _t0             12              0               
+30      JE                              13              true            35        
+31      JUMP                                                            47        
+32      JUMP                                                            47        
+33      SUB             _t1             14              0               
+34      JUMP                                                            30        
+35      JE                              15              true            37        
+36      JUMP                                                            39        
+37      SUB             _t2             16              0               
+38      JUMP                                                            44        
+39      JE                              17              true            41        
+40      JUMP                                                            43        
+41      SUB             _t0             18              0               
+42      JUMP                                                            44        
+43      SUB             _t0             19              0               
+44      JUMP                                                            47        
+45      JUMP                                                            33        
+46      JUMP                                                            33        
+47      JUMP                                                            27        
+48      SUB             _t0             20              0               
+49      JE                              21              true            54        
+50      JUMP                                                            60        
+51      JUMP                                                            60        
+52      SUB             _t1             22              0               
+53      JUMP                                                            49        
+54      JE                              23              true            56        
+55      JUMP                                                            58        
+56      JUMP                                                            58        
+57      JUMP                                                            54        
+58      JUMP                                                            52        
+59      JUMP                                                            52
 
 -->p3t_flow_control.asc SIMULATOR'S QUADS
 1: assign a 1 [line 1]
@@ -1013,36 +1015,38 @@ function(){ function() { iamafunction(3,4); } }
 -->p3t_funcdecl.asc OUR QUADS
 quad#   opcode          result          arg1            arg2            label 
 ------------------------------------------------------------------------------
-1       JUMP                                                            7         
+1       JUMP                                                            8         
 2       FUNCSTART       iamafunction                                    
 3       ADD             _t0             a               b               
 4       RET                             8                               
-5       SUB             _t0             9               0               
-6       FUNCEND         iamafunction                                    
-7       JUMP                                                            10        
-8       FUNCSTART       iamnothing                                      
-9       FUNCEND         iamnothing                                      
-10      JUMP                                                            16        
-11      FUNCSTART       $0                                              
-12      SUB             _t0             10              0               
-13      RET                             12                              
-14      SUB             _t0             11              0               
-15      FUNCEND         $0                                              
-16      ASSIGN          ihavenoname     $0                              
-17      ASSIGN          _t0             ihavenoname                     
-18      JUMP                                                            21        
-19      FUNCSTART       $1                                              
-20      FUNCEND         $1                                              
-21      JUMP                                                            31        
-22      FUNCSTART       $2                                              
-23      JUMP                                                            30        
-24      FUNCSTART       $3                                              
-25      PARAM                           4                               
-26      PARAM                           3                               
-27      CALL                            iamafunction                    
-28      RETVAL          _t0                                             
-29      FUNCEND         $3                                              
-30      FUNCEND         $2
+5       JUMP                                                            
+6       SUB             _t0             9               0               
+7       FUNCEND         iamafunction                                    
+8       JUMP                                                            11        
+9       FUNCSTART       iamnothing                                      
+10      FUNCEND         iamnothing                                      
+11      JUMP                                                            18        
+12      FUNCSTART       $0                                              
+13      SUB             _t0             10              0               
+14      RET                             12                              
+15      JUMP                                                            
+16      SUB             _t0             11              0               
+17      FUNCEND         $0                                              
+18      ASSIGN          ihavenoname     $0                              
+19      ASSIGN          _t0             ihavenoname                     
+20      JUMP                                                            23        
+21      FUNCSTART       $1                                              
+22      FUNCEND         $1                                              
+23      JUMP                                                            33        
+24      FUNCSTART       $2                                              
+25      JUMP                                                            32        
+26      FUNCSTART       $3                                              
+27      PARAM                           4                               
+28      PARAM                           3                               
+29      CALL                            iamafunction                    
+30      RETVAL          _t0                                             
+31      FUNCEND         $3                                              
+32      FUNCEND         $2
 
 -->p3t_funcdecl.asc SIMULATOR'S QUADS
 1: jump 18 [line 1]
