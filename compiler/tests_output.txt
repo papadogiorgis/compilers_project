@@ -11,7 +11,8 @@ quad#   opcode          result          arg1            arg2            label
 5       ASSIGN          _t2             true                            
 6       JUMP                                                            8         
 7       ASSIGN          _t2             false                           
-8       ASSIGN          x               _t2
+8       ASSIGN          x               _t2                             
+9       ASSIGN          _t3             x
 
 -->backpatch0.asc SIMULATOR'S QUADS
 1: if_eq a 'true' 3 [line 1]
