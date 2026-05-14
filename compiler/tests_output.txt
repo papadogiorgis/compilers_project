@@ -87,7 +87,7 @@ quad#   opcode          result          arg1            arg2            label
 11      CALL                            print                           
 12      RETVAL          _t3
 
---> SIMULATOR'S QUADS
+-->backpatch2.asc SIMULATOR'S QUADS
 1: if_eq a 'true' 5 [line 1]
 2: jump 3 [line 1]
 3: if_less b 2 5 [line 1]
@@ -194,7 +194,7 @@ quad#   opcode          result          arg1            arg2            label
 68      JUMP                                                            70        
 69      ASSIGN          _t3             false                           
 70      JE                              _t3             true            72        
-71      JUMP                                                            96        
+71      JUMP                                                            97        
 72      ASSIGN          i               0                               
 73      ASSIGN          _t4             i                               
 74      JL                              i               5               76        
@@ -205,37 +205,38 @@ quad#   opcode          result          arg1            arg2            label
 79      JUMP                                                            81        
 80      ASSIGN          _t7             false                           
 81      JE                              _t7             true            
-82      JUMP                                                            92        
-83      JUMP                                                            92        
-84      ADD             i               i               1               
+82      JUMP                                                            93        
+83      ADD             i               i               1               
+84      ASSIGN          _t8             i                               
 85      JUMP                                                            74        
 86      PARAM                           i                               
 87      CALL                            print                           
-88      RETVAL          _t8                                             
-89      JUMP                                                            84        
+88      RETVAL          _t9                                             
+89      JUMP                                                            83        
 90      ADD             i               i               1               
-91      JUMP                                                            84        
-92      PARAM                           y                               
-93      CALL                            print                           
-94      RETVAL          _t0                                             
-95      JUMP                                                            113       
-96      JE                              y               true            100       
-97      JUMP                                                            98        
-98      ASSIGN          _t1             true                            
-99      JUMP                                                            101       
-100     ASSIGN          _t1             false                           
-101     JE                              _t1             true            103       
-102     JUMP                                                            113       
-103     JE                              y               true            107       
-104     JUMP                                                            105       
-105     ASSIGN          _t3             true                            
-106     JUMP                                                            108       
-107     ASSIGN          _t3             false                           
-108     PARAM                           _t3                             
-109     CALL                            print                           
-110     RETVAL          _t4                                             
-111     JUMP                                                            113       
-112     JUMP                                                            96
+91      ASSIGN          _t0             i                               
+92      JUMP                                                            83        
+93      PARAM                           y                               
+94      CALL                            print                           
+95      RETVAL          _t0                                             
+96      JUMP                                                            114       
+97      JE                              y               true            101       
+98      JUMP                                                            99        
+99      ASSIGN          _t1             true                            
+100     JUMP                                                            102       
+101     ASSIGN          _t1             false                           
+102     JE                              _t1             true            104       
+103     JUMP                                                            114       
+104     JE                              y               true            108       
+105     JUMP                                                            106       
+106     ASSIGN          _t3             true                            
+107     JUMP                                                            109       
+108     ASSIGN          _t3             false                           
+109     PARAM                           _t3                             
+110     CALL                            print                           
+111     RETVAL          _t4                                             
+112     JUMP                                                            114       
+113     JUMP                                                            97
 
 -->backpatch3.asc SIMULATOR'S QUADS
 1: assign f 1 [line 1]
@@ -610,29 +611,33 @@ quad#   opcode          result          arg1            arg2            label
 48      ASSIGN          _t0             a                               
 49      SUB             a               a               1               
 50      ADD             b               b               1               
-51      SUB             _t1             _t0             b               
-52      SUB             c               c               1               
-53      ADD             _t2             _t1             c               
-54      ASSIGN          _t3             d                               
-55      ADD             d               d               1               
-56      SUB             _t4             _t2             _t3             
-57      TABGETEL        _t1             t               "x"             
-58      ASSIGN          _t0             _t1                             
-59      SUB             _t1             _t1             1               
-60      TABSETEL        t               _t1             "x"             
-61      TABGETEL        _t2             t               3               
-62      ADD             _t2             _t2             1               
-63      TABSETEL        t               _t2             3               
-64      SUB             _t3             _t0             _t2             
-65      TABGETEL        _t4             t               "a"             
-66      SUB             _t4             _t4             1               
-67      TABSETEL        t               _t4             "a"             
-68      ADD             _t5             _t3             _t4             
-69      TABGETEL        _t7             t               "z"             
-70      ASSIGN          _t6             _t7                             
-71      ADD             _t7             _t7             1               
-72      TABSETEL        t               _t7             "z"             
-73      SUB             _t8             _t5             _t6
+51      ASSIGN          _t1             b                               
+52      SUB             _t2             _t0             _t1             
+53      SUB             c               c               1               
+54      ASSIGN          _t3             c                               
+55      ADD             _t4             _t2             _t3             
+56      ASSIGN          _t5             d                               
+57      ADD             d               d               1               
+58      SUB             _t6             _t4             _t5             
+59      TABGETEL        _t1             t               "x"             
+60      ASSIGN          _t0             _t1                             
+61      SUB             _t1             _t1             1               
+62      TABSETEL        t               _t1             "x"             
+63      TABGETEL        _t2             t               3               
+64      ADD             _t2             _t2             1               
+65      TABSETEL        t               _t2             3               
+66      ASSIGN          _t3             _t2                             
+67      SUB             _t4             _t0             _t3             
+68      TABGETEL        _t5             t               "a"             
+69      SUB             _t5             _t5             1               
+70      TABSETEL        t               _t5             "a"             
+71      ASSIGN          _t6             _t5                             
+72      ADD             _t7             _t4             _t6             
+73      TABGETEL        _t9             t               "z"             
+74      ASSIGN          _t8             _t9                             
+75      ADD             _t9             _t9             1               
+76      TABSETEL        t               _t9             "z"             
+77      SUB             _t10            _t7             _t8
 
 -->p3t_basic_expr.asc SIMULATOR'S QUADS
 1: assign a 4 [line 1]
@@ -908,38 +913,36 @@ quad#   opcode          result          arg1            arg2            label
 25      SUB             _t0             10              0               
 26      JUMP                                                            19        
 27      JE                              11              true            29        
-28      JUMP                                                            48        
+28      JUMP                                                            47        
 29      SUB             _t0             12              0               
-30      JE                              13              true            35        
-31      JUMP                                                            47        
-32      JUMP                                                            47        
-33      SUB             _t1             14              0               
-34      JUMP                                                            30        
-35      JE                              15              true            37        
-36      JUMP                                                            39        
-37      SUB             _t2             16              0               
-38      JUMP                                                            44        
-39      JE                              17              true            41        
-40      JUMP                                                            43        
-41      SUB             _t0             18              0               
-42      JUMP                                                            44        
-43      SUB             _t0             19              0               
-44      JUMP                                                            47        
-45      JUMP                                                            33        
-46      JUMP                                                            33        
-47      JUMP                                                            27        
-48      SUB             _t0             20              0               
-49      JE                              21              true            54        
-50      JUMP                                                            60        
-51      JUMP                                                            60        
-52      SUB             _t1             22              0               
-53      JUMP                                                            49        
-54      JE                              23              true            56        
-55      JUMP                                                            58        
-56      JUMP                                                            58        
-57      JUMP                                                            54        
-58      JUMP                                                            52        
-59      JUMP                                                            52
+30      JE                              13              true            34        
+31      JUMP                                                            46        
+32      SUB             _t1             14              0               
+33      JUMP                                                            30        
+34      JE                              15              true            36        
+35      JUMP                                                            38        
+36      SUB             _t2             16              0               
+37      JUMP                                                            43        
+38      JE                              17              true            40        
+39      JUMP                                                            42        
+40      SUB             _t0             18              0               
+41      JUMP                                                            43        
+42      SUB             _t0             19              0               
+43      JUMP                                                            46        
+44      JUMP                                                            32        
+45      JUMP                                                            32        
+46      JUMP                                                            27        
+47      SUB             _t0             20              0               
+48      JE                              21              true            52        
+49      JUMP                                                            58        
+50      SUB             _t1             22              0               
+51      JUMP                                                            48        
+52      JE                              23              true            54        
+53      JUMP                                                            56        
+54      JUMP                                                            56        
+55      JUMP                                                            52        
+56      JUMP                                                            50        
+57      JUMP                                                            50
 
 -->p3t_flow_control.asc SIMULATOR'S QUADS
 1: assign a 1 [line 1]

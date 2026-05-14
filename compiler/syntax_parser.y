@@ -324,7 +324,9 @@ term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n"
                     if($2->type == tableitem_e){
                         emit(tablesetelem, lval, $2->index, $2, 0, yylineno);
                     }
-                    $$ = lval;
+                    expr* term = newtemp();
+                    emit(assign, lval, NULL, term, 0, yylineno);
+                    $$ = term;
                     printf("line %d: term-> ++lvalue\n", yylineno);}
                 | lvalue INCR{
                     if($1->sym != NULL){
@@ -360,7 +362,9 @@ term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n"
                     if($2->type == tableitem_e){
                         emit(tablesetelem, lval, $2->index, $2, 0, yylineno);
                     }
-                    $$ = lval;
+                    expr* term = newtemp();
+                    emit(assign, lval, NULL, term, 0, yylineno);
+                    $$ = term;
                     printf("line %d: term-> --lvalue\n", yylineno);}
                 | lvalue DECR{
                     if($1->sym != NULL){
@@ -739,17 +743,17 @@ forprefix:      FOR LEFT_PAR elist SEMICOLON M expr SEMICOLON
 
 /* forstmt:        FOR {loopFlag = 1;} LEFT_PAR elist SEMICOLON expr SEMICOLON elist RIGHT_PAR statement{loopFlag = 0;printf("line %d: forstmt-> for(elist;expr;elist) statement\n", yylineno);}; */
 
-forstmt:        forprefix N elist RIGHT_PAR N loopstmt N
+forstmt:        forprefix elist RIGHT_PAR N loopstmt N
                 {
-                    patchLabel($1 ? $1->enter : 0, $5 + 1);
-                    patchLabel($2, nextquadlabel());
-                    patchLabel($5, $1 ? $1->test : 0);
-                    patchLabel($7, $2 + 1);
+                    int stepquad = ($1 ? $1->falselist : 0) + 1;
+                    patchLabel($1 ? $1->enter : 0, $4 + 1);
+                    patchLabel($4, $1 ? $1->test : 0);
+                    patchLabel($6, stepquad);
 
                     patchLabel($1 ? $1->falselist : 0, nextquadlabel());
 
-                    patchlist($6 ? $6->breaklist: 0, nextquadlabel());
-                    patchlist($6 ? $6->contlist: 0, $2 + 1);
+                    patchlist($5 ? $5->breaklist: 0, nextquadlabel());
+                    patchlist($5 ? $5->contlist: 0, stepquad);
                 };
 
 returnstmt:     RETURN SEMICOLON{
