@@ -11,8 +11,7 @@ quad#   opcode          result          arg1            arg2            label
 5       ASSIGN          _t2             true                            
 6       JUMP                                                            8         
 7       ASSIGN          _t2             false                           
-8       ASSIGN          x               _t2                             
-9       ASSIGN          _t3             x
+8       ASSIGN          x               _t2
 
 -->backpatch0.asc SIMULATOR'S QUADS
 1: if_eq a 'true' 3 [line 1]
@@ -174,8 +173,63 @@ quad#   opcode          result          arg1            arg2            label
 48      RET                             true                            
 49      FUNCEND         $1                                              
 50      JE                              $1              true            52        
-51      JUMP                                                            54
-ASSERION `0` FAILED. ABORTED!
+51      JUMP                                                            54        
+52      ASSIGN          _t1             true                            
+53      JUMP                                                            55        
+54      ASSIGN          _t1             false                           
+55      ASSIGN          x               _t1                             
+56      ASSIGN          _t2             x                               
+57      JE                              a               true            65        
+58      JUMP                                                            59        
+59      JE                              b               true            65        
+60      JUMP                                                            61        
+61      ASSIGN          y               x                               
+62      ASSIGN          _t1             y                               
+63      JE                              _t1             true            65        
+64      JUMP                                                            67        
+65      ASSIGN          _t3             true                            
+66      JUMP                                                            68        
+67      ASSIGN          _t3             false                           
+68      JE                              _t3             true            70        
+69      JUMP                                                            94        
+70      ASSIGN          i               0                               
+71      ASSIGN          _t4             i                               
+72      JL                              i               5               74        
+73      JUMP                                                            78        
+74      JE                              a               true            76        
+75      JUMP                                                            78        
+76      ASSIGN          _t7             true                            84        
+77      JUMP                                                            79        
+78      ASSIGN          _t7             false                           
+79      JE                              _t7             true            
+80      JUMP                                                            93        
+81      JUMP                                                            93        
+82      ADD             i               i               1               
+83      JUMP                                                            72        
+84      PARAM                           i                               
+85      CALL                            print                           
+86      RETVAL          _t8                                             
+87      JUMP                                                            82        
+88      ADD             i               i               1               
+89      PARAM                           y                               
+90      CALL                            print                           
+91      RETVAL          _t0                                             
+92      JUMP                                                            82        
+93      JUMP                                                            108       
+94      JE                              y               true            98        
+95      JUMP                                                            96        
+96      ASSIGN          _t1             true                            
+97      JUMP                                                            99        
+98      ASSIGN          _t1             false                           
+99      JE                              _t1             true            101       
+100     JUMP                                                            108       
+101     JE                              y               true            
+102     JUMP                                                            
+103     PARAM                           _t2                             
+104     CALL                            print                           
+105     RETVAL          _t3                                             
+106     JUMP                                                            108       
+107     JUMP                                                            94
 
 -->backpatch3.asc SIMULATOR'S QUADS
 1: assign f 1 [line 1]
@@ -715,18 +769,8 @@ while (true) {
 }
 
 -->p3t_flow_control_error.asc OUR QUADS
-IT PRINTED THE ERRORS IN SYMBOLS (PHASE 2) BUT IT ALSO PRINTED QUADS (PHASE3)
-quad#   opcode          result          arg1            arg2            label 
-------------------------------------------------------------------------------
-1       JE                              true            true            3         
-2       JUMP                                                            10        
-3       JUMP                                                            8         
-4       FUNCSTART       $0                                              
-5       JUMP                                                            
-6       JUMP                                                            
-7       FUNCEND         $0                                              
-8       RET                                                             
-9       JUMP                                                            1
+AMAZING!! IT PRINTED THE SYMBOLS WITH THE ERRORS(PHASE 2),
+IT DIDNT PRINT ANY QUADS.
 
 -->p3t_flow_control_error.asc SIMULATOR'S QUADS
 IT DIDNT PRINT ANY QUADS(PHASE 3) OR SYMBOLS(PHASE 2)
