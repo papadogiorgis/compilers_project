@@ -327,7 +327,7 @@ term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n"
                     tempnum->numConst = 1;
                     emit(add, lval, tempnum, lval, 0, yylineno);
                     if($2->type == tableitem_e){
-                        emit(tablesetelem, lval, $2->index, $2, 0, yylineno);
+                        emit(tablesetelem, $2->index, lval, $2, 0, yylineno);
                     }
                     expr* term = newtemp();
                     emit(assign, lval, NULL, term, 0, yylineno);
@@ -348,7 +348,7 @@ term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n"
                     tempnum->numConst = 1;
                     emit(add, lval, tempnum, lval, 0, yylineno);
                     if($1->type == tableitem_e){
-                        emit(tablesetelem, lval, $1->index, $1, 0, yylineno);
+                        emit(tablesetelem, $1->index, lval, $1, 0, yylineno);
                     }
                     $$ = old;
                     printf("line %d: term-> lvalue++\n", yylineno);}
@@ -365,7 +365,7 @@ term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n"
                     tempnum->numConst = 1;
                     emit(sub, lval, tempnum, lval, 0, yylineno);
                     if($2->type == tableitem_e){
-                        emit(tablesetelem, lval, $2->index, $2, 0, yylineno);
+                        emit(tablesetelem, $2->index, lval, $2, 0, yylineno);
                     }
                     expr* term = newtemp();
                     emit(assign, lval, NULL, term, 0, yylineno);
@@ -386,7 +386,7 @@ term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n"
                     tempnum->numConst = 1;
                     emit(sub, lval, tempnum, lval, 0, yylineno);
                     if($1->type == tableitem_e){
-                        emit(tablesetelem, lval, $1->index, $1, 0, yylineno);
+                        emit(tablesetelem, $1->index, lval, $1, 0, yylineno);
                     }
                     $$ = old;
                     printf("line %d: term-> lvalue--\n", yylineno);}
@@ -549,8 +549,9 @@ indexed:        indexedelem{
                 ;
 
 indexedelem:    LEFT_CURL_BR expr COLON expr RIGHT_CURL_BR{
-                    $$ = $2;
-                    $$->index = $4;
+                    $$ = newexpr(nil_e);
+                    $$->index = $2;
+                    $$->value = $4;
                     $$->next = NULL;
                     printf("line %d: indexedelem-> {expr:expr}\n", yylineno);
                     }

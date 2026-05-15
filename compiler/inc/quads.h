@@ -28,6 +28,7 @@ typedef struct expr {
 	expr_t type;
 	node* sym; // symbol
 	struct expr* index;
+	struct expr* value;
 	double numConst;
 	char* strConst;
 	unsigned char boolConst;

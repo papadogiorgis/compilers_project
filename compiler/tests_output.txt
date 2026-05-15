@@ -436,38 +436,38 @@ quad#   opcode          result          arg1            arg2            label
 2       TABGETEL        _t0             a               3               
 3       TABGETEL        _t0             a               3               
 4       TABGETEL        _t1             a               3               
-5       TABSETEL        _t0             _t1             4               
+5       TABSETEL        _t0             4               _t1             
 6       TABGETEL        _t2             _t0             4               
 7       TABGETEL        _t0             a               3               
 8       TABGETEL        _t1             _t0             4               
 9       TABGETEL        _t2             _t1             4               
 10      TABGETEL        _t3             _t2             4               
-11      TABSETEL        a               _t3             "r"             
+11      TABSETEL        a               "r"             _t3             
 12      TABGETEL        _t4             a               "r"             
 13      TABGETEL        _t0             a               "r"             
-14      TABSETEL        a               _t0             "r"             
+14      TABSETEL        a               "r"             _t0             
 15      TABGETEL        _t1             a               "r"             
 16      TABGETEL        _t0             a               "r"             
 17      TABGETEL        _t1             a               "r"             
 18      TABGETEL        _t2             _t1             "q"             
-19      TABSETEL        _t0             _t2             "q"             
+19      TABSETEL        _t0             "q"             _t2             
 20      TABGETEL        _t3             _t0             "q"             
 21      TABGETEL        _t0             a               "r"             
 22      TABGETEL        _t1             _t0             "q"             
 23      TABGETEL        _t2             _t1             "r"             
 24      TABGETEL        _t3             _t2             "s"             
-25      TABSETEL        _t3             12              3               
+25      TABSETEL        _t3             3               12              
 26      TABGETEL        _t4             _t3             3               
 27      TABGETEL        _t0             a               "3"             
 28      TABGETEL        _t1             _t0             "q"             
 29      TABGETEL        _t2             _t1             4               
 30      CALL                            _t2                             
 31      RETVAL          _t3                                             
-32      TABSETEL        a               5               "r"             
+32      TABSETEL        a               "r"             5               
 33      TABGETEL        _t0             a               "r"             
-34      TABSETEL        a               _t0             1               
+34      TABSETEL        a               1               _t0             
 35      TABGETEL        _t1             a               1               
-36      TABSETEL        a               _t1             "x"             
+36      TABSETEL        a               "x"             _t1             
 37      TABGETEL        _t2             a               "x"
 
 -->p3t_assignments_objects.asc SIMULATOR'S QUADS
@@ -622,21 +622,21 @@ quad#   opcode          result          arg1            arg2            label
 59      TABGETEL        _t1             t               "x"             
 60      ASSIGN          _t0             _t1                             
 61      SUB             _t1             _t1             1               
-62      TABSETEL        t               _t1             "x"             
+62      TABSETEL        t               "x"             _t1             
 63      TABGETEL        _t2             t               3               
 64      ADD             _t2             _t2             1               
-65      TABSETEL        t               _t2             3               
+65      TABSETEL        t               3               _t2             
 66      ASSIGN          _t3             _t2                             
 67      SUB             _t4             _t0             _t3             
 68      TABGETEL        _t5             t               "a"             
 69      SUB             _t5             _t5             1               
-70      TABSETEL        t               _t5             "a"             
+70      TABSETEL        t               "a"             _t5             
 71      ASSIGN          _t6             _t5                             
 72      ADD             _t7             _t4             _t6             
 73      TABGETEL        _t9             t               "z"             
 74      ASSIGN          _t8             _t9                             
 75      ADD             _t9             _t9             1               
-76      TABSETEL        t               _t9             "z"             
+76      TABSETEL        t               "z"             _t9             
 77      SUB             _t10            _t7             _t8
 
 -->p3t_basic_expr.asc SIMULATOR'S QUADS
@@ -1262,29 +1262,29 @@ quad#   opcode          result          arg1            arg2            label
 ------------------------------------------------------------------------------
 1       TABCREATE       _t0                                             
 2       TABCREATE       _t0                                             
-3       TABSETEL        _t0             1               0               
-4       TABSETEL        _t0             2               1               
-5       TABSETEL        _t0             3               2               
+3       TABSETEL        _t0             0               1               
+4       TABSETEL        _t0             1               2               
+5       TABSETEL        _t0             2               3               
 6       TABCREATE       _t0                                             
 7       TABCREATE       _t1                                             
-8       TABSETEL        _t1             "hello"         0               
-9       TABSETEL        _t1             "lol"           1               
+8       TABSETEL        _t1             0               "hello"         
+9       TABSETEL        _t1             1               "lol"           
 10      TABCREATE       _t2                                             
 11      TABCREATE       _t3                                             
-12      TABSETEL        _t3             false           0               
-13      TABSETEL        _t3             true            1               
-14      TABSETEL        _t3             _t0             2               
-15      TABSETEL        _t3             5               3               
-16      TABSETEL        _t3             _t1             4               
-17      TABSETEL        _t3             _t2             5               
+12      TABSETEL        _t3             0               false           
+13      TABSETEL        _t3             1               true            
+14      TABSETEL        _t3             2               _t0             
+15      TABSETEL        _t3             3               5               
+16      TABSETEL        _t3             4               _t1             
+17      TABSETEL        _t3             5               _t2             
 18      JUMP                                                            21        
 19      FUNCSTART       $0                                              
 20      TABCREATE       _t0                                             
 21      FUNCEND         $0                                              
 22      TABCREATE       _t0                                             
-23      TABSETEL        _t0             1               0               
-24      TABSETEL        _t0             2               1               
-25      TABSETEL        _t0             3               2               
+23      TABSETEL        _t0             0               1               
+24      TABSETEL        _t0             1               2               
+25      TABSETEL        _t0             2               3               
 26      TABCREATE       _t1                                             
 27      TABSETEL        _t1             1               2               
 28      TABSETEL        _t1             "bool"          false           

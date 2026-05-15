@@ -16,7 +16,7 @@ expr* inter_code_assign(expr* lval, expr* rval)
 	//if rval is a table, bring its value
 	rval = emit_if_tableitem(rval);
 	if (lval->type == tableitem_e) {
-		emit(tablesetelem, rval, lval->index, lval, 0, yylineno);
+		emit(tablesetelem, lval->index, rval, lval, 0, yylineno);
 		expr* temp = emit_if_tableitem(lval);
 		temp->type = assignexpr_e;
 		return temp;
@@ -69,7 +69,7 @@ expr* inter_code_objectdef_elist(expr* e){
 		expr* arith = newexpr(constnum_e);
 		arith->numConst = i;
 		expr* val = emit_if_tableitem(elist_element);
-		emit(tablesetelem, val, arith, temp, 0, yylineno);
+		emit(tablesetelem, arith, val, temp, 0, yylineno);
 		elist_element = elist_element->next;
 		i++;
 	}
@@ -83,9 +83,9 @@ expr* inter_code_objectdef_indexed(expr* e){
 
 	expr* elist_element = e;
 	while(elist_element != NULL){
-		expr* val = emit_if_tableitem(elist_element);
 		expr* idx = emit_if_tableitem(elist_element->index);
-		emit(tablesetelem, val, idx, temp, 0, yylineno);
+		expr* val = emit_if_tableitem(elist_element->value);
+		emit(tablesetelem, idx, val, temp, 0, yylineno);
 		elist_element = elist_element->next;
 	}
 	return temp;
