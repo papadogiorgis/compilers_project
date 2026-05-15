@@ -16,5 +16,10 @@ expr* inter_code_objectdef_indexed(expr* e);
 expr* inter_code_member_item(expr* val, expr* index);
 expr* inter_code_call(expr* lval, expr* elist);
 expr* inter_code_callsuffix(expr* lval, call_struct* callsuffix);
+expr *inter_code_uminus(expr *exp);
+expr *inter_code_increment(expr *exp);
+expr *inter_code_decrement(expr *exp);
+expr *inter_code_decr_var(expr *val);
+expr *inter_code_incr_var(expr *val);
 
 #endif

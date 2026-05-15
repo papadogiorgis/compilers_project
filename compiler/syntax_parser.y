@@ -262,25 +262,25 @@ expr:           assignexpr{
                 | term{printf("line %d: expr->term\n", yylineno);}
                 ;
 
-term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n", yylineno);}
-                | UMINUS expr{printf("line %d: term-> -expr\n", yylineno);}
-                | NOT expr{printf("line %d: term-> not expr\n", yylineno);}
-                | INCR lvalue{ if($2->sym != NULL){ node *tmp = getSymbol($2->sym->key, symtable);
+term:           LEFT_PAR expr RIGHT_PAR{ $$=$2; printf("line %d: term-> (expr)\n", yylineno); }
+                | MINUS expr{ $$ = inter_code_uminus($2); printf("line %d: term-> -expr\n", yylineno); } %prec UMINUS
+                | NOT expr{ $$ = inter_code_bool($2, NULL, not_op); printf("line %d: term-> not expr\n", yylineno); }
+                | INCR lvalue{ if($2->sym != NULL){ node *tmp = getSymbol($2->sym->key, symtable); $$ = inter_code_incr_var($2);
                                 if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);};
                 }
                                 printf("line %d: term-> ++lvalue\n", yylineno);}
-                | lvalue INCR{ if($1->sym != NULL){ node *tmp = getSymbol($1->sym->key, symtable);
+                | lvalue INCR{ if($1->sym != NULL){ node *tmp = getSymbol($1->sym->key, symtable);$$ = inter_code_increment($1);
                                 if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);}
                 }
                                 printf("line %d: term-> lvalue++\n", yylineno);}
-                | DECR lvalue{ if($2->sym != NULL){ node *tmp = getSymbol($2->sym->key, symtable);
+                | DECR lvalue{ if($2->sym != NULL){ node *tmp = getSymbol($2->sym->key, symtable); $$ = inter_code_decr_var($2);
                                 if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);};
                 }
                                 printf("line %d: term-> --lvalue\n", yylineno);}
-                | lvalue DECR{ if($1->sym != NULL){ node *tmp = getSymbol($1->sym->key, symtable);
+                | lvalue DECR{ if($1->sym != NULL){ node *tmp = getSymbol($1->sym->key, symtable); $$ = inter_code_decrement($1);
                                 if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
                                     {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);};
                 }
@@ -621,8 +621,17 @@ forstmt:        forprefix N elist RIGHT_PAR N loopstmt N
                     patchlist($6 ? $6->contlist: 0, $2 + 1);
                 };
 
-returnstmt:     RETURN SEMICOLON{if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}printf("line %d: returnstmt-> return;\n", yylineno);}
-                | RETURN expr SEMICOLON{if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}printf("line %d: returnstmt-> return expr;\n", yylineno);}
+returnstmt:     RETURN SEMICOLON{
+                    if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}
+                    else if (infunc > 0){emit(ret, NULL, NULL, NULL, 0, yylineno);}
+                    printf("line %d: returnstmt-> return;\n", yylineno);
+
+                }
+                | RETURN expr SEMICOLON{
+                    if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}
+                    else if (infunc > 0) {emit(ret, NULL, NULL, $2, 0, yylineno);}
+                    printf("line %d: returnstmt-> return expr;\n", yylineno);
+                }
                 ;
 
 %%
