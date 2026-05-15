@@ -754,7 +754,7 @@ quad#   opcode          result          arg1            arg2            label
 26      PARAM                           a                               
 27      CALL                            _t0                             
 28      RETVAL          _t3                                             
-29      JUMP                                                            33        
+29      JUMP                                                            34        
 30      FUNCSTART       $0                                              
 31      CALL                            b                               
 32      RETVAL          _t0                                             
@@ -1277,7 +1277,7 @@ quad#   opcode          result          arg1            arg2            label
 15      TABSETEL        _t3             3               5               
 16      TABSETEL        _t3             4               _t1             
 17      TABSETEL        _t3             5               _t2             
-18      JUMP                                                            21        
+18      JUMP                                                            22        
 19      FUNCSTART       $0                                              
 20      TABCREATE       _t0                                             
 21      FUNCEND         $0                                              
@@ -1295,7 +1295,7 @@ quad#   opcode          result          arg1            arg2            label
 33      TABSETEL        _t2             "lulz"          $0              
 34      TABSETEL        _t2             "wot"           _t0             
 35      TABSETEL        _t2             "wut"           _t1             
-36      JUMP                                                            40        
+36      JUMP                                                            41        
 37      FUNCSTART       four                                            
 38      ASSIGN          four            4                               
 39      ASSIGN          _t0             four                            
