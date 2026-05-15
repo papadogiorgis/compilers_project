@@ -605,7 +605,6 @@ funcdef:        funcprefix funcargs funcbody
                     infunc--;
                     int offset = pop_and_top(stack);
                     restoreCurrScopeOffset(offset);
-                    patchLabel($1->iaddress - 1, nextquadlabel());
                     $1->totalLocals = $3;
                     // exitscopespace();
                     if(ret_top){
@@ -615,6 +614,7 @@ funcdef:        funcprefix funcargs funcbody
                         free(temp);
                     }
                     emit(funcend, NULL, NULL, lvalue_expr($1), 0, yylineno);
+                    patchLabel($1->iaddress - 1, nextquadlabel());
                     $$ = $1;
                     //emit(funcend, NULL, NULL, lvalue_expr($1), 0, yylineno);
 
@@ -750,8 +750,8 @@ forprefix:      FOR LEFT_PAR elist SEMICOLON M expr SEMICOLON
                 {
                     $$ = malloc(sizeof(forprefix));
                     $$->test = $5;
-                    $$->enter = nextquadlabel();
                     expr* cond = inter_code_bool_to_val($6);
+                    $$->enter = nextquadlabel();
                     emit(if_eq, cond, newexpr_constbool(1), NULL, 0, yylineno);
                     //emit(if_eq, newexpr_constbool(1), $6, NULL, 0, yylineno);
                     $$->falselist = nextquadlabel();
