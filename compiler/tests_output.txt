@@ -6,7 +6,7 @@ quad#   opcode          result          arg1            arg2            label
 ------------------------------------------------------------------------------
 1       JE                              a               true            3         
 2       JUMP                                                            7         
-3       JE                                              true            7         
+3       JE                              true            true            7         
 4       JUMP                                                            5         
 5       ASSIGN          _t2             true                            
 6       JUMP                                                            8         
@@ -160,20 +160,20 @@ quad#   opcode          result          arg1            arg2            label
 34      ASSIGN          _t4             y                               
 35      JE                              x               true            37        
 36      JUMP                                                            47        
-37      JUMP                                                            42        
+37      JUMP                                                            41        
 38      FUNCSTART       $0                                              
 39      RET                             false                           
-40      JUMP                                                            
+40      JUMP                                                            41        
 41      FUNCEND         $0                                              
 42      PARAM                           2                               
 43      CALL                            $0                              
 44      RETVAL          _t0                                             
 45      JE                              _t0             true            54        
 46      JUMP                                                            47        
-47      JUMP                                                            52        
+47      JUMP                                                            51        
 48      FUNCSTART       $1                                              
 49      RET                             true                            
-50      JUMP                                                            
+50      JUMP                                                            51        
 51      FUNCEND         $1                                              
 52      JE                              $1              true            54        
 53      JUMP                                                            56        
@@ -754,7 +754,7 @@ quad#   opcode          result          arg1            arg2            label
 26      PARAM                           a                               
 27      CALL                            _t0                             
 28      RETVAL          _t3                                             
-29      JUMP                                                            34        
+29      JUMP                                                            33        
 30      FUNCSTART       $0                                              
 31      CALL                            b                               
 32      RETVAL          _t0                                             
@@ -1018,31 +1018,31 @@ function(){ function() { iamafunction(3,4); } }
 -->p3t_funcdecl.asc OUR QUADS
 quad#   opcode          result          arg1            arg2            label 
 ------------------------------------------------------------------------------
-1       JUMP                                                            8         
+1       JUMP                                                            7         
 2       FUNCSTART       iamafunction                                    
 3       ADD             _t0             a               b               
 4       RET                             8                               
-5       JUMP                                                            
+5       JUMP                                                            7         
 6       SUB             _t0             9               0               
 7       FUNCEND         iamafunction                                    
-8       JUMP                                                            11        
+8       JUMP                                                            10        
 9       FUNCSTART       iamnothing                                      
 10      FUNCEND         iamnothing                                      
-11      JUMP                                                            18        
+11      JUMP                                                            17        
 12      FUNCSTART       $0                                              
 13      SUB             _t0             10              0               
 14      RET                             12                              
-15      JUMP                                                            
+15      JUMP                                                            17        
 16      SUB             _t0             11              0               
 17      FUNCEND         $0                                              
 18      ASSIGN          ihavenoname     $0                              
 19      ASSIGN          _t0             ihavenoname                     
-20      JUMP                                                            23        
+20      JUMP                                                            22        
 21      FUNCSTART       $1                                              
 22      FUNCEND         $1                                              
-23      JUMP                                                            33        
+23      JUMP                                                            32        
 24      FUNCSTART       $2                                              
-25      JUMP                                                            32        
+25      JUMP                                                            31        
 26      FUNCSTART       $3                                              
 27      PARAM                           4                               
 28      PARAM                           3                               
@@ -1277,7 +1277,7 @@ quad#   opcode          result          arg1            arg2            label
 15      TABSETEL        _t3             5               3               
 16      TABSETEL        _t3             _t1             4               
 17      TABSETEL        _t3             _t2             5               
-18      JUMP                                                            22        
+18      JUMP                                                            21        
 19      FUNCSTART       $0                                              
 20      TABCREATE       _t0                                             
 21      FUNCEND         $0                                              
@@ -1295,7 +1295,7 @@ quad#   opcode          result          arg1            arg2            label
 33      TABSETEL        _t2             "lulz"          $0              
 34      TABSETEL        _t2             "wot"           _t0             
 35      TABSETEL        _t2             "wut"           _t1             
-36      JUMP                                                            41        
+36      JUMP                                                            40        
 37      FUNCSTART       four                                            
 38      ASSIGN          four            4                               
 39      ASSIGN          _t0             four                            

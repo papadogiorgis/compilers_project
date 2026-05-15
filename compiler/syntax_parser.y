@@ -26,6 +26,11 @@
     lc_stack_t *lcs_top = NULL;
     lc_stack_t* lcs_bot = NULL;
     int err_count = 0;
+    typedef struct ret_stack{
+        int retlist;
+        struct ret_stack* next;
+    }ret_stack;
+    ret_stack* ret_top = NULL;
     
     extern int yylex(void);
 
@@ -571,6 +576,11 @@ funcprefix:     FUNC funcname
                     // enterscopespace();
                     resetFormalArgOffset();
                     infunc++;
+
+                    ret_stack* new_ret = malloc(sizeof(ret_stack));
+                    new_ret->retlist = 0;
+                    new_ret->next = ret_top;
+                    ret_top = new_ret;
                 };
 
 funcargs:       LEFT_PAR {scope++;} idlist {scope--;} RIGHT_PAR
@@ -592,12 +602,18 @@ funcblockend:   {pop_loopcounter();};
 funcdef:        funcprefix funcargs funcbody
                 {
                     infunc--;
-                    // exitscopespace();
-                    $1->totalLocals = $3;
                     int offset = pop_and_top(stack);
                     restoreCurrScopeOffset(offset);
-                    emit(funcend, NULL, NULL, lvalue_expr($1), 0, yylineno);
                     patchLabel($1->iaddress - 1, nextquadlabel());
+                    $1->totalLocals = $3;
+                    // exitscopespace();
+                    if(ret_top){
+                        patchlist(ret_top->retlist, nextquadlabel());
+                        ret_stack* temp = ret_top;
+                        ret_top = ret_top->next;
+                        free(temp);
+                    }
+                    emit(funcend, NULL, NULL, lvalue_expr($1), 0, yylineno);
                     $$ = $1;
                     //emit(funcend, NULL, NULL, lvalue_expr($1), 0, yylineno);
 
@@ -762,7 +778,11 @@ returnstmt:     RETURN SEMICOLON{
                         err_count++;
                     }
                     emit(ret, NULL, NULL, NULL, 0, yylineno);
+                    int j = nextquadlabel();
                     emit(jump, NULL, NULL, NULL, 0, yylineno);
+                    if(ret_top){
+                        ret_top->retlist = mergelist(ret_top->retlist, newlist(j));
+                    }
                     printf("line %d: returnstmt-> return;\n", yylineno);}
                 | RETURN expr SEMICOLON{
                     if (infunc == 0){
@@ -771,7 +791,11 @@ returnstmt:     RETURN SEMICOLON{
                     }
                     expr* retval = emit_if_tableitem($2);
                     emit(ret, retval, NULL, NULL, 0, yylineno);
+                    int j = nextquadlabel();
                     emit(jump, NULL, NULL, NULL, 0, yylineno);
+                    if(ret_top){
+                        ret_top->retlist = mergelist(ret_top->retlist, newlist(j));
+                    }
                     printf("line %d: returnstmt-> return expr;\n", yylineno);}
                 ;
 

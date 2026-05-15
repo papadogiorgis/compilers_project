@@ -185,9 +185,13 @@ void inter_make_bool_expr(expr* e){
 		return;
 	}
 	expr* val = emit_if_tableitem(e);
+
+	expr* quadval = newexpr(val->type);
+	*quadval = *val;
+
 	//if its not, i make the jumps
 	//if its true goto...
-	emit(if_eq, val, newexpr_constbool(1), NULL, 0, yylineno);
+	emit(if_eq, quadval, newexpr_constbool(1), NULL, 0, yylineno);
 	e->richtig_list = newlist(nextquadlabel() - 1);
 	//if its false goto...
 	emit(jump, NULL, NULL, NULL, 0, yylineno);
