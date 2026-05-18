@@ -314,82 +314,102 @@ term:           LEFT_PAR expr RIGHT_PAR{$$=$2; printf("line %d: term-> (expr)\n"
                     $$->richtig_list = $2->falsch_list;
                     $$->falsch_list = $2->richtig_list;
                     printf("line %d: term-> not expr\n", yylineno);}
-                | INCR lvalue{
-                    if($2->sym != NULL){ 
-                        node *tmp = getSymbol($2->sym->key, symtable);
-                        if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) {
-                            printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);
-                            err_count++;
-                        }
-                    }
-                    expr* lval = emit_if_tableitem($2);
-                    expr* tempnum = newexpr(constnum_e);
-                    tempnum->numConst = 1;
-                    emit(add, lval, tempnum, lval, 0, yylineno);
-                    if($2->type == tableitem_e){
-                        emit(tablesetelem, $2->index, lval, $2, 0, yylineno);
-                    }
-                    expr* term = newtemp();
-                    emit(assign, lval, NULL, term, 0, yylineno);
-                    $$ = term;
-                    printf("line %d: term-> ++lvalue\n", yylineno);}
-                | lvalue INCR{
-                    if($1->sym != NULL){
-                        node *tmp = getSymbol($1->sym->key, symtable);
-                        if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
-                            printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);
-                            err_count++;
-                        }
-                    }
-                    expr* old = newtemp();
-                    expr* lval = emit_if_tableitem($1);
-                    emit(assign, lval, NULL, old, 0, yylineno);
-                    expr* tempnum = newexpr(constnum_e);
-                    tempnum->numConst = 1;
-                    emit(add, lval, tempnum, lval, 0, yylineno);
-                    if($1->type == tableitem_e){
-                        emit(tablesetelem, $1->index, lval, $1, 0, yylineno);
-                    }
-                    $$ = old;
-                    printf("line %d: term-> lvalue++\n", yylineno);}
-                | DECR lvalue{
-                    if($2->sym != NULL){
-                        node *tmp = getSymbol($2->sym->key, symtable);
-                        if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
-                            printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);
-                            err_count++;
-                        }
-                    }
-                    expr* lval = emit_if_tableitem($2);
-                    expr* tempnum = newexpr(constnum_e);
-                    tempnum->numConst = 1;
-                    emit(sub, lval, tempnum, lval, 0, yylineno);
-                    if($2->type == tableitem_e){
-                        emit(tablesetelem, $2->index, lval, $2, 0, yylineno);
-                    }
-                    expr* term = newtemp();
-                    emit(assign, lval, NULL, term, 0, yylineno);
-                    $$ = term;
-                    printf("line %d: term-> --lvalue\n", yylineno);}
-                | lvalue DECR{
-                    if($1->sym != NULL){
-                        node *tmp = getSymbol($1->sym->key, symtable);
-                        if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
-                            printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);
-                            err_count++;
-                        }
-                    }
-                    expr* old = newtemp();
-                    expr* lval = emit_if_tableitem($1);
-                    emit(assign, lval, NULL, old, 0, yylineno);
-                    expr* tempnum = newexpr(constnum_e);
-                    tempnum->numConst = 1;
-                    emit(sub, lval, tempnum, lval, 0, yylineno);
-                    if($1->type == tableitem_e){
-                        emit(tablesetelem, $1->index, lval, $1, 0, yylineno);
-                    }
-                    $$ = old;
-                    printf("line %d: term-> lvalue--\n", yylineno);}
+                // | INCR lvalue{
+                //     if($2->sym != NULL){ 
+                //         node *tmp = getSymbol($2->sym->key, symtable);
+                //         if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) {
+                //             printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);
+                //             err_count++;
+                //         }
+                //     }
+                //     expr* lval = emit_if_tableitem($2);
+                //     expr* tempnum = newexpr(constnum_e);
+                //     tempnum->numConst = 1;
+                //     emit(add, lval, tempnum, lval, 0, yylineno);
+                //     if($2->type == tableitem_e){
+                //         emit(tablesetelem, $2->index, lval, $2, 0, yylineno);
+                //     }
+                //     expr* term = newtemp();
+                //     emit(assign, lval, NULL, term, 0, yylineno);
+                //     $$ = term;
+                //     printf("line %d: term-> ++lvalue\n", yylineno);}
+                | INCR lvalue{ if($2->sym != NULL){ node *tmp = getSymbol($2->sym->key, symtable); $$ = inter_code_incr_var($2);
+                                if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
+                                    {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);};
+                }
+                                printf("line %d: term-> ++lvalue\n", yylineno);}
+                // | lvalue INCR{
+                //     if($1->sym != NULL){
+                //         node *tmp = getSymbol($1->sym->key, symtable);
+                //         if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
+                //             printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);
+                //             err_count++;
+                //         }
+                //     }
+                //     expr* old = newtemp();
+                //     expr* lval = emit_if_tableitem($1);
+                //     emit(assign, lval, NULL, old, 0, yylineno);
+                //     expr* tempnum = newexpr(constnum_e);
+                //     tempnum->numConst = 1;
+                //     emit(add, lval, tempnum, lval, 0, yylineno);
+                //     if($1->type == tableitem_e){
+                //         emit(tablesetelem, $1->index, lval, $1, 0, yylineno);
+                //     }
+                //     $$ = old;
+                //     printf("line %d: term-> lvalue++\n", yylineno);}
+                | lvalue INCR{ if($1->sym != NULL){ node *tmp = getSymbol($1->sym->key, symtable);$$ = inter_code_increment($1);
+                                if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
+                                    {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);}
+                }
+                                printf("line %d: term-> lvalue++\n", yylineno);}
+                // | DECR lvalue{
+                //     if($2->sym != NULL){
+                //         node *tmp = getSymbol($2->sym->key, symtable);
+                //         if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
+                //             printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);
+                //             err_count++;
+                //         }
+                //     }
+                //     expr* lval = emit_if_tableitem($2);
+                //     expr* tempnum = newexpr(constnum_e);
+                //     tempnum->numConst = 1;
+                //     emit(sub, lval, tempnum, lval, 0, yylineno);
+                //     if($2->type == tableitem_e){
+                //         emit(tablesetelem, $2->index, lval, $2, 0, yylineno);
+                //     }
+                //     expr* term = newtemp();
+                //     emit(assign, lval, NULL, term, 0, yylineno);
+                //     $$ = term;
+                //     printf("line %d: term-> --lvalue\n", yylineno);}
+                | DECR lvalue{ if($2->sym != NULL){ node *tmp = getSymbol($2->sym->key, symtable); $$ = inter_code_decr_var($2);
+                                if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
+                                    {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $2->sym->key, yylineno);};
+                }
+                                printf("line %d: term-> --lvalue\n", yylineno);}
+                // | lvalue DECR{
+                //     if($1->sym != NULL){
+                //         node *tmp = getSymbol($1->sym->key, symtable);
+                //         if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)){
+                //             printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);
+                //             err_count++;
+                //         }
+                //     }
+                //     expr* old = newtemp();
+                //     expr* lval = emit_if_tableitem($1);
+                //     emit(assign, lval, NULL, old, 0, yylineno);
+                //     expr* tempnum = newexpr(constnum_e);
+                //     tempnum->numConst = 1;
+                //     emit(sub, lval, tempnum, lval, 0, yylineno);
+                //     if($1->type == tableitem_e){
+                //         emit(tablesetelem, $1->index, lval, $1, 0, yylineno);
+                //     }
+                //     $$ = old;
+                //     printf("line %d: term-> lvalue--\n", yylineno);}
+                | lvalue DECR{ if($1->sym != NULL){ node *tmp = getSymbol($1->sym->key, symtable); $$ = inter_code_decrement($1);
+                                if (tmp != NULL && (tmp->type == USERFUNC || tmp->type == LIBFUNC)) 
+                                    {printf("\nError: using func as lvalue, symbol:%s line:%d\n\n", $1->sym->key, yylineno);};
+                }
+                                printf("line %d: term-> lvalue--\n", yylineno);}
                 | primary  {$$=$1; printf("line %d: term->primary\n", yylineno);}
                 ;
 
@@ -774,30 +794,40 @@ forstmt:        forprefix elist RIGHT_PAR N loopstmt N
                 };
 
 returnstmt:     RETURN SEMICOLON{
-                    if (infunc == 0){
-                        printf("\nError: use of return outside of function, line %d\n", yylineno);
-                        err_count++;
-                    }
-                    emit(ret, NULL, NULL, NULL, 0, yylineno);
-                    int j = nextquadlabel();
-                    emit(jump, NULL, NULL, NULL, 0, yylineno);
-                    if(ret_top){
-                        ret_top->retlist = mergelist(ret_top->retlist, newlist(j));
-                    }
-                    printf("line %d: returnstmt-> return;\n", yylineno);}
+                //     if (infunc == 0){
+                //         printf("\nError: use of return outside of function, line %d\n", yylineno);
+                //         err_count++;
+                //     }
+                //     emit(ret, NULL, NULL, NULL, 0, yylineno);
+                //     int j = nextquadlabel();
+                //     emit(jump, NULL, NULL, NULL, 0, yylineno);
+                //     if(ret_top){
+                //         ret_top->retlist = mergelist(ret_top->retlist, newlist(j));
+                //     }
+                //     printf("line %d: returnstmt-> return;\n", yylineno);}
+                // | RETURN expr SEMICOLON{
+                //     if (infunc == 0){
+                //         printf("\nError: use of return outside of function, line %d\n", yylineno);
+                //         err_count++;
+                //     }
+                //     expr* retval = emit_if_tableitem($2);
+                //     emit(ret, retval, NULL, NULL, 0, yylineno);
+                //     int j = nextquadlabel();
+                //     emit(jump, NULL, NULL, NULL, 0, yylineno);
+                //     if(ret_top){
+                //         ret_top->retlist = mergelist(ret_top->retlist, newlist(j));
+                //     }
+                //     printf("line %d: returnstmt-> return expr;\n", yylineno);}
+                    if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}
+                    else if (infunc > 0){emit(ret, NULL, NULL, NULL, 0, yylineno);}
+                    printf("line %d: returnstmt-> return;\n", yylineno);
+
+                }
                 | RETURN expr SEMICOLON{
-                    if (infunc == 0){
-                        printf("\nError: use of return outside of function, line %d\n", yylineno);
-                        err_count++;
-                    }
-                    expr* retval = emit_if_tableitem($2);
-                    emit(ret, retval, NULL, NULL, 0, yylineno);
-                    int j = nextquadlabel();
-                    emit(jump, NULL, NULL, NULL, 0, yylineno);
-                    if(ret_top){
-                        ret_top->retlist = mergelist(ret_top->retlist, newlist(j));
-                    }
-                    printf("line %d: returnstmt-> return expr;\n", yylineno);}
+                    if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}
+                    else if (infunc > 0) {emit(ret, NULL, NULL, $2, 0, yylineno);}
+                    printf("line %d: returnstmt-> return expr;\n", yylineno);
+                }
                 ;
 
 %%

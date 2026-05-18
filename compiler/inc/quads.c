@@ -276,6 +276,13 @@ expr* newexpr_constbool(int val)
 	return e;
 }
 
+expr *newexpr_constnum(int num)
+{
+	expr *e = newexpr(constnum_e);
+	e->numConst = num;
+	return e;
+}
+
 const char* opcode_to_str(iopcode op)
 {
 	switch (op) {

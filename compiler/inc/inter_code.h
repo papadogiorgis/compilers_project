@@ -20,5 +20,9 @@ expr* inter_code_uminus(expr* e);
 void inter_make_bool_expr(expr* e);
 void inter_code_boolean_comparison(expr* lval, expr* arg1, expr* arg2, iopcode op);
 expr* inter_code_bool_to_val(expr* e);
+expr *inter_code_increment(expr *exp);
+expr *inter_code_decrement(expr *exp);
+expr *inter_code_decr_var(expr *val);
+expr *inter_code_incr_var(expr *val);
 
 #endif

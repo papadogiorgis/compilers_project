@@ -50,12 +50,82 @@ expr* inter_code_arithmetic(expr* lval, expr* rval, iopcode op)
 
 expr *inter_code_bool (expr *lval, expr* rval, iopcode op)
 {
-	lval = emit_if_tableitem(lval);
-	rval = emit_if_tableitem(rval);
+	lval = lval ? emit_if_tableitem(lval) : 0;
+	rval = rval ? emit_if_tableitem(rval) : 0;
 	
 	expr *tmp = newtemp();
-	emit(op, lval, rval, tmp, currQuad+2, yylineno);
+	emit(op, lval, rval, tmp, op == not_op ? 0 : currQuad+2, yylineno);
 	return tmp;
+}
+
+// Emits quad for expression: ++<var>
+expr *inter_code_incr_var(expr *val)
+{
+	expr *res = newtemp();
+
+	if (val->type == tableitem_e){
+		res = emit_if_tableitem(val);
+		emit(add, res, newexpr_constnum(1), res, 0, yylineno);
+		emit(tablesetelem, val->index, res, val, 0, yylineno);
+		return res;
+	}
+
+	emit(add, val, newexpr_constnum(1), val, 0, yylineno);
+	emit(assign, val, NULL, res, 0, yylineno);
+	return res;
+}
+
+expr *inter_code_decr_var(expr *val)
+{
+	expr *res = newtemp();
+
+	if (val->type == tableitem_e){
+		res = emit_if_tableitem(val);
+		emit(sub, res, newexpr_constnum(1), res, 0, yylineno);
+		emit(tablesetelem,  val->index, res, val,0, yylineno);
+		return res;
+	}
+
+	emit(sub, val, newexpr_constnum(1), val, 0, yylineno);
+	emit(assign, val, NULL, res, 0, yylineno);
+	return res;
+}
+
+// Emits quad for expression: <var>++
+expr *inter_code_increment(expr *val)
+{
+	expr *res = newtemp();
+
+	if (val->type == tableitem_e){
+		// fetch table item first and add later
+		expr *tmp = emit_if_tableitem(val);
+		emit(assign, tmp, NULL, res, 0, yylineno);
+		emit(add, tmp, newexpr_constnum(1), tmp, 0, yylineno);
+		emit(tablesetelem, val->index, tmp, val, 0 , yylineno);
+		return res;
+	}
+
+	emit(assign, val, NULL, res, 0, yylineno);
+	emit(add, val, newexpr_constnum(1), val, 0, yylineno);
+	return res;
+}
+
+expr *inter_code_decrement(expr *val)
+{
+	expr *res = newtemp();
+
+	if (val->type == tableitem_e){
+		// fetch table item first and add later
+		expr *tmp = emit_if_tableitem(val);
+		emit(assign, tmp, NULL, res, 0, yylineno);
+		emit(sub, tmp, newexpr_constnum(1), tmp, 0, yylineno);
+		emit(tablesetelem, val->index, tmp, val, 0 , yylineno);
+		return res;
+	}
+
+	emit(assign, val, NULL, res, 0, yylineno);
+	emit(sub, val, newexpr_constnum(1), val, 0, yylineno);
+	return res;
 }
 
 expr* inter_code_objectdef_elist(expr* e){
@@ -218,4 +288,3 @@ expr* inter_code_bool_to_val(expr* e){
 	return res;
 
 }
-//--------------------------------

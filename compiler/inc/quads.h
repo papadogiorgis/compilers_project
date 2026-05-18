@@ -145,5 +145,7 @@ int newlist(int i);
 
 void make_stmt (stmt_t* s);
 
+expr *newexpr_constnum(int num);
+
 
 #endif
