@@ -626,18 +626,16 @@ quad#   opcode          result          arg1            arg2            label
 63      TABGETEL        _t2             t               3               
 64      ADD             _t2             _t2             1               
 65      TABSETEL        t               3               _t2             
-66      ASSIGN          _t3             _t2                             
-67      SUB             _t4             _t0             _t3             
-68      TABGETEL        _t5             t               "a"             
-69      SUB             _t5             _t5             1               
-70      TABSETEL        t               "a"             _t5             
-71      ASSIGN          _t6             _t5                             
-72      ADD             _t7             _t4             _t6             
-73      TABGETEL        _t9             t               "z"             
-74      ASSIGN          _t8             _t9                             
-75      ADD             _t9             _t9             1               
-76      TABSETEL        t               "z"             _t9             
-77      SUB             _t10            _t7             _t8
+66      SUB             _t3             _t0             _t2             
+67      TABGETEL        _t4             t               "a"             
+68      SUB             _t4             _t4             1               
+69      TABSETEL        t               "a"             _t4             
+70      ADD             _t5             _t3             _t4             
+71      TABGETEL        _t7             t               "z"             
+72      ASSIGN          _t6             _t7                             
+73      ADD             _t7             _t7             1               
+74      TABSETEL        t               "z"             _t7             
+75      SUB             _t8             _t5             _t6
 
 -->p3t_basic_expr.asc SIMULATOR'S QUADS
 1: assign a 4 [line 1]

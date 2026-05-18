@@ -794,40 +794,40 @@ forstmt:        forprefix elist RIGHT_PAR N loopstmt N
                 };
 
 returnstmt:     RETURN SEMICOLON{
-                //     if (infunc == 0){
-                //         printf("\nError: use of return outside of function, line %d\n", yylineno);
-                //         err_count++;
-                //     }
-                //     emit(ret, NULL, NULL, NULL, 0, yylineno);
-                //     int j = nextquadlabel();
-                //     emit(jump, NULL, NULL, NULL, 0, yylineno);
-                //     if(ret_top){
-                //         ret_top->retlist = mergelist(ret_top->retlist, newlist(j));
-                //     }
-                //     printf("line %d: returnstmt-> return;\n", yylineno);}
-                // | RETURN expr SEMICOLON{
-                //     if (infunc == 0){
-                //         printf("\nError: use of return outside of function, line %d\n", yylineno);
-                //         err_count++;
-                //     }
-                //     expr* retval = emit_if_tableitem($2);
-                //     emit(ret, retval, NULL, NULL, 0, yylineno);
-                //     int j = nextquadlabel();
-                //     emit(jump, NULL, NULL, NULL, 0, yylineno);
-                //     if(ret_top){
-                //         ret_top->retlist = mergelist(ret_top->retlist, newlist(j));
-                //     }
-                //     printf("line %d: returnstmt-> return expr;\n", yylineno);}
-                    if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}
-                    else if (infunc > 0){emit(ret, NULL, NULL, NULL, 0, yylineno);}
-                    printf("line %d: returnstmt-> return;\n", yylineno);
-
-                }
+                    if (infunc == 0){
+                        printf("\nError: use of return outside of function, line %d\n", yylineno);
+                        err_count++;
+                    }
+                    emit(ret, NULL, NULL, NULL, 0, yylineno);
+                    int j = nextquadlabel();
+                    emit(jump, NULL, NULL, NULL, 0, yylineno);
+                    if(ret_top){
+                        ret_top->retlist = mergelist(ret_top->retlist, newlist(j));
+                    }
+                    printf("line %d: returnstmt-> return;\n", yylineno);}
                 | RETURN expr SEMICOLON{
-                    if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}
-                    else if (infunc > 0) {emit(ret, NULL, NULL, $2, 0, yylineno);}
-                    printf("line %d: returnstmt-> return expr;\n", yylineno);
-                }
+                    if (infunc == 0){
+                        printf("\nError: use of return outside of function, line %d\n", yylineno);
+                        err_count++;
+                    }
+                    expr* retval = emit_if_tableitem($2);
+                    emit(ret, retval, NULL, NULL, 0, yylineno);
+                    int j = nextquadlabel();
+                    emit(jump, NULL, NULL, NULL, 0, yylineno);
+                    if(ret_top){
+                        ret_top->retlist = mergelist(ret_top->retlist, newlist(j));
+                    }
+                    printf("line %d: returnstmt-> return expr;\n", yylineno);}
+                //     if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}
+                //     else if (infunc > 0){emit(ret, NULL, NULL, NULL, 0, yylineno);}
+                //     printf("line %d: returnstmt-> return;\n", yylineno);
+
+                // }
+                // | RETURN expr SEMICOLON{
+                //     if (infunc == 0){printf("\nError: use of return outside of function, line %d\n", yylineno);}
+                //     else if (infunc > 0) {emit(ret, NULL, NULL, $2, 0, yylineno);}
+                //     printf("line %d: returnstmt-> return expr;\n", yylineno);
+                // }
                 ;
 
 %%

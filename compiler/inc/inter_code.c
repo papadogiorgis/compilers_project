@@ -61,15 +61,14 @@ expr *inter_code_bool (expr *lval, expr* rval, iopcode op)
 // Emits quad for expression: ++<var>
 expr *inter_code_incr_var(expr *val)
 {
-	expr *res = newtemp();
-
 	if (val->type == tableitem_e){
-		res = emit_if_tableitem(val);
+		expr* res = emit_if_tableitem(val);
 		emit(add, res, newexpr_constnum(1), res, 0, yylineno);
 		emit(tablesetelem, val->index, res, val, 0, yylineno);
 		return res;
 	}
 
+	expr* res = newtemp();
 	emit(add, val, newexpr_constnum(1), val, 0, yylineno);
 	emit(assign, val, NULL, res, 0, yylineno);
 	return res;
@@ -77,15 +76,14 @@ expr *inter_code_incr_var(expr *val)
 
 expr *inter_code_decr_var(expr *val)
 {
-	expr *res = newtemp();
-
 	if (val->type == tableitem_e){
-		res = emit_if_tableitem(val);
+		expr* res = emit_if_tableitem(val);
 		emit(sub, res, newexpr_constnum(1), res, 0, yylineno);
 		emit(tablesetelem,  val->index, res, val,0, yylineno);
 		return res;
 	}
 
+	expr* res = newtemp();
 	emit(sub, val, newexpr_constnum(1), val, 0, yylineno);
 	emit(assign, val, NULL, res, 0, yylineno);
 	return res;
