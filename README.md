@@ -8,10 +8,10 @@
 This project was compiled, tested, and verified on the computer named `mango` located in the CSD labs.
 
 ## 2. How to Run
-To compile and execute the intermediate code generator:
+To compile and execute the compiler:
 1. Open your terminal and navigate to the `compilers/` directory.
 2. Build the executable by running `make`.
-3. Run the parser and pass the input text file as an argument: `./parse test.txt`
+3. To run the compiler with a text file as an argument use the command `./compiler test.txt`. You can use the flag `-print-syntax` to print the syntax analysis and the scope table.
 4. The intermediate code (quads) will be generated and saved to a file named `all_quads.txt` in the same directory. Scope lists and phase 2 outputs are printed to the console.
 
 *To clean up the generated files run `make clean`.*

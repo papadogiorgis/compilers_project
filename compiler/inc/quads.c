@@ -287,57 +287,57 @@ const char* opcode_to_str(iopcode op)
 {
 	switch (op) {
 	case assign:
-		return "ASSIGN";
+		return "assign";
 	case add:
-		return "ADD";
+		return "add";
 	case sub:
-		return "SUB";
+		return "sub";
 	case mul:
-		return "MUL";
+		return "mul";
 	case division:
-		return "DIV";
+		return "division";
 	case mod:
-		return "MOD";
+		return "mod";
 	case uminus:
-		return "UMINUS";
+		return "uminus";
 	case and_op:
-		return "AND";
+		return "and_op";
 	case or_op:
-		return "OR";
+		return "or_op";
 	case not_op:
-		return "NOT";
+		return "not_op";
 	case jump:
-		return "JUMP";
+		return "jump";
 	case if_eq:
-		return "JE"; // jump if equal
+		return "if_eq"; // jump if equal
 	case if_noteq:
-		return "JNE"; // jump if not equal
+		return "if_noteq"; // jump if not equal
 	case if_lesseq:
-		return "JLE"; // jump if less equal
+		return "if_lesseq"; // jump if less equal
 	case if_greatereq:
-		return "JGE"; // jump if greater equal
+		return "if_greatereq"; // jump if greater equal
 	case if_less:
-		return "JL"; // jump if less
+		return "if_less"; // jump if less
 	case if_greater:
-		return "JG"; // jump if greater
+		return "if_greater"; // jump if greater
 	case call:
-		return "CALL";
+		return "call";
 	case param:
-		return "PARAM";
+		return "param";
 	case ret:
-		return "RET";
+		return "ret";
 	case getretval:
-		return "RETVAL";
+		return "getretval";
 	case funcstart:
-		return "FUNCSTART";
+		return "funcstart";
 	case funcend:
-		return "FUNCEND";
+		return "funcend";
 	case tablecreate:
-		return "TABCREATE";
+		return "tablecreate";
 	case tablegetelem:
-		return "TABGETEL";
+		return "tablegetelem";
 	case tablesetelem:
-		return "TABSETEL";
+		return "tablesetelem";
 	default:
 		assert(0);
 	}

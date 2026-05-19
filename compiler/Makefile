@@ -9,10 +9,10 @@ SOURCE_FILES =  al.c \
 				inc/stack.c
 
 
-all: parse
+all: compiler
 
-parse: syntax_parser.c scanner.c
-	gcc $(FLAGS) $(SOURCE_FILES) -o parse
+compiler: syntax_parser.c scanner.c
+	gcc $(FLAGS) $(SOURCE_FILES) -o compiler
 
 syntax_parser.c: syntax_parser.y
 	bison -d -v --yacc --output=syntax_parser.c syntax_parser.y
@@ -21,4 +21,4 @@ scanner.c: scanner.l syntax_parser.c
 	flex --outfile=scanner.c --header-file=scanner.h scanner.l
 
 clean: 
-	rm -f scanner.c syntax_parser.c syntax_parser.output parse all_quads.txt
+	rm -f scanner.c syntax_parser.c syntax_parser.output compiler all_quads.txt
