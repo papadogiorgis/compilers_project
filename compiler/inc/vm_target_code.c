@@ -5,11 +5,20 @@
 
 extern unsigned int currQuad;
 extern quad* quads;
+extern int print_syntax;
 
 /*initialize the extern variables declared in the .h*/
 instruction* instructions = NULL;
 unsigned int currInstructions=0;
 unsigned int totalInstructions=0;
+double* numConsts=NULL;
+unsigned totalNumConsts=0;
+char** stringConsts=NULL;
+unsigned totalStringConsts=0;
+char** namedLibfuncs=NULL;
+unsigned totalNamedLibfuncs=0;
+userfunc* userFuncs=NULL;
+unsigned totalUserFuncs=0;
 
 /*helper function to emit target instructions, similar to quad's emit()*/
 void emit_instr(instruction t){
@@ -167,19 +176,11 @@ generator_func_t all_generators[] = {
     generate_FUNCEXIT,
     generate_NEWTABLE,
     generate_TABLEGETELEM,
-    generate_TABLESETELEM
+    generate_TABLESETELEM,
+    generate_NOP
 };
 
-/*-----------Generators---------------------
-loop through all generated quads*/
-void generate_loop(void){
-    for(unsigned i=1; i<currQuad; ++i){
-        /*record the first target instruction generated for this quad*/
-        quads[i].target_address = currInstructions;
-        /*dispatch to the correct generator function based on the quad's opcode*/
-        (*all_generators[quads[i].op])(&quads[i]);
-    }
-}
+/*-----------Generators---------------------*/
 
 /*Helper for arithmetic, assignments, tables, logical*/
 void helper_op(quad* q, enum vmopcode op){
@@ -214,7 +215,7 @@ void generate_SUB(quad* q){
     helper_op(q, sub_v);
 }
 void generate_MUL(quad* q){
-    helper_op(q, sub_v);
+    helper_op(q, mul_v);
 }
 void generate_DIV(quad* q){
     helper_op(q, div_v);
@@ -389,3 +390,145 @@ void generate_RETURN(quad* q){
 }
 
 // void generate_PUSHARG(quad* q);
+
+/*----------for debugging-------------*/
+void print_op(enum vmopcode op){
+    if(op==assign_v){
+        printf("assign ");
+    }else if(op==add_v){
+        printf("add ");
+    }else if(op==sub_v){
+        printf("sub ");
+    }else if(op==mul_v){
+        printf("mul ");
+    }else if(op==div_v){
+        printf("div ");
+    }else if(op==mod_v){
+        printf("mod ");
+    }else if(op==uminus_v){
+        printf("uminus ");
+    }else if(op==and_v){
+        printf("and ");
+    }else if(op==or_v){
+        printf("or ");
+    }else if(op==not_v){
+        printf("not ");
+    }else if(op==jeq_v){
+        printf("jeq ");
+    }else if(op==jne_v){
+        printf("jne ");
+    }else if(op==jle_v){
+        printf("jle ");
+    }else if(op==jge_v){
+        printf("jge ");
+    }else if(op==jlt_v){
+        printf("jlt ");
+    }else if(op==jgt_v){
+        printf("jgt ");
+    }else if(op==call_v){
+        printf("call ");
+    }else if(op==pusharg_v){
+        printf("pusharg ");
+    }else if(op==funcenter_v){
+        printf("funcenter ");
+    }else if(op==funcexit_v){
+        printf("funcexit ");
+    }else if(op==newtable_v){
+        printf("newtable ");
+    }else if(op==tablegetelem_v){
+        printf("tablegetelem ");
+    }else if(op==tablesetelem_v){
+        printf("tablesetelem ");
+    }else if(op==nop_v){
+        printf("nop ");
+    }else if(op==ret_v){
+        printf("return ");
+    }else if(op==getretval_v){
+        printf("getretval ");
+    }else if(op==jump_v){
+        printf("jump ");
+    }else{
+        print("- ");
+    }
+}
+
+void printarg(vmarg* varg){
+    if(varg==NULL){
+        printf("- ");
+    }
+    if(varg->type==label_a){
+        printf("label:");
+    }else if(varg->type==global_a){
+        printf("global:");
+    }else if(varg->type==formal_a){
+        printf("formal:");
+    }else if(varg->type==local_a){
+        printf("local:");
+    }else if(varg->type==number_a){
+        printf("number:");
+    }else if(varg->type==string_a){
+        printf("string:");
+    }else if(varg->type==bool_a){
+        printf("bool:");
+    }else if(varg->type==nil_a){
+        printf("nil:");
+    }else if(varg->type==userfunc_a){
+        printf("userfunc:");
+    }else if(varg->type==libfunc_a){
+        printf("libfunc:");
+    }else if(varg->type==retval_a){
+        printf("retval:");
+    }else{
+        printf("- ");
+    }
+    printf("%d ",varg->val);
+}
+
+/*loop through all generated quads*/
+void generate_loop(void){
+    if(print_syntax){
+        printf("----------------TARGET CODE----------------\n");
+    }
+    for(unsigned i=1; i<currQuad; ++i){
+        /*record the first target instruction generated for this quad*/
+        quads[i].target_address = currInstructions;
+        /*dispatch to the correct generator function based on the quad's opcode*/
+        (*all_generators[quads[i].op])(&quads[i]);
+
+        if(print_syntax){
+            printf("%d | ",i);
+            print_op(instructions[i].opcode);
+            printarg(&instructions[i].arg1);
+            printarg(&instructions[i].arg2);
+            printarg(&instructions[i].result);
+            printf("\n");
+            fflush(stdout);
+        }
+    }
+    if(print_syntax){
+        if(numConsts!=NULL){
+            printf("----------------numConsts----------------\n");
+            for(int k=0; k<totalNumConsts; k++){
+                printf("%d | %lf\n",k,numConsts[k]);
+            }
+        }
+        if(stringConsts!=NULL){
+            printf("----------------stringConsts----------------\n");
+            for(int k=0; k<totalStringConsts; k++){
+                printf("%d | \"%s\"\n",k,stringConsts[k]);
+            }
+        }
+        if(namedLibfuncs!=NULL){
+            printf("----------------namedLibfuncs----------------\n");
+            for(int k=0; k<totalNamedLibfuncs; k++){
+                printf("%d | \"%s\"\n",k,namedLibfuncs[k]);
+            }
+        }
+        if(userFuncs!=NULL){
+            printf("----------------userFuncs----------------\n");
+            for(int k=0; k<totalUserFuncs; k++){
+                printf("%d | \"%s\" | address=%d, localsize=%d\n",k,userFuncs[k].id,userFuncs[k].address,userFuncs[k].localsize);
+            }
+        }
+    }
+}

@@ -49,14 +49,14 @@ typedef struct userfunc {
     char *id;
 } userfunc;
 
-double* numConsts;
-unsigned totalNumConsts;
-char** stringConsts;
-unsigned totalStringConsts;
-char** namedLibfuncs;
-unsigned totalNamedLibfuncs;
-userfunc* userFuncs;
-unsigned totalUserFuncs;
+extern double* numConsts;
+extern unsigned totalNumConsts;
+extern char** stringConsts;
+extern unsigned totalStringConsts;
+extern char** namedLibfuncs;
+extern unsigned totalNamedLibfuncs;
+extern userfunc* userFuncs;
+extern unsigned totalUserFuncs;
 
 typedef struct incomplete_jump{
     unsigned instrNo;
@@ -94,7 +94,7 @@ void generate_JGE(quad* q);
 void generate_JLT(quad* q);
 void generate_JGT(quad* q);
 void generate_CALL(quad* q);
-void generate_PUSHARG(quad* q);
+// void generate_PUSHARG(quad* q);
 void generate_FUNCENTER(quad* q);
 void generate_FUNCEXIT(quad* q);
 void generate_NEWTABLE(quad* q);
