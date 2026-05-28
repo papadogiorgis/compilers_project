@@ -72,17 +72,72 @@ void make_operand(expr* e, vmarg* arg){
 }
 
 /*-------constant tables and incomplete jumps-----------------*/
-unsigned consts_newnumber(double n);
+unsigned consts_newnumber(double n){
+    for(unsigned i=0; i<totalNumConsts; i++){
+        if(numConsts[i]==n){
+            return i;
+        }
+    }
+    numConsts = realloc(numConsts, (totalNumConsts+1)*sizeof(double));
+    numConsts[totalNumConsts]=n;
+    return totalNumConsts++;
+}
 
-unsigned consts_newstring(char* s);
+unsigned consts_newstring(char* s){
+    for(unsigned i=0; i<totalStringConsts; i++){
+        if(strcmp(stringConsts[i],s)==0){
+            return i;
+        }
+    }
+    stringConsts = realloc(stringConsts, (totalStringConsts+1)*sizeof(char*));
+    stringConsts[totalStringConsts]=strdup(s);
+    return totalStringConsts++;
+}
 
-unsigned libfuncs_nevused(char* s);
+unsigned libfuncs_nevused(char* s){
+    for(unsigned i=0; i<totalNamedLibfuncs; i++){
+        if(strcmp(namedLibfuncs[i],s)==0){
+            return i;
+        }
+    }
+    namedLibfuncs = realloc(namedLibfuncs, (totalNamedLibfuncs+1)*sizeof(char*));
+    namedLibfuncs[totalNamedLibfuncs]=strdup(s);
+    return totalNamedLibfuncs++;
+}
 
-unsigned userfuncs_newfunc(node* sym);
+unsigned userfuncs_newfunc(node* sym){
+    for(unsigned i=0; i<totalUserFuncs; i++){
+        if(strcmp(userFuncs[i].id,sym->key)==0){
+            return i;
+        }
+    }
+    userFuncs = realloc(userFuncs, (totalUserFuncs+1)*sizeof(userfunc));
+    userFuncs[totalUserFuncs].id=strdup(sym->key);
+    userFuncs[totalUserFuncs].address=sym->iaddress;
+    userFuncs[totalUserFuncs].localsize=sym->totalLocals;
+    return totalUserFuncs++;
+}
 
-void add_incomplete_jump(unsigned instrNo, unsigned iaddress);
+void add_incomplete_jump(unsigned instrNo, unsigned iaddress){
+    incomplete_jump* incju = malloc(sizeof(incomplete_jump));
+    incju->instrNo = instrNo;
+    incju->iaddress = iaddress;
+    incju->next = ij_head;
+    ij_head = incju;
+    ij_total++;
+}
 
-void patch_incomplete_jumps(void);
+void patch_incomplete_jumps(void){
+    incomplete_jump* current = ij_head;
+    while(current != NULL){
+        if(current->iaddress==currQuad){
+            instructions[current->instrNo].result.val = currInstructions;
+        }else{
+            instructions[current->instrNo].result.val = quads[current->iaddress].target_address;
+        }
+        current = current->next;
+    }
+}
 
 
 /*-------generator array-----------------*/
