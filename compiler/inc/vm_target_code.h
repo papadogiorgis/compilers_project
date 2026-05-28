@@ -3,6 +3,9 @@
 
 #include "quads.h"
 
+extern instruction* instructions;
+extern unsigned int currInstructions;
+
 enum vmopcode {
     assign_v, add_v, sub_v, mul_v, div_v,
     mod_v, uminus_v, and_v, or_v, not_v, jeq_v,
@@ -26,12 +29,12 @@ enum vmarg_t{
 };
 
 typedef struct vmarg {
-    vmarg_t type;
+    enum vmarg_t type;
     unsigned val;
 } vmarg ;
 
 typedef struct instruction {
-    vmopcode opcode;
+    enum vmopcode opcode;
     vmarg result;
     vmarg arg1;
     vmarg  arg2;
@@ -53,7 +56,6 @@ unsigned totalNamedLibfuncs;
 userfunc* userFuncs;
 unsigned totalUserFuncs;
 
-/*---------------------------------------
 typedef struct incomplete_jump{
     unsigned instrNo;
     unsigned iaddress;
@@ -63,7 +65,6 @@ incomplete_jump* ij_head = (incomplete_jump*)0;
 unsigned ij_total = 0;
 void add_incomplete_jump(unsigned instrNo, unsigned iaddress);
 void patch_incomplete_jumps(void);
----------------------------------------*/
 
 void generate_loop(void);
 
