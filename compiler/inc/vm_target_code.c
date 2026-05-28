@@ -71,12 +71,18 @@ void make_operand(expr* e, vmarg* arg){
     }
 }
 
-// void add_incomplete_jump(unsigned instrNo, unsigned iaddress);
-// void patch_incomplete_jumps(void);
-// unsigned consts_newstring(char* s);
-// unsigned consts_newnumber(double n);
-// unsigned libfuncs_nevused(char* s);
-// unsigned userfuncs_newfunc(node* sym);
+/*-------constant tables and incomplete jumps-----------------*/
+unsigned consts_newnumber(double n);
+
+unsigned consts_newstring(char* s);
+
+unsigned libfuncs_nevused(char* s);
+
+unsigned userfuncs_newfunc(node* sym);
+
+void add_incomplete_jump(unsigned instrNo, unsigned iaddress);
+
+void patch_incomplete_jumps(void);
 
 
 /*-------generator array-----------------*/
@@ -120,7 +126,7 @@ void generate_loop(void){
     }
 }
 
-/*Helper for arithmetic, assignments, tables, and more*/
+/*Helper for arithmetic, assignments, tables, logical*/
 void helper_op(quad* q, enum vmopcode op){
     instruction inst;
     inst.opcode = op;
@@ -164,24 +170,167 @@ void generate_MOD(quad* q){
 void generate_UMINUS(quad* q){
     helper_op(q, uminus_v);
 }
-// void generate_AND(quad* q);
-// void generate_OR(quad* q);
-// void generate_NOT(quad* q);
-// void generate_JEQ(quad* q);
-// void generate_JNE(quad* q);
-// void generate_JLE(quad* q);
-// void generate_JGE(quad* q);
-// void generate_JLT(quad* q);
-// void generate_JGT(quad* q);
-// void generate_CALL(quad* q);
+void generate_AND(quad* q){
+    helper_op(q, and_v);
+}
+void generate_OR(quad* q){
+    helper_op(q, or_v);
+}
+void generate_NOT(quad* q){
+    helper_op(q, not_v);
+}
+void generate_NEWTABLE(quad* q){
+    helper_op(q, newtable_v);
+}
+void generate_TABLEGETELEM(quad* q){
+    helper_op(q, tablegetelem_v);
+}
+void generate_TABLESETELEM(quad* q){
+    helper_op(q, tablesetelem_v);
+}
+void generate_NOP(quad* q){
+    helper_op(q, nop_v);
+}
+
+/*Helper for jumps*/
+void helper_jumps(quad* q, enum vmopcode op){
+    instruction inst;
+    inst.opcode = op;
+    inst.arg1.type = -1;
+    inst.arg2.type = -1;
+    inst.result.type = -1;
+    inst.arg1.val = 0;
+    inst.arg2.val = 0;
+    inst.result.val = 0;
+    if(q->arg1 != NULL){
+        make_operand(q->arg1, &inst.arg1);
+    }
+    if(q->arg2 != NULL){
+        make_operand(q->arg2, &inst.arg2);
+    }
+    inst.result.type = label_a;
+    inst.srcline = q->line;
+    emit_instr(inst);
+    add_incomplete_jump(currInstructions-1, q->label);
+}
+
+void generate_JEQ(quad* q){
+    helper_jumps(q, jeq_v);
+}
+void generate_JNE(quad* q){
+    helper_jumps(q, jne_v);
+}
+void generate_JLE(quad* q){
+    helper_jumps(q, jle_v);
+}
+void generate_JGE(quad* q){
+    helper_jumps(q, jge_v);
+}
+void generate_JLT(quad* q){
+    helper_jumps(q, jlt_v);
+}
+void generate_JGT(quad* q){
+    helper_jumps(q, jgt_v);
+}
+void generate_JUMP(quad* q){
+    helper_jumps(q, jump_v);
+}
+
+void generate_CALL(quad* q){
+    q->target_address = currInstructions;
+    instruction inst;
+    inst.opcode = call_v;
+    inst.arg1.type = -1;
+    inst.arg2.type = -1;
+    inst.result.type = -1;
+    inst.arg1.val = 0;
+    inst.arg2.val = 0;
+    inst.result.val = 0;
+
+    make_operand(q->arg1, &inst.arg1);
+    inst.srcline = q->line;
+    emit_instr(inst);
+}
+
+void generate_FUNCENTER(quad* q){
+    instruction inst;
+    inst.opcode = funcenter_v;
+    inst.arg1.type = -1;
+    inst.arg2.type = -1;
+    inst.result.type = -1;
+    inst.arg1.val = 0;
+    inst.arg2.val = 0;
+    inst.result.val = 0;
+
+    make_operand(q->result, &inst.result);
+    inst.srcline = q->line;
+    emit_instr(inst);
+}
+
+void generate_FUNCEXIT(quad* q){
+    instruction inst;
+    inst.opcode = funcexit_v;
+    inst.arg1.type = -1;
+    inst.arg2.type = -1;
+    inst.result.type = -1;
+    inst.arg1.val = 0;
+    inst.arg2.val = 0;
+    inst.result.val = 0;
+
+    make_operand(q->result, &inst.result);
+    inst.srcline = q->line;
+    emit_instr(inst);
+}
+
+void generate_PARAM(quad* q){
+    q->target_address = currInstructions;
+    instruction inst;
+    inst.opcode = pusharg_v;
+    inst.arg1.type = -1;
+    inst.arg2.type = -1;
+    inst.result.type = -1;
+    inst.arg1.val = 0;
+    inst.arg2.val = 0;
+    inst.result.val = 0;
+
+    make_operand(q->arg1, &inst.arg1);
+    inst.srcline = q->line;
+    emit_instr(inst);
+}
+
+void generate_GETRETVAL(quad* q){
+    q->target_address = currInstructions;
+    instruction inst;
+    inst.opcode = assign_v;
+    inst.arg1.type = -1;
+    inst.arg2.type = -1;
+    inst.result.type = -1;
+    inst.arg1.val = 0;
+    inst.arg2.val = 0;
+    inst.result.val = 0;
+
+    make_operand(q->result, &inst.result);
+    inst.arg1.type = retval_a;
+    inst.srcline = q->line;
+    emit_instr(inst);
+}
+
+void generate_RETURN(quad* q){
+    instruction inst;
+    inst.opcode = assign_v;
+    inst.arg1.type = -1;
+    inst.arg2.type = -1;
+    inst.result.type = -1;
+    inst.arg1.val = 0;
+    inst.arg2.val = 0;
+    inst.result.val = 0;
+
+    inst.result.type = retval_a;
+    if(q->arg1 != NULL){
+        make_operand(q->arg1, &inst.arg1);
+    }
+    inst.srcline = q->line;
+    emit_instr(inst);
+}
+
 // void generate_PUSHARG(quad* q);
-// void generate_FUNCENTER(quad* q);
-// void generate_FUNCEXIT(quad* q);
-// void generate_NEWTABLE(quad* q);
-// void generate_TABLEGETELEM(quad* q);
-// void generate_TABLESETELEM(quad* q);
-// void generate_NOP(quad* q);
-// void generate_JUMP(quad* q);
-// void generate_PARAM(quad* q);
-// void generate_GETRETVAL(quad* q);
-// void generate_RETURN(quad* q);

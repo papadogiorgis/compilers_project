@@ -13,7 +13,7 @@ enum vmopcode {
     jne_v, jle_v, jge_v, jlt_v, jgt_v, call_v, 
     pusharg_v, funcenter_v, funcexit_v, newtable_v,
     tablegetelem_v, tablesetelem_v, nop_v,
-    ret_v, getretval_v
+    ret_v, getretval_v, jump_v
 };
 
 enum vmarg_t{
