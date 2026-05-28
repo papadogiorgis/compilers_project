@@ -1,4 +1,5 @@
-# CS-340 Compilers Project - Phase C
+# Alpha Compiler and Virtual Machine
+*CS-340 Languages and Compilers - University of Crete*
 
 ## Authors
 * **Andreas Kantilierakis (csd5411)**

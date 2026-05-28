@@ -3,6 +3,30 @@
 #include <string.h>
 #include <assert.h>
 
+extern unsigned int currQuad;
+extern quad* quads;
+
+/*initialize the extern variables declared in the .h*/
+instruction* instructions = NULL;
+unsigned int currInstructions=0;
+unsigned int totalInstructions=0;
+
+/*helper function to emit target instructions, similar to quad's emit()*/
+void emit_instr(instruction t){
+    if(currInstructions==totalInstructions){
+        unsigned int size = (totalInstructions+1024)*sizeof(instruction);
+        instruction* p = malloc(size);
+        if(instructions){
+            memcpy(p, instructions, totalInstructions*sizeof(instruction));
+            free(instructions);
+        }
+        instructions = p;
+        totalInstructions+=1024;
+    }
+    instructions[currInstructions++]=t;
+}
+
+/*-------make_operand() function-------------*/
 void make_operand(expr* e, vmarg* arg){
     if(e == NULL){
         /*
@@ -55,16 +79,91 @@ void make_operand(expr* e, vmarg* arg){
 // unsigned userfuncs_newfunc(node* sym);
 
 
-/*-----------Generators---------------------*/
-// void generate_loop(void){}
+/*-------generator array-----------------*/
+generator_func_t all_generators[] = {
+    generate_ASSIGN,
+    generate_ADD,
+    generate_SUB,
+    generate_MUL,
+    generate_DIV,
+    generate_MOD,
+    generate_UMINUS,
+    generate_AND,
+    generate_OR,
+    generate_NOT,
+    generate_JUMP,
+    generate_JEQ,
+    generate_JNE,
+    generate_JLE,
+    generate_JGE,
+    generate_JLT,
+    generate_JGT,
+    generate_CALL,
+    generate_PARAM,
+    generate_RETURN,
+    generate_GETRETVAL,
+    generate_FUNCENTER,
+    generate_FUNCEXIT,
+    generate_NEWTABLE,
+    generate_TABLEGETELEM,
+    generate_TABLESETELEM
+};
 
-// void generate_ASSIGN(quad* q);
-// void generate_ADD(quad* q);
-// void generate_SUB(quad* q);
-// void generate_MUL(quad* q);
-// void generate_DIV(quad* q);
-// void generate_MOD(quad* q);
-// void generate_UMINUS(quad* q);
+/*-----------Generators---------------------
+loop through all generated quads*/
+void generate_loop(void){
+    for(unsigned i=1; i<currQuad; ++i){
+        /*record the first target instruction generated for this quad*/
+        quads[i].target_address = currInstructions;
+        /*dispatch to the correct generator function based on the quad's opcode*/
+        (*all_generators[quads[i].op])(&quads[i]);
+    }
+}
+
+/*Helper for arithmetic, assignments, tables, and more*/
+void helper_op(quad* q, enum vmopcode op){
+    instruction inst;
+    inst.opcode = op;
+    inst.arg1.type = -1;
+    inst.arg2.type = -1;
+    inst.result.type = -1;
+    inst.arg1.val = 0;
+    inst.arg2.val = 0;
+    inst.result.val = 0;
+    if(q->arg1 != NULL){
+        make_operand(q->arg1, &inst.arg1);
+    }
+    if(q->arg2 != NULL){
+        make_operand(q->arg2, &inst.arg2);
+    }
+    if(q->result != NULL){
+        make_operand(q->result, &inst.result);
+    }
+    inst.srcline = q->line;
+    emit_instr(inst);
+}
+
+void generate_ASSIGN(quad* q){
+    helper_op(q, assign_v);
+}
+void generate_ADD(quad* q){
+    helper_op(q, add_v);
+}
+void generate_SUB(quad* q){
+    helper_op(q, sub_v);
+}
+void generate_MUL(quad* q){
+    helper_op(q, sub_v);
+}
+void generate_DIV(quad* q){
+    helper_op(q, div_v);
+}
+void generate_MOD(quad* q){
+    helper_op(q, mod_v);
+}
+void generate_UMINUS(quad* q){
+    helper_op(q, uminus_v);
+}
 // void generate_AND(quad* q);
 // void generate_OR(quad* q);
 // void generate_NOT(quad* q);
@@ -86,4 +185,3 @@ void make_operand(expr* e, vmarg* arg){
 // void generate_PARAM(quad* q);
 // void generate_GETRETVAL(quad* q);
 // void generate_RETURN(quad* q);
-// typedef void (*generator_func_t)(quad*);
