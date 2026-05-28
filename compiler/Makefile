@@ -6,7 +6,8 @@ SOURCE_FILES =  al.c \
 				inc/symtablehash.c \
 				inc/quads.c \
 				inc/inter_code.c \
-				inc/stack.c
+				inc/stack.c \
+				inc/vm_target_code.c
 
 
 all: compiler
