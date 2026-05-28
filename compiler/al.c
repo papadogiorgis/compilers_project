@@ -7,6 +7,7 @@
 #include "syntax_parser.h"
 #include "inc/symtable.h"
 #include "inc/quads.h"
+#include "inc/vm_target_code.h"
 
 extern int yylex(void);
 extern int yyparse(void);
@@ -69,6 +70,8 @@ int main(int argc, char **argv){
     }else{
         if(err_count == 0){
             give_quads(quad_txt);
+            generate_loop();
+            //patch_incomplete_jumps();
         }
     }
 
