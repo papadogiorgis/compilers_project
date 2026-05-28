@@ -75,6 +75,7 @@ typedef struct quad {
 	expr* arg2;
 	unsigned int label;
 	unsigned int line;
+	unsigned int target_address;
 } quad;
 
 typedef enum scopespace_t {
