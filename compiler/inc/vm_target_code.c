@@ -20,6 +20,11 @@ unsigned totalNamedLibfuncs=0;
 userfunc* userFuncs=NULL;
 unsigned totalUserFuncs=0;
 
+incomplete_jump* ij_head = NULL;
+unsigned ij_total = 0;
+
+extern unsigned int programVarOffset; //thats from quads.c
+
 /*helper function to emit target instructions, similar to quad's emit()*/
 void emit_instr(instruction t){
     if(currInstructions==totalInstructions){
@@ -448,13 +453,13 @@ void print_op(enum vmopcode op){
     }else if(op==jump_v){
         printf("jump ");
     }else{
-        print("- ");
+        printf("UNKNOWN_OP ");
     }
 }
 
 void printarg(vmarg* varg){
     if(varg==NULL){
-        printf("- ");
+        printf("NULL ");
     }
     if(varg->type==label_a){
         printf("label:");
@@ -479,7 +484,7 @@ void printarg(vmarg* varg){
     }else if(varg->type==retval_a){
         printf("retval:");
     }else{
-        printf("- ");
+        printf("UNKNOWN_TYPE ");
     }
     printf("%d ",varg->val);
 }
@@ -487,25 +492,26 @@ void printarg(vmarg* varg){
 /*loop through all generated quads*/
 void generate_loop(void){
     if(print_syntax){
-        printf("----------------TARGET CODE----------------\n");
+        printf("\n\n----------------TARGET CODE----------------\n");
     }
     for(unsigned i=1; i<currQuad; ++i){
         /*record the first target instruction generated for this quad*/
         quads[i].target_address = currInstructions;
         /*dispatch to the correct generator function based on the quad's opcode*/
         (*all_generators[quads[i].op])(&quads[i]);
+    }
 
-        if(print_syntax){
+    patch_incomplete_jumps();
+
+    if(print_syntax){
+        for(unsigned i=0; i<currInstructions; ++i){
             printf("%d | ",i);
             print_op(instructions[i].opcode);
             printarg(&instructions[i].arg1);
             printarg(&instructions[i].arg2);
             printarg(&instructions[i].result);
             printf("\n");
-            fflush(stdout);
         }
-    }
-    if(print_syntax){
         if(numConsts!=NULL){
             printf("----------------numConsts----------------\n");
             for(int k=0; k<totalNumConsts; k++){
@@ -531,4 +537,45 @@ void generate_loop(void){
             }
         }
     }
+}
+
+/*----------------generate binary file---------------------*/
+void create_binary_file(void){
+    FILE* out_abc = fopen("out.abc","wb");
+    if(!out_abc){
+        printf("Couldn't open file abc.out\n");
+        return;
+    }
+
+    unsigned int magic_num = 340200499;
+    fwrite(&magic_num, sizeof(unsigned int), 1, out_abc);
+    fwrite(&programVarOffset, sizeof(unsigned int),1,out_abc);
+    fwrite(&totalStringConsts, sizeof(unsigned),1,out_abc);
+    for(unsigned i=0; i<totalStringConsts; ++i){
+        unsigned str_length = strlen(stringConsts[i]+1);
+        fwrite(&str_length, sizeof(unsigned),1,out_abc);
+        fwrite(stringConsts[i],sizeof(char),str_length,out_abc);
+    }
+    fwrite(&totalNumConsts, sizeof(unsigned),1,out_abc);
+    for(unsigned i=0; i<totalNumConsts; ++i){
+        fwrite(&numConsts[i],sizeof(double),1,out_abc);
+    }
+    fwrite(&totalUserFuncs, sizeof(unsigned),1,out_abc);
+    for(unsigned i=0; i<totalUserFuncs; ++i){
+        fwrite(&userFuncs[i].address,sizeof(unsigned),1,out_abc);
+        fwrite(&userFuncs[i].localsize,sizeof(unsigned),1,out_abc);
+        unsigned usfunclength = strlen(userFuncs[i].id)+1;
+        fwrite(&usfunclength,sizeof(unsigned),1,out_abc);
+        fwrite(userFuncs[i].id,sizeof(char),usfunclength,out_abc);
+    }
+    fwrite(&totalNamedLibfuncs,sizeof(unsigned),1,out_abc);
+    for(unsigned i=0; i<totalNamedLibfuncs; ++i){
+        unsigned libfunclength = strlen(namedLibfuncs[i])+1;
+        fwrite(&libfunclength,sizeof(unsigned),1,out_abc);
+        fwrite(namedLibfuncs[i],sizeof(char),libfunclength,out_abc);
+    }
+    fwrite(&currInstructions,sizeof(unsigned),1,out_abc);
+    fwrite(instructions, sizeof(instruction),currInstructions,out_abc);
+
+    fclose(out_abc);
 }

@@ -71,7 +71,7 @@ int main(int argc, char **argv){
         if(err_count == 0){
             give_quads(quad_txt);
             generate_loop();
-            patch_incomplete_jumps();
+            create_binary_file();
         }
     }
 

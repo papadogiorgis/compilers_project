@@ -3,10 +3,6 @@
 
 #include "quads.h"
 
-extern instruction* instructions;
-extern unsigned int currInstructions;
-extern unsigned int totalInstructions;
-
 enum vmopcode {
     assign_v, add_v, sub_v, mul_v, div_v,
     mod_v, uminus_v, and_v, or_v, not_v, jeq_v,
@@ -39,7 +35,7 @@ typedef struct instruction {
     enum vmopcode opcode;
     vmarg result;
     vmarg arg1;
-    vmarg  arg2;
+    vmarg arg2;
     unsigned srcline;
 } instruction;
 
@@ -48,6 +44,16 @@ typedef struct userfunc {
     unsigned localsize;
     char *id;
 } userfunc;
+
+typedef struct incomplete_jump{
+    unsigned instrNo;
+    unsigned iaddress;
+    struct incomplete_jump* next;
+}incomplete_jump;
+
+extern instruction* instructions;
+extern unsigned int currInstructions;
+extern unsigned int totalInstructions;
 
 extern double* numConsts;
 extern unsigned totalNumConsts;
@@ -58,13 +64,10 @@ extern unsigned totalNamedLibfuncs;
 extern userfunc* userFuncs;
 extern unsigned totalUserFuncs;
 
-typedef struct incomplete_jump{
-    unsigned instrNo;
-    unsigned iaddress;
-    incomplete_jump* next;
-}incomplete_jump;
-incomplete_jump* ij_head = (incomplete_jump*)0;
-unsigned ij_total = 0;
+
+extern incomplete_jump* ij_head;
+extern unsigned ij_total;
+
 void add_incomplete_jump(unsigned instrNo, unsigned iaddress);
 void patch_incomplete_jumps(void);
 
@@ -107,5 +110,7 @@ void generate_GETRETVAL(quad* q);
 void generate_RETURN(quad* q);
 
 typedef void (*generator_func_t)(quad*);
+
+void create_binary_file(void);
 
 #endif
