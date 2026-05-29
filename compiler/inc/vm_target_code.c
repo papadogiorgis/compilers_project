@@ -458,8 +458,8 @@ void print_op(enum vmopcode op){
 }
 
 void printarg(vmarg* varg){
-    if(varg==NULL){
-        printf("NULL ");
+    if((varg==NULL)||((int)varg->type==-1)){
+        return;
     }
     if(varg->type==label_a){
         printf("label:");
@@ -552,7 +552,7 @@ void create_binary_file(void){
     fwrite(&programVarOffset, sizeof(unsigned int),1,out_abc);
     fwrite(&totalStringConsts, sizeof(unsigned),1,out_abc);
     for(unsigned i=0; i<totalStringConsts; ++i){
-        unsigned str_length = strlen(stringConsts[i]+1);
+        unsigned str_length = strlen(stringConsts[i])+1;
         fwrite(&str_length, sizeof(unsigned),1,out_abc);
         fwrite(stringConsts[i],sizeof(char),str_length,out_abc);
     }
