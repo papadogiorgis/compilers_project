@@ -64,7 +64,7 @@ int main(int argc, char **argv){
         printScopeList();
     }
 
-    FILE* quad_txt = fopen("all_quads.txt", "w");
+    FILE* quad_txt = fopen("compiler/all_quads.txt", "w");
     if(!quad_txt){
         fprintf(stderr, "Couldn't open file all_quads.txt\n");
     }else{

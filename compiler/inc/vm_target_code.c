@@ -612,7 +612,7 @@ void generate_loop(void){
 
 /*----------------generate binary file---------------------*/
 void create_binary_file(void){
-    FILE* out_abc = fopen("out.abc","wb");
+    FILE* out_abc = fopen("avm/out.abc","wb");
     if(!out_abc){
         printf("Couldn't open file abc.out\n");
         return;

@@ -27,5 +27,5 @@ compiler/syntax_parser.c compiler/syntax_parser.h: compiler/syntax_parser.y
 	@cd compiler && bison -d -v --yacc --output=syntax_parser.c syntax_parser.y
 
 clean: 
-	@rm -f compiler/scanner.c compiler/syntax_parser.c compiler/syntax_parser.output alpha_compiler compiler/all_quads.txt compiler/out.abc
+	@rm -f compiler/scanner.c compiler/syntax_parser.c compiler/syntax_parser.output alpha_compiler compiler/all_quads.txt avm/out.abc
 	@echo All cleaned up!
