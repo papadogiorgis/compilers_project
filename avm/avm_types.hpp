@@ -2,31 +2,39 @@
 #define AVM_TYPES
 
 #include <map>
+#include <string>
 
 #include "../compiler/inc/vm_target_code.h"
 
+struct avm_memcell;
+
 enum avm_memcell_t {
-    number_m,
-    string_m,
-    bool_m,
-    table_m,
-    userfunc_m,
-    libfunc_m,
-    nil_m,
-    undef_m
+    number_m=0,
+    string_m=1,
+    bool_m=2,
+    table_m=3,
+    userfunc_m=4,
+    libfunc_m=5,
+    nil_m=6,
+    undef_m=7
 };
 
 
 typedef struct avm_table{
     unsigned refcnt;
     unsigned tableno;
+
+    std::map<double, struct avm_memcell*> numIndexed;
+    std::map<std::string, struct avm_memcell*> strIndexed;
+    std::map<struct avm_memcell*, struct avm_memcell*> otherIndexed;
+
     void incrrefcounter();
     void decrrefcounter();
     avm_table(void);
     ~avm_table(void);
 } avm_table;
 
-typedef struct {
+typedef struct avm_memcell{
     avm_memcell_t type;
     union {
         double numVal;
@@ -38,9 +46,11 @@ typedef struct {
     } data;
 } avm_memcell;
 
-typedef void (*execute_func_t)(instruction *);
+extern const char* typeStrings[];
 
 avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg);
 void avm_assign (avm_memcell *lv, avm_memcell *rv);
+avm_memcell* avm_tablegetelem(avm_table* table, avm_memcell* index);
+userfunc* avm_getfuncinfo(unsigned address);
 
 #endif

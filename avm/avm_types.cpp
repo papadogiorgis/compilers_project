@@ -1,19 +1,87 @@
 #include "avm_types.hpp"
-#include "../compiler/inc/vm_target_code.h"
 #include "avm_stack.hpp"
-#include <stdio.h>
-#include <cstdlib>
 #include "instr.hpp"
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
+#include <cassert>
 
 extern avm_memcell ax, bx, cx, retval;
 extern avm_memcell stack[STACK_SZ];
 extern unsigned ebp, esp;
+extern double* numConsts;
+extern char** stringConsts;
+extern char** namedLibfuncs;
+extern userfunc* userFuncs;
+extern unsigned totalUserFuncs;
 
-avm_table::avm_table(){}
+const char* typeStrings[] = {
+    "number",
+    "string",
+    "bool",
+    "table",
+    "userfunc",
+    "libfunc",
+    "nil",
+    "undef"
+};
+
+unsigned totalTables=0;
+
+avm_table::avm_table(){
+    refcnt=0;
+    tableno= ++totalTables;
+}
+
+avm_table::~avm_table(){
+    for(auto& pair : numIndexed){
+        avm_memcellclear(pair.second);
+        delete pair.second;
+    }
+    for(auto& pair : strIndexed){
+        avm_memcellclear(pair.second);
+        delete pair.second;
+    }
+    for(auto& pair : otherIndexed){
+        avm_memcellclear(pair.second);
+        delete pair.second;
+    }
+    numIndexed.clear();
+    strIndexed.clear();
+    otherIndexed.clear();
+}
+
+void avm_table::incrrefcounter(void){
+    ++refcnt;
+}
+
+void avm_table::decrrefcounter(void){
+    assert(refcnt>0);
+    if(--refcnt == 0){
+        delete this;
+    }
+}
+
 avm_memcell* avm_tablegetelem(avm_table* table, avm_memcell* index){
+    if(index->type == number_m){
+        auto temp = table->numIndexed.find(index->data.numVal);
+        if(temp != table->numIndexed.end()){
+            return temp->second;
+        }
+    }else if(index->type == string_m){
+        auto temp = table->strIndexed.find(index->data.strVal);
+        if(temp != table->strIndexed.end()){
+            return temp->second;
+        }
+    }else{
+        auto temp = table->otherIndexed.find(index);
+        if(temp != table->otherIndexed.end()){
+            return temp->second;
+        }
+    }
     return nullptr;
 }
+
 userfunc* avm_getfuncinfo(unsigned address){
     for(unsigned i=0; i<totalUserFuncs; ++i){
         if(userFuncs[i].address == address){
@@ -32,12 +100,12 @@ avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg){
 
         case number_a: {
             reg->type = number_m;
-            // reg->data.numVal = consts_getnumber(arg->val);
+            reg->data.numVal = numConsts[arg->val];
             return reg;
         }
         case string_a: {
             reg->type = string_m;
-            // reg->data.strVal = consts_getstring(arg->val);
+            reg->data.strVal = strdup(stringConsts[arg->val]);
             return reg;
         }
         case bool_a: {
@@ -52,8 +120,8 @@ avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg){
             return reg;
         }
         case libfunc_a: {
-            reg->type = userfunc_m;
-            // reg->data.libFuncVal = libfuncs_getused(arg->val);
+            reg->type = libfunc_m;
+            reg->data.libFuncVal = strdup(namedLibfuncs[arg->val]);
             return reg;
         }
         default:
@@ -79,20 +147,10 @@ void avm_assign (avm_memcell *lv, avm_memcell *rv)
 
     if (lv->type == string_m){
         lv->data.strVal = strdup(rv->data.strVal);
-    }
-    else if (lv->type == table_m) {
-        // avm_tableincrecounter(lv->data.tableVal);
+    }else if (lv->type == libfunc_m) {
+        lv->data.libFuncVal = strdup(rv->data.libFuncVal);
+    }else if (lv->type == table_m) {
+        lv->data.tableVal->incrrefcounter();
     }
     return;
-}
-
-
-void avm_table::incrrefcounter(void)
-{
-    refcnt++;
-}
-
-void avm_table::decrrefcounter(void)
-{
-    refcnt--;
 }

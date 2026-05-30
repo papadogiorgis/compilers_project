@@ -20,17 +20,6 @@ void libfunc_print(void)
     }
 }
 
-const char* typeStrings[] = {
-    "number",
-    "string",
-    "bool",
-    "table",
-    "userfunc",
-    "libfunc",
-    "nil",
-    "undef"
-};
-
 void libfunc_typeof(void)
 {
     unsigned n = avm_totalactuals();
