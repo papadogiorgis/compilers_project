@@ -20,9 +20,6 @@ AVM_SOURCE_FILES = avm/main.cpp \
 				avm/avm_dispatch.cpp \
 				avm/lib/functions.cpp
 
-temp = avm/main.cpp\
-	avm/avm_loader.cpp
-
 all: alpha_compiler alpha_vm
 
 alpha_compiler: compiler/scanner.c compiler/syntax_parser.c
