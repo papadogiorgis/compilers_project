@@ -51,6 +51,12 @@ typedef struct incomplete_jump{
     struct incomplete_jump* next;
 }incomplete_jump;
 
+typedef struct funcjump_stack{
+    unsigned inst;
+    struct funcjump_stack* prev;
+    struct funcjump_stack* next;
+}funcjump_stack;
+
 extern instruction* instructions;
 extern unsigned int currInstructions;
 extern unsigned int totalInstructions;

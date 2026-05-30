@@ -25,6 +25,8 @@ unsigned ij_total = 0;
 
 extern unsigned int programVarOffset; //thats from quads.c
 
+funcjump_stack* funcjump_top;
+
 /*helper function to emit target instructions, similar to quad's emit()*/
 void emit_instr(instruction t){
     if(currInstructions==totalInstructions){
@@ -229,7 +231,22 @@ void generate_MOD(quad* q){
     helper_op(q, mod_v);
 }
 void generate_UMINUS(quad* q){
-    helper_op(q, uminus_v);
+    /*MULTIPLICATION WITH -1*/
+    instruction inst;
+    inst.opcode = mul_v;
+    inst.arg1.type = -1;
+    inst.arg2.type = -1;
+    inst.result.type = -1;
+    inst.arg1.val = 0;
+    inst.arg2.val = 0;
+    inst.result.val = 0;
+    
+    make_operand(q->arg1, &inst.arg1);
+    make_operand(q->result, &inst.result);
+    inst.arg2.type = number_a;
+    inst.arg2.val = consts_newnumber(-1.0);
+    inst.srcline = q->line;
+    emit_instr(inst);
 }
 void generate_AND(quad* q){
     helper_op(q, and_v);
@@ -313,7 +330,58 @@ void generate_CALL(quad* q){
     emit_instr(inst);
 }
 
+/*simple stack to track function jump patching for nested functions*/
+
+void push_funcjump(unsigned instrNo){
+    funcjump_stack* temp;
+    if(funcjump_top==NULL){
+        funcjump_top = malloc(sizeof(struct funcjump_stack));
+        funcjump_top->prev = NULL;
+        assert(funcjump_top);
+    }else{
+        funcjump_top->next = malloc(sizeof(struct funcjump_stack));
+        assert(funcjump_top->next);
+        temp = funcjump_top;
+        funcjump_top = funcjump_top->next;
+        funcjump_top->prev = temp;
+    }
+    funcjump_top->next = NULL;
+    funcjump_top->inst = instrNo;
+}
+
+unsigned pop_funcjump(){
+    unsigned temp_num;
+    funcjump_stack* temp;
+    if(funcjump_top==NULL){
+        printf("Error: Cannot pop from empty funcjump_stack.\n");
+        return 0;
+    }
+    temp_num = funcjump_top->inst;
+    temp = funcjump_top;
+    if(funcjump_top->prev==NULL){
+        funcjump_top = NULL;
+    }else{
+        funcjump_top = funcjump_top->prev;
+    }
+    free(temp);
+    return temp_num;
+}
+
 void generate_FUNCENTER(quad* q){
+    /*emit jump to skip function body*/
+    instruction jump_inst;
+    jump_inst.opcode = jump_v;
+    jump_inst.arg1.type = -1;
+    jump_inst.arg2.type = -1;
+    jump_inst.result.type = label_a;
+    jump_inst.arg1.val = 0;
+    jump_inst.arg2.val = 0;
+    jump_inst.result.val = 0;
+    jump_inst.srcline = q->line;
+    emit_instr(jump_inst);
+
+    push_funcjump(currInstructions-1);
+
     instruction inst;
     inst.opcode = funcenter_v;
     inst.arg1.type = -1;
@@ -341,6 +409,9 @@ void generate_FUNCEXIT(quad* q){
     make_operand(q->result, &inst.result);
     inst.srcline = q->line;
     emit_instr(inst);
+
+    unsigned jump_index = pop_funcjump();
+    instructions[jump_index].result.val = currInstructions;
 }
 
 void generate_PARAM(quad* q){
