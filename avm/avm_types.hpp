@@ -1,7 +1,7 @@
 #ifndef AVM_TYPES
 #define AVM_TYPES
 
-#include "../compiler/inc/vmtypes.h"
+#include "../compiler/inc/vm_target_code.h"
 
 enum avm_memcell_t {
     number_m,
@@ -29,6 +29,8 @@ typedef struct {
         char *libFuncVal;
     } data;
 } avm_memcell;
+
+typedef void (*execute_func_t)(instruction *);
 
 avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg);
 
