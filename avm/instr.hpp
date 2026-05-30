@@ -19,4 +19,19 @@ memclear_func_t memclearFuncs[] = {
 
 void avm_memcellclear (avm_memcell *m);
 
+void avm_tablesetelem (avm_table *table, avm_memcell *index, avm_memcell* content);
+avm_memcell* avm_tablegetelem(avm_table* table, avm_memcell* index);
+
+char* typeStrings[] = {
+    "number",
+    "string",
+    "bool",
+    "table",
+    "userfunc",
+    "libfunc",
+    "nil",
+    "undef"
+};
+
+
 #endif

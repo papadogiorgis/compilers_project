@@ -1,7 +1,9 @@
 #ifndef AVM_TYPES
 #define AVM_TYPES
 
-#include "../compiler/inc/vmtypes.h"
+#include <map>
+
+#include "../compiler/inc/vm_target_code.h"
 
 enum avm_memcell_t {
     number_m,
@@ -14,9 +16,15 @@ enum avm_memcell_t {
     undef_m
 };
 
-// TODO: define later
-typedef tableval;
-typedef avm_table;
+
+typedef struct avm_table{
+    unsigned refcnt;
+    unsigned tableno;
+    void incrrefcounter();
+    void decrrefcounter();
+    avm_table(void);
+    ~avm_table(void);
+} avm_table;
 
 typedef struct {
     avm_memcell_t type;
@@ -31,5 +39,6 @@ typedef struct {
 } avm_memcell;
 
 avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg);
+void avm_assign (avm_memcell *lv, avm_memcell *rv);
 
 #endif

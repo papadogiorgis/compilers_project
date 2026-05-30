@@ -5,7 +5,10 @@
 #include <cstdlib>
 
 extern void avm_assign (avm_memcell *lv, avm_memcell *rv);
-extern avm_memcell ax, bx, cx;
+extern avm_memcell ax, bx, cx, retval;
+extern avm_memcell *stack;
+extern unsigned esp, ebp, pc;
+extern unsigned char executionFinished;
 
 extern void memclear_string (avm_memcell *m)
 {
@@ -31,12 +34,3 @@ void avm_memcellclear (avm_memcell *m)
     }
 }
 
-void execute_assign(instruction *instr) 
-{
-    avm_memcell *lv = avm_translate_operand(&instr->result, (avm_memcell*) 0);
-    avm_memcell *rv = avm_translate_operand(&instr->arg1, &ax);
-
-    // assert(lv && (&stack[]));
-
-    avm_assign(lv, rv);
-}
