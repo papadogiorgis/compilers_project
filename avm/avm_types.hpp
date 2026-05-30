@@ -1,8 +1,11 @@
 #ifndef AVM_TYPES
 #define AVM_TYPES
 
+<<<<<<< HEAD
 #include <map>
 
+=======
+>>>>>>> 08e058ca58ede18473d46e41f1a2e86f5649862c
 #include "../compiler/inc/vm_target_code.h"
 
 enum avm_memcell_t {
@@ -37,6 +40,8 @@ typedef struct {
         char *libFuncVal;
     } data;
 } avm_memcell;
+
+typedef void (*execute_func_t)(instruction *);
 
 avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg);
 void avm_assign (avm_memcell *lv, avm_memcell *rv);
