@@ -11,7 +11,7 @@ extern unsigned totalNamedLibfuncs;
 extern unsigned totalUserFuncs;
 extern unsigned programVarOffset;
 
-bool debug_flag;
+extern bool debug_flag;
 
 bool load_binary(int argc, char* argv[]);
 

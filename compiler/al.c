@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "inc/stack.h"
 #include "scanner.h"
@@ -25,28 +26,35 @@ int main(int argc, char **argv){
     stack = stack_create();
     push_loopcounter();
     print_syntax=0;
-    int file_flag=1;
+
+    char* filename = NULL;
 
     putLibFunctions(symtable);
-    if (argc > 1){
-        for(int i=1; i<argc; i++){
-            if(strcmp(argv[i], "-print-syntax")==0){
-                print_syntax=1;
-            }else{
-                if (!(yyin = fopen(argv[i], "r"))){
-                    fprintf(stderr, "Can't open file\n");
-                    return -1;
-                }else{
-                    file_flag=0;
-                }
+
+    if(argc<2 || argc>3){
+        fprintf(stderr,"Usage: %s -print-syntax[optional] <input_file>\n",argv[0]);
+        return -1;
+    }
+
+    for(int i=1; i<argc; i++){
+        if(strcmp(argv[i], "-print-syntax")==0){
+            print_syntax=1;
+        }else{
+            if(filename != NULL){
+                fprintf(stderr, "Too many arguments provided!\n");
+                return -1;
             }
+            filename=argv[i];
         }
-        if(file_flag){
-            fprintf(stderr, "Give input file\n");
-            return -1;
-        }
-    }else {
-        fprintf(stderr, "Give input file\n");
+    }
+
+    if(filename==NULL){
+        fprintf(stderr,"Give input file.\n");
+        return -1;
+    }
+
+    if(!(yyin=fopen(filename, "r"))){
+        fprintf(stderr, "Cannot open file %s\n",filename);
         return -1;
     }
 
@@ -73,6 +81,7 @@ int main(int argc, char **argv){
             generate_loop();
             create_binary_file();
         }
+        fclose(quad_txt);
     }
 
     return parse_res;
