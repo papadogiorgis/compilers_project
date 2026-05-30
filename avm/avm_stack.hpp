@@ -2,7 +2,7 @@
 #define AVM_STACK
 
 #include "avm_types.hpp"
-#include "../compiler/inc/vmtypes.h"
+#include "../compiler/inc/vm_target_code.h"
 
 #define STACK_SZ 4096
 #define ENV_SZ 4

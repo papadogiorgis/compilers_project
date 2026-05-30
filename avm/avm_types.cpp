@@ -1,5 +1,5 @@
 #include "avm_types.hpp"
-#include "../compiler/inc/vmtypes.h"
+#include "../compiler/inc/vm_target_code.h"
 #include "avm_stack.hpp"
 #include <stdio.h>
 #include <cstdlib>
