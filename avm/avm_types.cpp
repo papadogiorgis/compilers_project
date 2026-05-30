@@ -10,6 +10,19 @@ extern avm_memcell ax, bx, cx, retval;
 extern avm_memcell stack[STACK_SZ];
 extern unsigned ebp, esp;
 
+avm_table::avm_table(){}
+avm_memcell* avm_tablegetelem(avm_table* table, avm_memcell* index){
+    return nullptr;
+}
+userfunc* avm_getfuncinfo(unsigned address){
+    for(unsigned i=0; i<totalUserFuncs; ++i){
+        if(userFuncs[i].address == address){
+            return &userFuncs[i];
+        }
+    }
+    return nullptr;
+}
+
 avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg){
     switch (arg->type) {
         case global_a: return &stack[STACK_SZ - 1 - arg->val];
@@ -43,6 +56,8 @@ avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg){
             // reg->data.libFuncVal = libfuncs_getused(arg->val);
             return reg;
         }
+        default:
+            return nullptr;
     }
 }
 
@@ -77,7 +92,7 @@ void avm_table::incrrefcounter(void)
     refcnt++;
 }
 
-void avm_table::incrrefcounter(void)
+void avm_table::decrrefcounter(void)
 {
     refcnt--;
 }

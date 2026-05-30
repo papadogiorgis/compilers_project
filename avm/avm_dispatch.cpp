@@ -139,12 +139,13 @@ void execute_assign(instruction *instr)
 void execute_newtable(instruction* i)
 {
     avm_memcell* lv = avm_translate_operand(&i->result, 0);
-    assert(lv && (&stack[STACK_SZ - 1] >= lv && &stack[esp] < lv || lv == &retval ));
+    assert(lv && (((&stack[STACK_SZ - 1] >= lv) && (&stack[esp] < lv)) || (lv == &retval)));
     avm_memcellclear(lv);
 
     lv->type = table_m;
     // lv->data.tableVal = avm_tablenew();
-    lv->data.tableVal = &avm_table();
+    //lv->data.tableVal = &avm_table();
+    lv->data.tableVal = new avm_table();
     // avm_tableincrefcounter(lv->data.tableVal);
     lv->data.tableVal->incrrefcounter();
 }
@@ -161,8 +162,15 @@ void execute_tablegetelem(instruction* instr)
     avm_memcellclear(lv);
     lv->type = nil_m;
 
-    if(lv->type != table_m){
-        printf("illegal use of type %s as table", "change later");
+    // if(lv->type != table_m){
+    //     printf("illegal use of type %s as table", "change later");
+    // }
+    if(t->type!=table_m){
+        printf("illegal use of type %s as table\n", typeStrings[t->type]);
+        executionFinished=1;
+    }else{
+        (void)i;
+        //TOODO
     }
 }
 
@@ -219,3 +227,14 @@ void execute_jeq (instruction* instr) {
     }
 }
 
+void execute_uminus(instruction* i){}
+void execute_and(instruction* i){}
+void execute_or(instruction* i){}
+void execute_not(instruction* i){}
+void execute_jne(instruction* i){}
+void execute_jle(instruction* i){}
+void execute_jge(instruction* i){}
+void execute_jlt(instruction* i){}
+void execute_jgt(instruction* i){}
+void execute_tablesetelem(instruction* i){}
+void execute_nop(instruction* i){}

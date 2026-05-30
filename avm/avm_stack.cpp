@@ -4,7 +4,7 @@
 #include <cassert>
 #include <cstdio>
 #include <iostream>
-#include <string>
+#include <cstring>
 #include <vector>
 #include <cstdlib>
 #include <map>
@@ -29,6 +29,22 @@ std::map<std::string, library_func_t> libfuncs;
 
 // must initialize later, after phase 4 is finished
 extern std::vector<instruction> code;
+
+tostring_func_t tostringFuncs[]={
+    number_tostring,
+    string_tostring,
+    bool_tostring,
+    table_tostring,
+    userfunc_tostring,
+    libfunc_tostring,
+    nil_tostring,
+    undef_tostring
+};
+
+void avm_callsaveenviroment(void);
+void avm_calllibfunc(char *id);
+void avm_call_functor(avm_table *t);
+void avm_push_table_arg(avm_table* t);
 
 void execute_call(instruction *instr)
 {
@@ -117,7 +133,7 @@ void execute_funcexit(instruction* instr)
 void avm_call_functor (avm_table *t)
 {
     cx.type = string_m;
-    cx.data.strVal = "()";
+    cx.data.strVal = strdup("()");
     avm_memcell* f = avm_tablegetelem(t, &cx);
     if (!f) {fprintf(stderr, "in calling table: no '()' element found\n");}
     else if (f->type == table_m) { avm_call_functor(f->data.tableVal); }
@@ -225,6 +241,7 @@ std::string userfunc_tostring(avm_memcell* m)
 {
     assert(m && m->type == userfunc_m);
     // TODO : add impl later because funcs table is missing
+    return std::string(""); //just to satisfy the g++ for now
 }
 
 std::string libfunc_tostring(avm_memcell* m)

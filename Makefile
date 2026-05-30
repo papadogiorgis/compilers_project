@@ -20,7 +20,8 @@ AVM_SOURCE_FILES = avm/main.cpp \
 				avm/avm_dispatch.cpp \
 				avm/lib/functions.cpp
 
-temp = avm/main.cpp avm/avm_loader.cpp
+temp = avm/main.cpp\
+	avm/avm_loader.cpp
 
 all: alpha_compiler alpha_vm
 
@@ -29,7 +30,7 @@ alpha_compiler: compiler/scanner.c compiler/syntax_parser.c
 	@echo Alpha Compiler is ready!
 
 alpha_vm:
-	@g++ $(AVM_FLAGS) $(temp) -o alpha_vm
+	@g++ $(AVM_FLAGS) $(AVM_SOURCE_FILES) -o alpha_vm
 	@echo Alpha Virtual Machine is ready!
 
 compiler/scanner.c compiler/scanner.h: compiler/scanner.l

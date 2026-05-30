@@ -25,16 +25,7 @@ unsigned avm_totalactuals (void);
 avm_memcell* avm_getactual (unsigned i);
 
 
-tostring_func_t tostringFuncs[]={
-    number_tostring,
-    string_tostring,
-    bool_tostring,
-    table_tostring,
-    userfunc_tostring,
-    libfunc_tostring,
-    nil_tostring,
-    undef_tostring
-};
+extern tostring_func_t tostringFuncs[];
 
 std::string avm_tostring(avm_memcell* m);
 
