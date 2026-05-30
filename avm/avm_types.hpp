@@ -1,11 +1,11 @@
 #ifndef AVM_TYPES
 #define AVM_TYPES
 
-<<<<<<< HEAD
+// <<<<<<< HEAD
 #include <map>
 
-=======
->>>>>>> 08e058ca58ede18473d46e41f1a2e86f5649862c
+// =======
+// >>>>>>> 08e058ca58ede18473d46e41f1a2e86f5649862c
 #include "../compiler/inc/vm_target_code.h"
 
 enum avm_memcell_t {
