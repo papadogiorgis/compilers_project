@@ -24,9 +24,9 @@ typedef struct avm_table{
     unsigned refcnt;
     unsigned tableno;
 
-    std::map<double, struct avm_memcell*> numIndexed;
-    std::map<std::string, struct avm_memcell*> strIndexed;
-    std::map<struct avm_memcell*, struct avm_memcell*> otherIndexed;
+    std::map<double, avm_memcell*> numIndexed;
+    std::map<std::string, avm_memcell*> strIndexed;
+    std::map<avm_memcell*, avm_memcell*> otherIndexed;
 
     void incrrefcounter();
     void decrrefcounter();
