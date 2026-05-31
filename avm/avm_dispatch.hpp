@@ -2,6 +2,7 @@
 #define AVM_DISPATCH
 
 #include <string>
+#include "instr.hpp"
 
 typedef double (*arithmetic_func_t)(double x, double y);
 typedef bool (*cmp_func) (double, double);
@@ -37,12 +38,11 @@ void execute_tablegetelem (instruction *);
 void execute_tablesetelem (instruction *);
 void execute_nop (instruction *);
 
+void execute_ret (instruction *);
+void execute_getretval (instruction *);
+void execute_jump (instruction *);
+
 void executeCycle (void);
 void execute_arithmetic (instruction* i);
-void execute_assign(instruction *instr) ;
-void execute_newtable(instruction* i);
-void execute_tablegetelem(instruction* instr);
-void execute_jeq (instruction* instr);
-void execute_nop (instruction* instr);
 
 #endif

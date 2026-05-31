@@ -231,22 +231,7 @@ void generate_MOD(quad* q){
     helper_op(q, mod_v);
 }
 void generate_UMINUS(quad* q){
-    /*MULTIPLICATION WITH -1*/
-    instruction inst;
-    inst.opcode = mul_v;
-    inst.arg1.type = -1;
-    inst.arg2.type = -1;
-    inst.result.type = -1;
-    inst.arg1.val = 0;
-    inst.arg2.val = 0;
-    inst.result.val = 0;
-    
-    make_operand(q->arg1, &inst.arg1);
-    make_operand(q->result, &inst.result);
-    inst.arg2.type = number_a;
-    inst.arg2.val = consts_newnumber(-1.0);
-    inst.srcline = q->line;
-    emit_instr(inst);
+    helper_op(q, uminus_v);
 }
 void generate_AND(quad* q){
     helper_op(q, and_v);
