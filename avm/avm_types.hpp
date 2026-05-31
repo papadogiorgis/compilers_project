@@ -24,12 +24,17 @@ typedef struct avm_table{
     unsigned refcnt;
     unsigned tableno;
     void incrrefcounter();
+
+    std::map<double, struct avm_memcell*> numIndexed;
+    std::map<std::string, struct avm_memcell*> strIndexed;
+    std::map<struct avm_memcell*, struct avm_memcell*> otherIndexed;
+
     void decrrefcounter();
     avm_table(void);
     ~avm_table(void);
 } avm_table;
 
-typedef struct {
+typedef struct avm_memcell{
     avm_memcell_t type;
     union {
         double numVal;
@@ -45,5 +50,8 @@ typedef void (*execute_func_t)(instruction *);
 
 avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg);
 void avm_assign (avm_memcell *lv, avm_memcell *rv);
+avm_memcell* avm_tablegetelem(avm_table* t, avm_memcell* index);
+userfunc* avm_getfuncinfo(unsigned addr);
+avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg);
 
 #endif

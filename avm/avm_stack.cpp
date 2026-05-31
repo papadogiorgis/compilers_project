@@ -80,8 +80,6 @@ void avm_callsaveenviroment (void)
     avm_push_envvalue(ebp);
 }
 
-
-extern userfunc* avm_getfuncinfo(unsigned addr);
 void execute_funcenter(instruction *instr)
 {
     avm_memcell* func = avm_translate_operand(&instr->result, &ax);
