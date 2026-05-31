@@ -50,6 +50,7 @@ extern const char* typeStrings[];
 
 avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg);
 void avm_assign (avm_memcell *lv, avm_memcell *rv);
+void avm_tablesetelem(avm_table* table, avm_memcell* key, avm_memcell *elem);
 avm_memcell* avm_tablegetelem(avm_table* table, avm_memcell* index);
 userfunc* avm_getfuncinfo(unsigned address);
 

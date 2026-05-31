@@ -44,5 +44,11 @@ void execute_jump (instruction *);
 
 void executeCycle (void);
 void execute_arithmetic (instruction* i);
+void execute_assign(instruction *instr) ;
+void execute_newtable(instruction* i);
+void execute_tablesetelem(instruction* instr);
+void execute_tablegetelem(instruction* instr);
+void execute_jeq (instruction* instr);
+void execute_nop (instruction* instr);
 
 #endif

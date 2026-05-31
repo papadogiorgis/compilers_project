@@ -20,16 +20,16 @@ memclear_func_t memclearFuncs[]{
     0 //undef
 };
 
-extern void memclear_string (avm_memcell *m)
+void memclear_string (avm_memcell *m)
 {
     assert(m->data.strVal);
     free(m->data.strVal);
 }
 
-extern void memclear_table (avm_memcell *m)
+void memclear_table (avm_memcell *m)
 {
     assert(m->data.tableVal);
-    // avm_tabledecrecounter(m->data.tableVal);
+    m->data.tableVal->decrrefcounter();
 }
 
 

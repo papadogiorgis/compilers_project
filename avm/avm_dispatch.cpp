@@ -1,3 +1,8 @@
+#include <cassert>
+#include <iostream>
+#include <vector>
+#include <string>
+
 #include "avm_stack.hpp"
 #include "avm_types.hpp"
 #include "avm_dispatch.hpp"
@@ -137,7 +142,65 @@ void execute_assign(instruction *instr)
     avm_assign(lv, rv);
 }
 
-/*-------------boolean conversion-------------*/
+void execute_newtable(instruction* i)
+{
+    avm_memcell* lv = avm_translate_operand(&i->result, 0);
+    assert(lv && (((&stack[STACK_SZ - 1] >= lv) && (&stack[esp] < lv)) || (lv == &retval)));
+    avm_memcellclear(lv);
+
+    lv->type = table_m;
+    // lv->data.tableVal = avm_tablenew();
+    //lv->data.tableVal = &avm_table();
+    lv->data.tableVal = new avm_table();
+    // avm_tableincrefcounter(lv->data.tableVal);
+    lv->data.tableVal->incrrefcounter();
+}
+
+void execute_tablegetelem(instruction* instr)
+{
+    avm_memcell* lv = avm_translate_operand(&instr->result, (avm_memcell*)0);
+    avm_memcell* t = avm_translate_operand(&instr->arg1, (avm_memcell*)0);
+    avm_memcell* i = avm_translate_operand(&instr->arg2, &ax);
+
+    assert(lv && &stack[STACK_SZ - 1] >= lv && lv > &stack[esp]);
+    assert(t && &stack[STACK_SZ - 1] >= t && t > &stack[esp]);
+
+    avm_memcellclear(lv);
+    lv->type = nil_m;
+
+    if(t->type!=table_m){
+        printf("illegal use of type %s as table\n", typeStrings[t->type]);
+        executionFinished=1;
+    }else{
+        avm_memcell* content = avm_tablegetelem(t->data.tableVal, i);
+        if (content) {
+            avm_assign(lv, content);
+        }
+        else {
+            std::string ts = avm_tostring(t);
+            std::string is = avm_tostring(i);
+            std::cout << ts << "[" << is << "] not found\n";
+        }
+    }
+}
+
+void execute_tablesetelem(instruction* instr)
+{
+    avm_memcell* t = avm_translate_operand(&instr->result, (avm_memcell*)0);
+    avm_memcell* i = avm_translate_operand(&instr->arg1, &ax);
+    avm_memcell* c = avm_translate_operand(&instr->arg2, &bx);
+
+    assert(t);
+    assert(i && c);
+
+    if (t->type != table_m){
+        std::cout << "illegal use of type" << typeStrings[t->type] << "as table\n";
+    }
+    else {
+        avm_tablesetelem(t->data.tableVal, i, c);
+    }
+}
+
 typedef unsigned char (*tobool_func_t)(avm_memcell*);
 
 unsigned char number_tobool (avm_memcell* m) { return m->data.numVal != 0; }

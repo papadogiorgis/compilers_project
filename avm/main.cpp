@@ -15,6 +15,8 @@ int main(int argc, char* argv[]){
         return -1;
     }
 
+    avm_initfuncs();
+    avm_initialize_stack();
     while(!executionFinished) {
         executeCycle();
     }

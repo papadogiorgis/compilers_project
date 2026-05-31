@@ -232,7 +232,7 @@ std::string bool_tostring(avm_memcell* m)
 std::string table_tostring(avm_memcell *m)
 {
     assert(m && m->type == table_m);
-    std::string result = "table: {TODO later}\n";
+    std::string result = "table: {";
     return result;
 }
 
@@ -240,7 +240,8 @@ std::string userfunc_tostring(avm_memcell* m)
 {
     assert(m && m->type == userfunc_m);
     // TODO : add impl later because funcs table is missing
-    return std::string(""); //just to satisfy the g++ for now
+    std::string ret = userFuncs[m->data.funcVal].id;
+    return ret; //just to satisfy the g++ for now
 }
 
 std::string libfunc_tostring(avm_memcell* m)

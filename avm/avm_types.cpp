@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 #include <cassert>
 
 extern avm_memcell ax, bx, cx, retval;
@@ -62,6 +63,63 @@ void avm_table::decrrefcounter(void){
     assert(refcnt>0);
     if(--refcnt == 0){
         delete this;
+    }
+}
+
+void avm_tablesetelem(avm_table* t, avm_memcell* key, avm_memcell *elem)
+{
+    assert(t && key && elem);
+    
+    if(elem->type == number_m) {
+        double num = key->data.numVal;
+        auto it = t->numIndexed.find(num);
+
+        if (elem->type == nil_m) {
+            if (it != t->numIndexed.end()) {
+                avm_memcellclear((it->second));
+                delete it->second;
+                t->numIndexed.erase(it);
+            }
+        }
+        else {
+            if (it != t->numIndexed.end()) {
+                avm_assign(it->second, elem);
+            }
+            else {
+                avm_memcell* newcell = (avm_memcell*)malloc(sizeof(avm_memcell));
+                newcell->type = undef_m;
+                avm_assign(newcell, elem);
+                t->numIndexed[num] = newcell;
+            }
+        }
+    }
+    else if (key->type == string_m) {
+        std::string strKey = key->data.strVal;
+        auto it = t->strIndexed.find(strKey);
+
+        if(elem->type == nil_m) {
+            if (it != t->strIndexed.end()) {
+                avm_memcellclear((it->second));
+                delete it->second;
+                t->strIndexed.erase(it);
+            }
+        }
+        else {
+            if (it != t->strIndexed.end()) {
+                avm_assign(it->second, elem);
+            }
+            else {
+                avm_memcell* newcell = (avm_memcell*)malloc(sizeof(avm_memcell));
+                newcell->type = undef_m;
+                avm_assign(newcell, elem);
+                t->strIndexed[strKey] = newcell;
+            }
+        
+        }
+    
+    }
+    else {
+        std::cout << "warning set elem avm\n";
     }
 }
 
@@ -124,7 +182,8 @@ avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg){
         }
         case libfunc_a: {
             reg->type = libfunc_m;
-            reg->data.libFuncVal = strdup(namedLibfuncs[arg->val]);
+            // reg->data.libFuncVal = strdup(namedLibfuncs[arg->val]);
+            reg->data.libFuncVal = namedLibfuncs[arg->val]  ;
             return reg;
         }
         default:
