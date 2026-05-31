@@ -29,7 +29,7 @@ alpha_compiler: compiler/scanner.c compiler/syntax_parser.c
 	@echo Alpha Compiler is ready!
 
 alpha_vm:
-	@g++ $(AVM_FLAGS) $(temp) -o alpha_vm
+	@g++ $(AVM_FLAGS) $(AVM_SOURCE_FILES) -o alpha_vm
 	@echo Alpha Virtual Machine is ready!
 
 compiler/scanner.c compiler/scanner.h: compiler/scanner.l

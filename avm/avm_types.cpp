@@ -3,6 +3,7 @@
 #include "avm_stack.hpp"
 #include <stdio.h>
 #include <cstdlib>
+#include <string>
 #include "instr.hpp"
 #include <cstring>
 

@@ -3,6 +3,8 @@
 #include "avm_dispatch.hpp"
 #include "instr.hpp"
 #include <cassert>
+#include <vector>
+#include <string>
 
 #define AVM_ENDING_PC codeSize
 #define AVM_MAX_INSTRUCTIONS (unsigned) nop_v
@@ -15,6 +17,11 @@ unsigned pc = 0;
 unsigned currLine = 0;
 unsigned codeSize = 0;
 instruction *code = 0;
+
+// std::vector<double> constNumArray;
+// std::vector<std::string> libFuncArray;
+// std::vector<std::string> constStringArray;
+// std::vector<userfunc> usrfuncArray;
 
 typedef void (*execute_func_t)(instruction*);
 
@@ -54,7 +61,8 @@ void executeCycle (void) {
     }
     else {
         assert(pc < AVM_ENDING_PC);
-        instruction *instr = code + pc;
+        // instruction *instr = code + pc;
+        instruction *instr = instructions + pc;
         assert(instr->opcode >= 0 && instr->opcode <= AVM_MAX_INSTRUCTIONS);
         if (instr->srcline)
             currLine = instr->srcline;
@@ -194,4 +202,7 @@ void execute_jeq (instruction* instr) {
         pc = instr->result.val;
     }
 }
+
+void execute_nop(instruction* instr){}
+
 

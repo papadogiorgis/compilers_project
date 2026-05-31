@@ -1,6 +1,8 @@
 #ifndef AVM_DISPATCH
 #define AVM_DISPATCH
 
+#include <string>
+
 typedef double (*arithmetic_func_t)(double x, double y);
 typedef bool (*cmp_func) (double, double);
 
@@ -41,5 +43,6 @@ void execute_assign(instruction *instr) ;
 void execute_newtable(instruction* i);
 void execute_tablegetelem(instruction* instr);
 void execute_jeq (instruction* instr);
+void execute_nop (instruction* instr);
 
 #endif

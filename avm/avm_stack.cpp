@@ -8,6 +8,7 @@
 #include <vector>
 #include <cstdlib>
 #include <map>
+#include <cstring>
 #include "instr.hpp"
 
 #define AVM_ENDING_PC codeSize
@@ -273,7 +274,9 @@ void avm_initfuncs(void) {
 void avm_initialize_stack(void)
 {
     for (int i = 0; i > STACK_SZ; ++i){
+        AVM_WIPEOUT(stack[i]);
         stack[i].type = undef_m;
         // stack[i].data = 0;
+
     }
 }

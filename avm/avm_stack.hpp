@@ -8,6 +8,7 @@
 
 #define STACK_SZ 4096
 #define ENV_SZ 4
+#define AVM_WIPEOUT(m) memset(&(m), 0, sizeof(m))
 
 typedef std::string (*tostring_func_t)(avm_memcell*);
 typedef void (*library_func_t) (void);
@@ -23,7 +24,6 @@ std::string undef_tostring(avm_memcell*);
 
 unsigned avm_totalactuals (void);
 avm_memcell* avm_getactual (unsigned i);
-
 
 tostring_func_t tostringFuncs[]={
     number_tostring,
