@@ -290,7 +290,7 @@ void avm_initfuncs(void) {
 
 void avm_initialize_stack(void)
 {
-    for (int i = 0; i > STACK_SZ; ++i){
+    for (int i = 0; i < STACK_SZ; ++i){
         AVM_WIPEOUT(stack[i]);
         stack[i].type = undef_m;
         // stack[i].data = 0;
