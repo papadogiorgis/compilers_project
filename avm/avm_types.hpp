@@ -34,7 +34,7 @@ typedef struct avm_table{
     ~avm_table(void);
 } avm_table;
 
-typedef struct avm_memcell{
+typedef struct avm_memcell{ 
     avm_memcell_t type;
     union {
         double numVal;

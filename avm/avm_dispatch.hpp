@@ -3,6 +3,7 @@
 
 #include <string>
 #include "instr.hpp"
+#include "avm_stack.hpp"
 
 typedef double (*arithmetic_func_t)(double x, double y);
 typedef bool (*cmp_func) (double, double);

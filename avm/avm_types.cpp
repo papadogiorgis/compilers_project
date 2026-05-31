@@ -155,7 +155,7 @@ userfunc* avm_getfuncinfo(unsigned address){
 avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg){
     switch (arg->type) {
         case global_a: return &stack[STACK_SZ - 1 - arg->val];
-        case local_a: return &stack[esp - arg->val];
+        case local_a: return &stack[esp -1- arg->val];
         case formal_a: return &stack[esp + ENV_SZ + 1 + arg->val];
         case retval_a: return &retval;
 
@@ -182,8 +182,8 @@ avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg){
         }
         case libfunc_a: {
             reg->type = libfunc_m;
-            // reg->data.libFuncVal = strdup(namedLibfuncs[arg->val]);
-            reg->data.libFuncVal = namedLibfuncs[arg->val]  ;
+            reg->data.libFuncVal = strdup(namedLibfuncs[arg->val]);
+            // reg->data.libFuncVal = namedLibfuncs[arg->val]  ;
             return reg;
         }
         default:

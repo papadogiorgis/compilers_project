@@ -11,13 +11,6 @@
 #include <cstring>
 #include "instr.hpp"
 
-#define AVM_ENDING_PC codeSize
-#define AVM_MAX_INSTRUCTIONS (unsigned) nop_v
-#define AVM_NUMACTUALS_OFFSET +4
-#define AVM_SAVEDPC_OFFSET +3
-#define AVM_SAVEDTOP_OFFSET +2
-#define AVM_SAVEDTOPSP_OFFSET + 1
-
 avm_memcell ax, bx, cx, retval; // registers
 unsigned ebp = STACK_SZ;
 unsigned esp;
@@ -28,8 +21,7 @@ extern unsigned char executionFinished;
 extern unsigned codeSize;
 std::map<std::string, library_func_t> libfuncs;
 
-// must initialize later, after phase 4 is finished
-extern std::vector<instruction> code;
+extern instruction* instructions;
 
 tostring_func_t tostringFuncs[]={
     number_tostring,
@@ -42,35 +34,6 @@ tostring_func_t tostringFuncs[]={
     undef_tostring
 };
 
-void avm_callsaveenviroment(void);
-void avm_calllibfunc(char *id);
-void avm_call_functor(avm_table *t);
-void avm_push_table_arg(avm_table* t);
-
-void execute_call(instruction *instr)
-{
-    avm_memcell* func = avm_translate_operand(&instr->result, &ax);
-    assert(func);
-
-    switch (func->type) {
-        case userfunc_m : {
-            avm_callsaveenviroment();
-            pc = func->data.funcVal;
-            assert(pc < AVM_ENDING_PC);
-            assert(code[pc].opcode == funcenter_v);
-            break;
-        }
-        case string_m: avm_calllibfunc(func->data.strVal);
-        case libfunc_m: avm_calllibfunc(func->data.libFuncVal);
-        case table_m: avm_call_functor(func->data.tableVal);
-
-        default: {
-            std::string s = avm_tostring(func);
-            std::cout << "call: can not bind ' "<< s << "' to function\n";
-            executionFinished = 1;
-        }
-    }
-}
 
 void avm_dec_top(void)
 {
@@ -91,22 +54,12 @@ void avm_push_envvalue (unsigned val)
 void avm_callsaveenviroment (void) 
 {
     avm_push_envvalue(totalActuals);
-    assert(code[pc].opcode == call_v);
+    assert(instructions[pc].opcode == call_v);
     avm_push_envvalue(pc + 1);
     avm_push_envvalue(esp + totalActuals + 2);
     avm_push_envvalue(ebp);
 }
 
-void execute_funcenter(instruction *instr)
-{
-    avm_memcell* func = avm_translate_operand(&instr->result, &ax);
-    assert(func);
-    assert (pc == func->data.funcVal);
-    totalActuals = 0;
-    userfunc *funcInfo = avm_getfuncinfo(pc);
-    ebp = esp;
-    esp = esp - funcInfo->localsize;
-}
 
 unsigned avm_get_envvalue (unsigned i)
 {
@@ -114,18 +67,6 @@ unsigned avm_get_envvalue (unsigned i)
     unsigned val = (unsigned) stack[i].data.numVal;
     assert(((double) val) == stack[i].data.numVal);
     return val;
-}
-
-void execute_funcexit(instruction* instr)
-{
-    unsigned oldtop = esp;
-    esp = avm_get_envvalue(ebp + AVM_SAVEDTOP_OFFSET);
-    pc = avm_get_envvalue(ebp + AVM_SAVEDPC_OFFSET);
-    ebp = avm_get_envvalue(ebp + AVM_SAVEDTOPSP_OFFSET);
-
-    while (++oldtop <= esp) {
-        avm_memcellclear(&stack[oldtop]);
-    }
 }
 
 // extern void avm_push_table_arg (avm_table* t);
@@ -141,7 +82,7 @@ void avm_call_functor (avm_table *t)
         avm_push_table_arg(t);
         avm_callsaveenviroment();
         pc = f->data.funcVal;
-        assert(pc < AVM_ENDING_PC && code[pc].opcode == funcenter_v);
+        assert(pc < AVM_ENDING_PC && instructions[pc].opcode == funcenter_v);
     }
     else {
         fprintf(stderr, "in calling table: illegal '()' element value\n");
@@ -178,6 +119,7 @@ void avm_calllibfunc(char *id){
 
 unsigned avm_totalactuals (void)
 {
+    std::cout << avm_get_envvalue(ebp + AVM_NUMACTUALS_OFFSET) << "\n";
     return avm_get_envvalue(ebp + AVM_NUMACTUALS_OFFSET);
 }
 
@@ -192,16 +134,6 @@ extern void avm_push_table_arg(avm_table* t)
     stack[esp].type = table_m;
     stack[esp].data.tableVal = t;
     stack[esp].data.tableVal->incrrefcounter();
-    ++totalActuals;
-    avm_dec_top();
-}
-
-void execute_pusharg (instruction* instr)
-{
-    avm_memcell* arg = avm_translate_operand(&instr->arg1, &ax);
-    assert(arg);
-
-    avm_assign(&stack[esp], arg);
     ++totalActuals;
     avm_dec_top();
 }
@@ -291,10 +223,12 @@ void avm_initfuncs(void) {
 
 void avm_initialize_stack(void)
 {
+    esp = ebp = STACK_SZ;
+    ax.type = undef_m;
+    bx.type = undef_m;
+    cx.type = undef_m;
     for (int i = 0; i < STACK_SZ; ++i){
         AVM_WIPEOUT(stack[i]);
         stack[i].type = undef_m;
-        // stack[i].data = 0;
-
     }
 }

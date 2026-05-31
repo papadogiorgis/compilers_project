@@ -16,6 +16,4 @@ void avm_memcellclear (avm_memcell *m);
 void avm_tablesetelem (avm_table *table, avm_memcell *index, avm_memcell* content);
 avm_memcell* avm_tablegetelem(avm_table* table, avm_memcell* index);
 
-extern const char* typeStrings[];
-
 #endif

@@ -35,6 +35,7 @@ void memclear_table (avm_memcell *m)
 
 void avm_memcellclear (avm_memcell *m)
 {
+    assert(m);
     if (m->type != undef_m){
         memclear_func_t f = memclearFuncs[m->type]; // find specific func to use to memclear
         if (f) {

@@ -13,9 +13,6 @@
 #include <string>
 #include <cstring>
 
-#define AVM_ENDING_PC currInstructions
-#define AVM_MAX_INSTRUCTIONS (unsigned) jump_v
-
 extern avm_memcell ax, bx, cx, retval;
 extern avm_memcell stack[STACK_SZ];
 extern unsigned esp, ebp;
@@ -56,8 +53,9 @@ execute_func_t executeFuncs[] = {
 };
 
 void executeCycle (void) {
-    if (executionFinished) { return; }
+    if (executionFinished) { std::cout << "exefin\n"; return; }
     else if (pc == AVM_ENDING_PC) {
+        std::cout << "pc == avm ending pc\n";
         executionFinished = 1;
         return;
     }
@@ -66,6 +64,7 @@ void executeCycle (void) {
         // instruction *instr = code + pc;
         instruction *instr = instructions + pc;
         assert(instr->opcode >= 0 && instr->opcode <= AVM_MAX_INSTRUCTIONS);
+        std::cout << "VM fetching pc:" << pc << "opcode: " << instr->opcode << ".\n";
         if (instr->srcline)
             currLine = instr->srcline;
         unsigned oldPc = pc;
@@ -149,10 +148,7 @@ void execute_newtable(instruction* i)
     avm_memcellclear(lv);
 
     lv->type = table_m;
-    // lv->data.tableVal = avm_tablenew();
-    //lv->data.tableVal = &avm_table();
     lv->data.tableVal = new avm_table();
-    // avm_tableincrefcounter(lv->data.tableVal);
     lv->data.tableVal->incrrefcounter();
 }
 
@@ -420,39 +416,97 @@ void execute_getretval(instruction* instr){
 }
 
 /*-------------tables-------------*/
-void execute_newtable(instruction* i){
-    avm_memcell* lv = avm_translate_operand(&i->result, (avm_memcell*)0);
-    assert(lv && (((&stack[STACK_SZ - 1] >= lv) && (&stack[esp] < lv)) || (lv == &retval)));
-    avm_memcellclear(lv);
+// void execute_newtable(instruction* i){
+//     avm_memcell* lv = avm_translate_operand(&i->result, (avm_memcell*)0);
+//     assert(lv && (((&stack[STACK_SZ - 1] >= lv) && (&stack[esp] < lv)) || (lv == &retval)));
+//     avm_memcellclear(lv);
 
-    lv->type = table_m;
-    lv->data.tableVal = new avm_table();
-    lv->data.tableVal->incrrefcounter();
-}
+//     lv->type = table_m;
+//     lv->data.tableVal = new avm_table();
+//     lv->data.tableVal->incrrefcounter();
+// }
 
-void execute_tablegetelem(instruction* instr){
-    avm_memcell* lv = avm_translate_operand(&instr->result, (avm_memcell*)0);
-    avm_memcell* t = avm_translate_operand(&instr->arg1, (avm_memcell*)0);
-    avm_memcell* i = avm_translate_operand(&instr->arg2, &ax);
+// void execute_tablegetelem(instruction* instr){
+//     avm_memcell* lv = avm_translate_operand(&instr->result, (avm_memcell*)0);
+//     avm_memcell* t = avm_translate_operand(&instr->arg1, (avm_memcell*)0);
+//     avm_memcell* i = avm_translate_operand(&instr->arg2, &ax);
 
-    assert(lv && &stack[STACK_SZ - 1] >= lv && lv > &stack[esp]);
-    assert(t && &stack[STACK_SZ - 1] >= t && t > &stack[esp]);
+//     assert(lv && &stack[STACK_SZ - 1] >= lv && lv > &stack[esp]);
+//     assert(t && &stack[STACK_SZ - 1] >= t && t > &stack[esp]);
 
-    avm_memcellclear(lv);
-    lv->type = nil_m;
+//     avm_memcellclear(lv);
+//     lv->type = nil_m;
 
-    if(t->type != table_m){
-        printf("Error: Illegal use of type %s as table\n", typeStrings[t->type]);
-        executionFinished = 1;
-    }else{
-        //ANDREA DO THIS <3
+//     if(t->type != table_m){
+//         printf("Error: Illegal use of type %s as table\n", typeStrings[t->type]);
+//         executionFinished = 1;
+//     }else{
+//         //ANDREA DO THIS <3
+//     }
+// }
+
+/*-------------remainings-------------*/
+void execute_call(instruction *instr)
+{
+    avm_memcell* func = avm_translate_operand(&instr->arg1, &ax);
+    assert(func);
+
+    switch (func->type) {
+        case userfunc_m : {
+            avm_callsaveenviroment();
+            pc = func->data.funcVal;
+            assert(pc < AVM_ENDING_PC);
+            assert(instructions[pc].opcode == funcenter_v);
+            break;
+        }
+        case string_m: avm_calllibfunc(func->data.strVal);
+        case libfunc_m: avm_calllibfunc(func->data.libFuncVal);
+        case table_m: avm_call_functor(func->data.tableVal);
+
+        default: {
+            std::string s = avm_tostring(func);
+            std::cout << "call: can not bind ' "<< s << "' to function\n";
+            executionFinished = 1;
+        }
     }
 }
 
-/*-------------remainings-------------*/
-void execute_call(instruction* i){}
-void execute_pusharg(instruction* i){}
-void execute_funcenter(instruction* i){}
-void execute_funcexit(instruction* i){}
-void execute_tablesetelem(instruction* i){}
+extern unsigned totalActuals;
+void execute_pusharg (instruction* instr)
+{
+    avm_memcell* arg = avm_translate_operand(&instr->arg1, &ax);
+    assert(arg);
+
+    avm_assign(&stack[esp], arg);
+    ++totalActuals;
+    avm_dec_top();
+}
+
+
+void execute_funcenter(instruction *instr)
+{
+    avm_memcell* func = avm_translate_operand(&instr->result, &ax);
+    assert(func);
+    assert (pc == func->data.funcVal);
+    totalActuals = 0;
+    userfunc *funcInfo = avm_getfuncinfo(pc);
+    ebp = esp;
+    esp = esp - funcInfo->localsize;
+}
+
+
+void execute_funcexit(instruction* i)
+{
+    unsigned oldTop = esp;
+    esp = avm_get_envvalue(ebp + AVM_SAVEDTOP_OFFSET);
+    pc = avm_get_envvalue(ebp + AVM_SAVEDPC_OFFSET);
+    ebp = avm_get_envvalue(ebp + AVM_SAVEDTOPSP_OFFSET);
+
+    while (oldTop++ <= esp){
+        avm_memcellclear(&stack[oldTop]);
+    }
+    
+}
+
+
 void execute_nop(instruction* i){}

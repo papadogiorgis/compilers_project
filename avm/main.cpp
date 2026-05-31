@@ -11,12 +11,13 @@ extern unsigned char executionFinished;
 extern unsigned pc;
 
 int main(int argc, char* argv[]){
+    avm_initialize_stack();
+    avm_initfuncs();
     if(!load_binary(argc, argv)){
         return -1;
     }
+    std::cout << "total instr: " << totalInstructions <<"\n";
 
-    avm_initfuncs();
-    avm_initialize_stack();
     while(!executionFinished) {
         executeCycle();
     }
