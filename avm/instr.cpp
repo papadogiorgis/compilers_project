@@ -9,6 +9,16 @@ extern avm_memcell ax, bx, cx, retval;
 extern avm_memcell *stack;
 extern unsigned esp, ebp, pc;
 extern unsigned char executionFinished;
+memclear_func_t memclearFuncs[]{
+    0, //number
+    memclear_string,
+    0, //bool
+    memclear_table,
+    0, //userfunc
+    0, //libfunc
+    0, //nil
+    0 //undef
+};
 
 extern void memclear_string (avm_memcell *m)
 {

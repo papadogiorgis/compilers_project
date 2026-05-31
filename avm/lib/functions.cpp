@@ -20,17 +20,6 @@ void libfunc_print(void)
     }
 }
 
-char* typeStrings[] = {
-    "number",
-    "string",
-    "bool",
-    "table",
-    "userfunc",
-    "libfunc",
-    "nil",
-    "undef"
-};
-
 void libfunc_typeof(void)
 {
     unsigned n = avm_totalactuals();
@@ -43,3 +32,14 @@ void libfunc_typeof(void)
         retval.data.strVal = strdup(typeStrings[avm_getactual(0)->type]);
     }
 }
+
+void libfunc_input(void){}
+void libfunc_objectmemberkeys(void){}
+void libfunc_objecttotalmembers(void){}
+void libfunc_objectcopy(void){}
+void libfunc_totalarguments(void){}
+void libfunc_argument(void){}
+void libfunc_strtonum(void){}
+void libfunc_sqrt(void){}
+void libfunc_cos(void){}
+void libfunc_sin(void){}
