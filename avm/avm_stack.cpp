@@ -7,6 +7,7 @@
 #include <sstream>
 #include <iomanip>
 #include <cstring>
+#include <cmath>
 #include <vector>
 #include <cstdlib>
 #include <map>
@@ -145,7 +146,16 @@ std::string number_tostring(avm_memcell* m)
 {
     assert(m->type == number_m);
     std::ostringstream res;
-    res << std::fixed << std::setprecision(3) << m->data.numVal;
+    res << std::fixed << std::setprecision(3) << m->data.numVal; // max 3 digits percition for readability
+
+    double integer;
+    double modf = std::modf(m->data.numVal, &integer);
+    if (modf == 0){ // if digits after decimal point are zero, print as integer
+        std::string res2;
+        res2 = std::to_string(static_cast<int>(integer));
+        return res2;
+    }
+
     return res.str();
 }
 
