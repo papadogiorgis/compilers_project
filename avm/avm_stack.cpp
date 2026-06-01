@@ -86,7 +86,12 @@ void avm_call_functor (avm_table *t)
     if (f->type == userfunc_m) {
         avm_push_table_arg(t);
         avm_callsaveenviroment();
-        pc = f->data.funcVal;
+
+        userfunc* finfo = avm_getfuncinfo_byindex(f->data.funcVal);
+        assert(finfo);
+        pc = finfo->address;
+
+        //pc = f->data.funcVal;
         assert(pc < AVM_ENDING_PC && instructions[pc].opcode == funcenter_v);
     }
     else {
@@ -113,6 +118,7 @@ void avm_calllibfunc(char *id){
     }
     else {
         avm_callsaveenviroment();
+        if(executionFinished) return;
         ebp = esp;
         totalActuals = 0;
         (*f)();
@@ -149,13 +155,13 @@ std::string number_tostring(avm_memcell* m)
     std::ostringstream res;
     res << std::fixed << std::setprecision(3) << m->data.numVal; // max 3 digits percition for readability
 
-    double integer;
+    /* double integer;
     double modf = std::modf(m->data.numVal, &integer);
     if (modf == 0){ // if digits after decimal point are zero, print as integer
         std::string res2;
         res2 = std::to_string(static_cast<int>(integer));
         return res2;
-    }
+    }*/
 
     return res.str();
 }
@@ -179,6 +185,15 @@ std::string bool_tostring(avm_memcell* m)
 std::string table_tostring(avm_memcell *m)
 {
     assert(m && m->type == table_m);
+
+    static std::vector<avm_table*> visited;
+    for(avm_table* t : visited){
+        if(t == m->data.tableVal){
+            return "[table (self-reference)]";
+        }
+    }
+    visited.push_back(m->data.tableVal);
+
     std::string result = "[";
     // unsigned size = m->data.tableVal->strIndexed.size() + m->data.tableVal->numIndexed.size();
     for (auto const& elem : m->data.tableVal->strIndexed){
@@ -192,6 +207,7 @@ std::string table_tostring(avm_memcell *m)
     }
     result += "]";
 
+    visited.pop_back();
     return result;
 }
 
