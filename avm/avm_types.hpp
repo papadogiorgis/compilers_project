@@ -38,7 +38,7 @@ typedef struct avm_memcell{
     avm_memcell_t type;
     union {
         double numVal;
-        char *strVal;
+        char* strVal;
         unsigned char boolVal;
         avm_table *tableVal;
         unsigned funcVal;
