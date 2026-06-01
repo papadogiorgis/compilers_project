@@ -62,7 +62,14 @@ void make_operand(expr* e, vmarg* arg){
             arg->type = local_a;
         }else if(e->sym->type == FORMAL){
             arg->type = formal_a;
+        }else if(e->sym->type == USERFUNC || (int)e->sym->type == (int)programfunc_s){
+            arg->type = userfunc_a;
+            arg->val = userfuncs_newfunc(e->sym);
+        }else if(e->sym->type == LIBFUNC || (int)e->sym->type == (int)libraryfunc_s){
+            arg->type = libfunc_a;
+            arg->val = libfuncs_nevused(e->sym->key);
         }else{
+            printf("\n[Error] make_operand: Unhandled sym->type = %d for symbol '%s'\n",e->sym->type, e->sym->key ? e->sym->key : "UNKNOWN");
             assert(0);
         }
     }else if(e->type == constbool_e){
@@ -83,6 +90,7 @@ void make_operand(expr* e, vmarg* arg){
         arg->type = libfunc_a;
         arg->val = libfuncs_nevused(e->sym->key);
     }else{
+        printf("\n[Error] make_operand: Unhandled expr->type = %d\n",e->type);
         assert(0);
     }
 }
@@ -558,6 +566,11 @@ void generate_loop(void){
     }
 
     patch_incomplete_jumps();
+
+    for(unsigned i=0; i<totalUserFuncs; ++i){
+        unsigned quadindex = userFuncs[i].address;
+        userFuncs[i].address = quads[quadindex].target_address +1;
+    }
 
     if(print_syntax){
         for(unsigned i=0; i<currInstructions; ++i){

@@ -24,7 +24,7 @@ all: alpha_compiler alpha_vm
 
 alpha_compiler: compiler/scanner.c compiler/syntax_parser.c
 	@gcc $(COMPILER_FLAGS) $(COMPILER_SOURCE_FILES) -o alpha_compiler
-	@rm -f compiler/scanner.c compiler/syntax_parser.c compiler/syntax_parser.output
+	@rm -f compiler/scanner.c compiler/syntax_parser.c compiler/syntax_parser.output compiler/all_quads.txt
 	@echo Alpha Compiler is ready!
 
 alpha_vm:
