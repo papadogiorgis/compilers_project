@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if ! make all > /dev/null 2>&1; then
+    echo "Error: Make failed! Please run 'make' manually to inspect the issue."
+    exit 1
+fi
+
+FLAG=""
+FILE=""
+
+if [ "$1" == "-debug-flag" ]; then
+    FLAG="$1"
+    FILE="$2"
+elif [ "$2" == "-debug-flag" ]; then
+    FLAG="$2"
+    FILE="$1"
+else
+    FILE="$1"
+fi
+
+if [ -z "$FILE" ]; then
+    echo "Error: No input file given."
+    echo "Usage: ./alpha [-debug-flag] <source_file.asc>"
+    exit 1
+fi
+
+./alpha_compiler $FLAG "$FILE" && \
+./alpha_vm $FLAG out.abc
+rm -f compiler/all_quads.txt out.abc
