@@ -1,0 +1,2403 @@
+-->01_err_1.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+    user function 9
+	user function 46
+	4.000
+	3.000
+	error: line 25: call: cannot bind '3.000' to function!
+
+*/
+
+function executor (a) {
+    f = (function(a){return(function(a){return(function(a){return(function(a){return a();});});});});
+    print(f(a)(a)(a)(a), "\n");
+}
+
+t = [ { "tablefunc" : (function() { return (function(){return 3; }); }) }, { "tablefunc2" : (function(){return 4;}) } ];
+
+executor(print);
+executor(t.tablefunc);
+executor(t.tablefunc2);
+executor(t.tablefunc());
+executor(t.tablefunc()());	//run time error
+
+-->01_err_1.asc OUR RESULT
+$3
+$5
+4.000000
+3.000000
+call: can not bind ' 3.000000' to function
+
+-->02_err_2.asc CODE
+/*  Testt file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+    this is a text message
+    run time error in line 15
+*/
+
+t = [ { "foo" : 0 } ];
+t1 = [ "print", 34, 89, 100, true, false, nil ];
+
+t[1453] = "this is a message";
+t1[0]("this is a text message", "\n");
+
+t1[1](); //run time error
+
+-->02_err_2.asc OUR RESULT
+this is a text message
+call: can not bind ' 34.000000' to function
+
+-->03_err_3.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+infinite loop
+*/
+
+function foo () {
+    while ([ 1, 2, 3, 4 ]) {
+        t = [
+            { "bigggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg" : 0 },
+            { "biggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg" : 1 }
+        ];
+
+        f = nil;
+        for(v=0;v<1;++v) {
+
+            f = [
+                t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t,
+                t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t,
+                t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t, t
+            ];
+            g = [
+                    f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f,
+                    f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f,
+                    f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f
+            ];
+            print(f);
+        }
+    }
+}
+foo();
+while(true)print("ok"); // never prints
+
+
+-->03_err_3.asc OUR RESULT
+table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table:...
+
+-->04_err_4.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected output:
+    run time error: Stack overflow!
+*/
+
+function left (func) {
+    print("Func: ", func, " left\n");
+    f = func;
+    func = 999;
+    return f(left);
+}
+
+function right (func) {
+    print("Func: ", func, " right\n");
+    f = func;
+    func = 999;
+    another = "lala";
+    return f(right);
+}
+
+right(left);
+
+
+-->04_err_4.asc OUR RESULT
+(...)
+Func: left right
+Func: right left
+Func: left right
+Func: right left
+Func: left right
+Func: right left
+Func: left right
+Func: right left
+Func: left right
+Func: right left
+Func: left right
+Func: right left
+Func: left right
+Func: right left
+stack overflow
+alpha_vm: avm/avm_stack.cpp:67: unsigned int avm_get_envvalue(unsigned int): Assertion `stack[i].type == number_m' failed.
+./alpha: line 28: 14330 Aborted                 (core dumped) ./alpha_vm $FLAG out.abc
+
+-->05_err_5.asc CODE
+/*  Testt file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+    print("corrupt & destroy\n");
+    error: out of stack - ask argument which is not pushed in the arguments list
+*/
+
+function foo () {
+    function corrupt_the_youth (a1, a2, a3, a4, a5, a6, a7, a8, a9, a10) {
+        print("corrupt & destroy\n");
+        function corrupt_plus(b1, b2, b3, b4, b5, b6) {
+        	print("corrupt & plus\n");
+
+        	b5 = 0;
+        	b6 = 0;
+        }
+
+        a9 = 0;
+        a10 = 0;
+        corrupt_plus(a3,a4);
+    }
+
+    corrupt_the_youth();
+    return nil;
+}
+
+foo();
+
+
+-->05_err_5.asc OUR RESULT
+corrupt & destroy
+./alpha: line 28: 14390 Segmentation fault      (core dumped) ./alpha_vm $FLAG out.abc
+
+-->06_err_6.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+    YOYOYOYOYYOYOYOYOYOOYOYOYOYOOYOYO
+*/
+function foo () {
+        function foo() {
+                function foo() {
+                        function foo() {
+                                function foo() {
+                                        function foo() {
+                                                function foo() {
+                                                        function foo() {
+                                                                function foo() {
+                                                                   function foo() {
+
+                                                                        i = true;
+                                                                        t = [];
+                                                                        j = [3];
+                                                                        for (i = -1000; i < 0 and i < 0 and i < 0 or i < 0 and i < 0; ++i) {
+                                                                               t[i] = i * i;
+                                                                               j[i] = [3];
+                                                                        }
+                                                                        for (i = -1000; i < 0 or i < 0; ++i) {
+                                                                               if (t[i] != i*i)
+                                                                                print("FAILED: ", i, " i^2: ", i, "\n");
+                                                                               for (f = 0; f < 100; ++f) {
+                                                                                j[i][f] = [ [3] ];
+                                                                               }
+										print("YO");
+																			   
+                                                                        }
+                                                                        print("j is: ", j, "\nend-j\n");
+
+
+                                                                        for (i = 0; i < 100; ++i) {
+                                                                               if (nil == t[i])
+                                                                                break;
+                                                                               else
+                                                                                continue;
+                                                                        }
+                                                                   }
+                                                                   foo();
+                                                                }
+                                                                foo();
+                                                        }
+                                                        foo();
+                                                }
+                                                foo();
+                                        }
+                                        foo();
+                                }
+                                foo();
+                        }
+                        foo();
+                }
+                foo();
+        }
+        foo();
+}
+foo();
+
+-->06_err_6.asc OUR RESULT
+stack overflow
+stack overflow
+
+-->07_relop_logic.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+	123
+	true false true
+	//true
+	false
+
+*/
+
+nl = "\n";
+
+a = 1;
+
+b = 2;
+
+c = 3;
+
+print(a,b,c);
+
+d = b < c; //true
+
+e = not a == b; //false
+
+f = c >= d or b != 1; //true
+
+print(d, " ", e, " ", f, nl);
+
+//f = e >= d and c != b or not c > a; //true
+
+print(f, nl);
+
+f = not f; //false
+
+print(f, nl);
+
+-->07_relop_logic.asc OUR RESULT
+1.0000002.0000003.000000Error: Relational operator on non-numbers.
+
+-->08_arith.asc CODE
+-->EMPTY FILE
+
+-->08_arith.asc OUR RESULT
+-->DID NOT RUN TEST ON EMPTY SOURCE FILE(they probably forgot)
+
+-->09_if_else.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+    1.000
+	e is FALSE!
+	5.000
+	7.000
+*/
+
+sp = " ";
+nl = "\n";
+
+a = 1;
+
+b = 2;
+
+c = 3;
+
+d = 6;
+
+g = 7;
+
+if (b < c) {
+        d = 1;
+}
+else {
+        d = 0;
+}
+
+print(d, nl);
+
+e = not a == b;
+
+if (e)
+        print("e is TRUE!", nl);
+else
+        print("e is FALSE!", nl);
+
+if (c >= d or b != 1) {
+        f = c + b;
+        print(f, nl);
+}
+
+if (e and b < 1)
+        if (a == d)
+                g = 1;
+        else {
+                g = 2;
+                if (d <= f or b < f)
+                        g = 3;
+        }
+
+print(g, nl);
+
+
+-->09_if_else.asc OUR RESULT
+1.000000
+e is FALSE!
+5.000000
+7.000000
+
+-->10_loop_simple.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+	GP SERIES (first:2, ratio:3)
+	1.000  3.000  9.000  27.000  81.000  243.000  729.000
+	Sum of the GP series till 7.000 terms is 1093.000
+
+	GP SERIES(first:2, ratio:2)
+	1.000  2.000  4.000  8.000  16.000  32.000  64.000
+	Product of the GP series till 7.000 terms is 2097152.000
+
+	 Even numbers till 60:
+	0.000  2.000  4.000  6.000  8.000  10.000  12.000  14.000  16.000  18.000  20.000  22.000  24.000  26.000  28.000  30.000  32.000  34.000  36.000  38.000  40.000  42.000  44.000  46.000  48.000  50.000  52.000  54.000  56.000  58.000
+
+	 Odd numbers till 60:
+	1.000  3.000  5.000  7.000  9.000  11.000  13.000  15.000  17.000  19.000  21.000  23.000  25.000  27.000  29.000  31.000  33.000  35.000  37.000  39.000  41.000  43.000  45.000  47.000  49.000  51.000  53.000  55.000  57.000  59.000 
+*/
+
+sp = " ";
+nl = "\n";
+
+/* ======== FOR LOOP - print the series and add all elements to sum ======== */
+terms = 7;
+first = 1;
+sum = 0;
+ratio = 3;
+
+value = first;
+print("GP SERIES (first:2, ratio:3)\n");
+for(i = 0; i < terms; i++) {
+    print(value);
+    print("  ");
+    sum = sum + value;
+    value = value * ratio;
+}
+
+print("\nSum of the GP series till ");
+print(terms);
+print(" terms is ");
+print(sum);
+
+
+/* ======== WHILE LOOP - print the series and times all elements to product ======== */
+i=0;
+product = 1;
+ratio = 2;
+
+value = first;
+print("\n\nGP SERIES(first:2, ratio:2)\n");
+while(i++ < terms) {
+    print(value);
+    print("  ");
+    product = product * value;
+    value = value * ratio;
+}
+
+print("\nProduct of the GP series till ");
+print(terms);
+print(" terms is ");
+print(product);
+
+
+/* ======== FOR LOOP WITH BC - print even numbers till 60 ======= */
+print("\n\n Even numbers till 60:\n");
+for(i=0;i<100;i++){
+  if (i==60)
+    break;
+
+  if(i%2 == 0){
+    print(i);
+    print("  ");
+    continue;
+  }
+}
+
+
+
+/* ======== WHILE LOOP WITH BC - print odd numbers till 60 ======= */
+print("\n\n Odd numbers till 60:\n");
+k=0;
+while(k++<60){
+  if (k==60)
+    break;
+
+  if(k%2 == 1){
+    print(k);
+    print("  ");
+    continue;
+  }
+}
+
+print(nl);
+
+
+-->10_loop_simple.asc OUR RESULT
+GP SERIES (first:2, ratio:3)
+1.000000  3.000000  9.000000  27.000000  81.000000  243.000000  729.000000  
+Sum of the GP series till 7.000000 terms is 1093.000000
+
+GP SERIES(first:2, ratio:2)
+1.000000  2.000000  4.000000  8.000000  16.000000  32.000000  64.000000  
+Product of the GP series till 7.000000 terms is 2097152.000000
+
+ Even numbers till 60:
+0.000000  2.000000  4.000000  6.000000  8.000000  10.000000  12.000000  14.000000  16.000000  18.000000  20.000000  22.000000  24.000000  26.000000  28.000000  30.000000  32.000000  34.000000  36.000000  38.000000  40.000000  42.000000  44.000000  46.000000  48.000000  50.000000  52.000000  54.000000  56.000000  58.000000  
+
+ Odd numbers till 60:
+1.000000  3.000000  5.000000  7.000000  9.000000  11.000000  13.000000  15.000000  17.000000  19.000000  21.000000  23.000000  25.000000  27.000000  29.000000  31.000000  33.000000  35.000000  37.000000  39.000000  41.000000  43.000000  45.000000  47.000000  49.000000  51.000000  53.000000  55.000000  57.000000  59.000000
+
+-->11_loop_advanced.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+    To print all prime numbers between 1 to 100
+    3.000, 5.000, 7.000, 11.000, 13.000, 17.000, 19.000, 23.000, 29.000, 31.000, 37.000, 41.000, 43.000, 47.000, 53.000, 59.000, 61.000, 67.000, 71.000, 73.000, 79.000, 83.000, 89.000, 97.000,
+
+*/
+
+
+/* ======== NESTED LOOPS - print prime numbers between 1 to 100 ======== */
+
+N=100;
+
+print("To print all prime numbers between 1 to 100\n");
+
+/* For every number between 2 to N, check
+whether it is prime number or not */
+i=3;
+while(i <= N){
+    isPrime = 0;
+    /* Check whether i is prime or not */
+    for(j = 2; j <= i/2; j++){
+         /* Check If any number between 2 to i/2 divides I
+          completely If yes the i cannot be prime number */
+         if(i % j == 0){
+             isPrime = 1;
+             break;
+         }
+    }
+
+    if (isPrime==0 and N!= 1){
+      print(i);
+      print(", ");
+    }
+    i++;
+}
+print("\n");
+
+
+-->11_loop_advanced.asc OUR RESULT
+To print all prime numbers between 1 to 100
+3.000000, 5.000000, 7.000000, 11.000000, 13.000000, 17.000000, 19.000000, 23.000000, 29.000000, 31.000000, 37.000000, 41.000000, 43.000000, 47.000000, 53.000000, 59.000000, 61.000000, 67.000000, 71.000000, 73.000000, 79.000000, 83.000000, 89.000000, 97.000000,
+
+-->12_loop_bubblesort_tables_calls.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+    Find the element at position 6.000000
+
+    Before sorting:
+    14.000000, -2.000000, 5.000000, 133.000000, -20.000000, 85638.000000, 234.000000, -246.000000,
+
+    After sorting:
+    -246.000000, -20.000000, -2.000000, 5.000000, 14.000000, 133.000000, 234.000000, 85638.000000,
+*/
+
+
+/* ======== FOR LOOP WITH CONTINUE - search a number from array ======== */
+
+x=234;
+array = [14, -2, 3+2, 133, -20, 85634+ 4, x++,-246];
+SIZE = 8;
+
+needle = 234;
+
+// for loop with continue
+for (i = 0; i < SIZE; i++)
+{
+    if (needle != array[i])
+    {
+        continue;
+    }
+
+    print("Find the element at position ");
+    print(i);
+    print("\n");
+    break;
+}
+
+/* ======== NESTED FOR LOOPS - sort an array of numbers ======== */
+
+// nested for loops
+function bubbleSort(numbers, array_size) {
+  for (i = (array_size - 1); i > 0; i--) {
+    for (j = 1; j <= i; j++) {
+      if (numbers[j-1] > numbers[j]) {
+        temp = numbers[j-1];
+        numbers[j-1] = numbers[j];
+        numbers[j] = temp;
+      }
+    }
+  }
+}
+
+/* ======== WHILE WITH BC - print an array of numbers ======== */
+function printArray(numbers, size){
+  local i=0;
+  while(true){
+    print(numbers[i]);
+    print(", ");
+    if(++i >= size){
+      break;
+    }
+    else{
+      continue;
+    }
+  }
+}
+
+// function calls
+print("\nBefore sorting:\n");
+printArray(array, 8);
+
+bubbleSort(array, 8);
+
+print("\n\nAfter sorting:\n");
+printArray(array, 8);
+print("\n");
+
+
+-->12_loop_bubblesort_tables_calls.asc OUR RESULT
+Find the element at position 6.000000
+
+Before sorting:
+14.000000, -2.000000, 5.000000, 133.000000, -20.000000, 85638.000000, 234.000000, -246.000000, 
+
+After sorting:
+-246.000000, -20.000000, -2.000000, 5.000000, 14.000000, 133.000000, 234.000000, 85638.000000,
+
+-->13_func_calls.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+	1.000
+	hello
+	fract(1): 1.000  (must be 1)
+	fract(2): 2.000  (must be 2)
+	fract(3): 6.000  (must be 6)
+	fract(4): 24.000  (must be 24)
+	foo: 10.000
+	foo2: 9.000
+	foo3: 10.000
+	foo: 8.000
+	foo2: 7.000
+	foo3: 8.000
+	foo: 6.000
+	foo2: 5.000
+	foo3: 6.000
+	foo: 4.000
+	foo2: 3.000
+	foo3: 4.000
+	foo: 2.000
+	foo2: 1.000
+	foo3: 2.000
+	foo: 0.000
+	hello world
+	hello world inside
+	bar_
+	zero
+	zero
+	one
+	scope1
+	scope2
+	global
+	global
+	global
+	1.000 2.000 3.000
+	1.000 2.000 3.000
+*/
+
+function simple_print(x) {
+
+	print(x);
+}
+
+simple_print(1);
+simple_print("\nhello\n");
+
+function fract(x) {
+
+	if(x == 1)
+		return 1;
+	else
+		return x*fract(x-1);
+}
+
+print("fract(1): ", fract(1), " (must be 1)\n");
+print("fract(2): ", fract(2), " (must be 2)\n");
+print("fract(3): ", fract(3), " (must be 6)\n");
+print("fract(4): ", fract(4), " (must be 24)\n");
+
+function foo(f1, f2, x) {
+
+	print("foo: ", x, "\n");
+
+	if(x==0)
+		return x;
+
+	return f1(foo, f2, x-1);
+}
+
+function foo2(f1, f2, x) {
+
+	print("foo2: ", x, "\n");
+	return f2(foo2, f1, x+1);
+}
+
+function foo3(f1, f2, x) {
+
+	print("foo3: ", x, "\n");
+	return f2(f1, foo3, x-2);
+}
+
+foo(foo2, foo3, 10);
+/*
+Output for this:
+foo: 10
+foo2: 9
+foo3: 10
+foo: 8
+foo2: 7
+foo3: 8
+foo: 6
+foo2: 5
+foo3: 6
+foo: 4
+foo2: 3
+foo3: 4
+foo: 2
+foo2: 1
+foo3: 2
+foo: 0
+*/
+
+s_p=(function (x){return print(x);});
+s_p("hello world\n");
+
+function bar(){
+	s_p("hello world inside\n");
+	function bar(){
+		print("bar_\n");
+	}
+	bar();
+
+}
+bar();
+
+/*
+hello world
+hello world inside
+bar_
+*/
+
+function F(){
+	print("zero\n");	
+	function F(){
+		print("one\n");
+		return F;
+	}
+	return F;
+}
+
+F(); //zero
+F()(); //zero \n one
+
+function fscope() { print("global\n"); }
+{ 
+	function fscope() { print("scope1\n"); }
+	fscope();	//scope1
+	{
+		function fscope() {print("scope2\n");}
+		fscope();	//scope2
+		::fscope(); //global
+	}
+	::fscope();  	//global
+}
+fscope();		//global
+
+function fp(x) { print(x); return fp; }
+fp(1)(2)(3); 
+print("\n");
+//1 2 3 
+
+t = [ (function fx(x){ print(x); return t; }) ];
+t[0](1)[0](2)[0](3);
+
+//1 2 3
+
+
+-->13_func_calls.asc OUR RESULT
+1.000000
+hello
+fract(1): 1.000000 (must be 1)
+fract(2): 2.000000 (must be 2)
+fract(3): 6.000000 (must be 6)
+fract(4): 24.000000 (must be 24)
+foo: 10.000000
+foo2: 9.000000
+foo3: 10.000000
+foo: 8.000000
+foo2: 7.000000
+foo3: 8.000000
+foo: 6.000000
+foo2: 5.000000
+foo3: 6.000000
+foo: 4.000000
+foo2: 3.000000
+foo3: 4.000000
+foo: 2.000000
+foo2: 1.000000
+foo3: 2.000000
+foo: 0.000000
+hello world
+hello world inside
+hello world inside
+
+(...)
+hello world inside
+hello world inside
+hello world inside
+hello world inside
+hello world inside
+hello world inside
+hello world inside
+hello world inside
+hello world inside
+hello world inside
+hello world inside
+stack overflow
+alpha_vm: avm/avm_stack.cpp:67: unsigned int avm_get_envvalue(unsigned int): Assertion `stack[i].type == number_m' failed.
+./alpha: line 28: 14786 Aborted                 (core dumped) ./alpha_vm $FLAG out.abc
+
+-->14_tables1.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+    2.000
+    zero
+    1.000
+    1.000
+    true
+    0.000
+    hello
+    [ false, true, [ ], 5.000, [ hello, hi ], [ ] ]
+
+*/
+
+nl = "\n";
+
+vec0=[];
+
+vec1=[1, 2, 3];
+
+vec2= [false, true, [], 5, [ "hello", "hi" ], []];
+
+vectors = [vec0, vec1, vec2];
+
+vec3=[
+    {"x": vectors[0]},
+    {"y": vectors[1]}, 
+    {0 : "zero"}, 
+    {1 : "one"}
+];
+
+
+print(vec1[1], nl, vec3[0], nl); //2, zero
+
+print(vectors[1][0], nl); //1
+
+result=vec3.y[0];
+
+print(result, nl); // 1
+
+if(vectors[0] == vec0)
+    print("true");      //TRUE
+else
+    print("false");
+
+print(nl);    
+    
+vectors[0]=0;
+result=vectors[0];
+print(result, nl); //0
+
+vec3.y[2]=vec2[4][0];
+result=vec3.y[2];
+print(result, nl); //"hello"   
+
+print(vec2, nl);
+
+
+-->14_tables1.asc OUR RESULT
+2.000000
+zero
+1.000000
+1.000000
+true
+0.000000
+hello
+table: {
+
+-->15_tables2.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+    pt.x: 21
+    pt.y: 32
+    sq.p1.x: 6
+    sq.p1.y: 12
+    sq.p2.x: 26
+    sq.p2.y: 32
+    first hello
+    second hello
+    third hello
+    fourth hello
+    table1_2 ok1
+    table2_3 ok2
+*/
+
+function Point(x, y) {
+
+        return [
+                {"x": x},
+                {"y": y},
+                {"move": (function(p,dx,dy) {
+                                p.x = p.x + dx;
+                                p.y = p.y + dy;
+                                }
+                        )}
+                ];
+}
+
+pt = Point(20,30);
+pt.move(pt, 1, 2);
+
+print("pt.x: ", pt.x, "\n");
+print("pt.y: ", pt.y, "\n");
+
+function Square(p1, p2) {
+
+        return [
+                {"p1": p1},
+                {"p2": p2},
+                {"move": (function(p, dx, dy) {
+                                p.p1.move(p.p1, dx, dy);
+                                p.p2.move(p.p2, dx, dy);
+                                }
+                        )}
+                ];
+}
+
+sq = Square(Point(10,20), Point(30,40));
+sq.move(sq, -4, -8);
+
+print("sq.p1.x: ", sq.p1.x, "\n");
+print("sq.p1.y: ", sq.p1.y, "\n");
+print("sq.p2.x: ", sq.p2.x, "\n");
+print("sq.p2.y: ", sq.p2.y, "\n");
+
+// Dispatch table
+
+dispatchTable = [ {1: (function (x){ print("first ", x);})},
+                  {2: (function (x){ print("second ", x);})},
+                  {3: (function (x){ print("third ", x);})},
+                  {4: (function (x){ print("fourth ", x);})}
+                ];
+
+for(i=1; i<= 4; ++i)
+        dispatchTable[i]("hello\n");
+
+//
+
+table = [{"table1" : [{1: (function (x){ print("table1_1 ", x);})},
+                      {2: (function (x){ print("table1_2 ", x);})},
+                      {3: (function (x){ print("table1_3 ", x);})}
+                     ]
+         },
+         {"table2" : [{1: (function (x){ print("table2_1 ", x);})},
+                      {2: (function (x){ print("table2_2 ", x);})},
+                      {3: (function (x){ print("table2_3 ", x);})}
+                     ]
+         }
+        ];
+
+table.table1[2]("ok1\n");
+table.table2[3]("ok2\n");
+
+-->15_tables2.asc OUR RESULT
+pt.x: 21.000000
+pt.y: 32.000000
+sq.p1.x: 6.000000
+sq.p1.y: 12.000000
+sq.p2.x: 26.000000
+sq.p2.y: 32.000000
+first hello
+second hello
+third hello
+fourth hello
+table2_2 ok1
+table2_3 ok2
+
+-->16_libfuncs_bonus1.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+    Table t is: [{key1 : 1}, {key2 : 2}, {key3 : tria}, {key4 : true}, {key5 : [{1 : 3}, {2 : 4}, {4 : 5}, ]}, ]
+    Lenght of table t is (must be 5):5
+    Function prnt printing: prnt() and print: lib::print
+    Table t in prnt is: [{0 : [{key1 : 1}, {key2 : 2}, {key3 : tria}, {key4 : true}, {key5 : [{1 : 3}, {2 : 4}, {4 : 5}, ]}, ]}, {1 : 2}, {2 : 3.14}, {3 : 4}, {4 : true}, {5 : false}, ]
+    Table indices of global t: [{0 : key1}, {1 : key2}, {2 : key3}, {3 : key4}, {4 : key5}, ] which has length: 5
+    Table copy is: [{key1 : 1}, {key2 : 2}, {key3 : tria}, {key4 : true}, {key5 : [{1 : 3}, {2 : 4}, {4 : 5}, ]}, ] and it is printed with print_function
+    PASSED: value: nil type: nil
+    PASSED: value: nil type: nil
+    PASSED: value: 3.141 type: number
+    PASSED value: 1.41421 != 1.41421
+    PASSED: value: nil type: nil
+    PASSED value: 0.5 type: number
+    PASSED value: 0.5 type: number
+    PASSED: value: nil type: nil
+    PASSED: value: nil type: nil
+    --->12
+    Testing lib function typeof
+
+    trypeof([1,2,3])        :>table<
+    trypeof((function(){})) :userfunction<
+    trypeof(typeof) :libraryfunction<
+
+    Testing lib function input and typeof (type exit for exit)
+
+    input: 3
+    typeof(stdin): number, value of stdin: 3
+    input: 3.4
+    typeof(stdin): number, value of stdin: 3.4
+    input: true
+    typeof(stdin): boolean, value of stdin: true
+    input: false
+    typeof(stdin): boolean, value of stdin: false
+    input: p[
+    typeof(stdin): string, value of stdin: p[
+    input: 4.4a
+    typeof(stdin): string, value of stdin: 4.4a
+    input: "gap gap gap"
+    typeof(stdin): string, value of stdin: "gap gap gap"
+    input: exit
+    typeof(stdin): string, value of stdin: exit
+*/
+
+
+
+t = [ { "key1" : 1 }, { "key2" : 2 }, { "key3" : "tria" }, { "key4" : true }, { "key5" : [ nil, 3, 4, nil, 5 ] } ];
+
+print("Table t is: ", t, "\n");
+print("Lenght of table t is (must be 5):", objecttotalmembers(t),"\n");
+
+function foo() {
+    function lala() {
+        function prnt() {
+            local t = [ ::t, 2, 3.14, "4", true, false ];
+            print("Table t in prnt is: ", t, "\n");
+        }
+        print("Function prnt printing: ", prnt, " and print: ", print, "\n");
+        prnt();
+    }
+    return lala;
+}
+
+f = foo();
+f();
+
+ind = objectmemberkeys(t);
+print("Table indices of global t: ", ind, " which has length: ", objecttotalmembers(ind), "\n");
+
+function my_print () {
+
+    targs = totalarguments();
+    if (targs < 0 or targs > 20) {
+        print("ERROR in my_print: arguments reported: ", targs, "\n");
+        return nil;
+    }
+
+    for (i = 0; i < totalarguments(); ++i) {
+        print(argument(i));
+    }
+}
+
+////////////////////////////////////////////////////////////////////////
+// PRINT FUNCTION HERE
+
+print_function = my_print;
+//print_function = print;
+
+
+////////////////////////////////////////////////////////////////////////
+tcopy = objectcopy(t);
+
+print_function("Table copy is: ", tcopy, " ", "and it is printed with print_function", "\n");
+
+function check (variable, type, value) {
+    if (typeof(variable) != type) {
+        print_function("FAILED type: ", typeof(variable), " != ", type, ", value: ", variable, "\n");
+        return nil;
+    }
+    if (value != variable) {
+        print_function("FAILED value: ", variable, " != ", value, "\n");
+        return nil;
+    }
+    print_function("PASSED: value: ", value, " type: ", type, "\n");
+}
+
+check(strtonum("foo"), "nil", nil);
+check(strtonum("3.12a"), "nil", nil);
+check(strtonum("3.141"), "number", 3.141);
+check(sqrt(2), "number", 1.41421356237309504880);
+check(sqrt(-1), "nil", nil);
+check(cos(60), "number", 0.5);
+check(sin(30), "number", 0.5);
+check(totalarguments(), "nil", nil);
+check(argument(0), "nil", nil);
+
+
+ax = strtonum("12");
+print("--->", ax, "\n");
+
+
+print("Testing lib function typeof\n\n");
+print("trypeof([1,2,3])\t:>", typeof([1,2,3]), "<\n");
+print("trypeof((function(){}))\t:", typeof((function(){})), "<\n");
+print("trypeof(typeof)\t:", typeof(typeof), "<\n\n");
+print("Testing lib function input and typeof (type exit for exit)\n\n");
+
+stdin = nil;
+while (true) {
+        
+    if (typeof(stdin) == "string") {
+        if (stdin == "exit") {
+            break;
+        }
+    }
+
+    print("input: ");
+    stdin = input();
+    print("typeof(stdin): ", typeof(stdin), ", value of stdin: ", stdin, "\n");
+}
+
+
+
+-->16_libfuncs_bonus1.asc OUR RESULT
+Table t is: table: {
+Lenght of table t is (must be 5):0.000000
+Function prnt printing: prnt and print: print
+Table t in prnt is: table: {
+Table indices of global t: lala which has length: lala
+warning: assigning from undef content
+warning: assigning from undef content
+undefwarning: assigning from undef content
+(...)
+warning: assigning from undef content
+warning: assigning from undef content
+undefwarning: assigning from undef content
+warning: assigning from undef content
+warning: assigning from undef content
+undefwarning: assigning from undef content
+alpha_vm: avm/avm_stack.cpp:67: unsigned int avm_get_envvalue(unsigned int): Assertion `stack[i].type == number_m' failed.
+./alpha: line 28: 14949 Aborted                 (core dumped) ./alpha_vm $FLAG out.abc
+
+-->17_libfuncs_bonus2_part2_tables_catch_self_reference_error.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+    [ { a : 1.000 }, { b : 2.000 }, { c : 3.000 }, { e : 5.000 }, { f : 6.000 } ]
+    5.000
+    Failed to convert parameter to number, in strtonum
+    WARNING: table[a] not found! at line 14
+    Failed to convert parameter to number, in strtonum
+    WARNING: table[b] not found! at line 14
+    Failed to convert parameter to number, in strtonum
+    WARNING: table[c] not found! at line 14
+    Failed to convert parameter to number, in strtonum
+    WARNING: table[e] not found! at line 14
+    Failed to convert parameter to number, in strtonum
+    WARNING: table[f] not found! at line 14
+    Must print 0: 0.000
+    Must print 5: 5.000
+    Must print true (shallow copy): true
+    WARNING: table[b] not found! at line 28
+    Must print true (shallow copy): true
+    Must print 'Hello, World!' (shallow copy):
+    Must print: variables: 4, functions: 2, tables: 1
+    variables:4.000 , functions:2.000 , tables:1.000
+    Danger! Type 'y' to proceed:
+
+    press y
+    segmentation fault -> self referemce
+
+*/
+
+nl = "\n";
+t = [ {"a" : 1}, {"b" : 2}, {"c" : 3}, {"d" : nil}, {"e" : 5}, {"f" : 6} ];
+
+tcopy = objectcopy(t);
+
+print(t,nl);
+print(objecttotalmembers(t), nl);
+
+keys = objectmemberkeys(t);
+n_elems = objecttotalmembers(t);
+
+for(i = 0; i < n_elems; ++i)
+{
+    t[keys[i]] = strtonum(keys[i]);
+}
+
+print("Must print 0: ", objecttotalmembers(t), nl);
+print("Must print 5: ", objecttotalmembers(tcopy), nl);
+
+///////////////////////////////////////////////////////////////////////////////
+
+t1 = [ {"t" : [ {"a" : 1}, {"b" : 2}, {"c" : 3}, {"d" : 4}, {"e" : 5}] } ];
+t2 = objectcopy(t1);
+
+t1["t"]["a"] = 13;
+print("Must print true (shallow copy): ", t1["t"]["a"] == t2["t"]["a"], nl);
+
+t1["t"]["b"] = nil;
+print("Must print true (shallow copy): ", objecttotalmembers(t1) == objecttotalmembers(t2), nl);
+
+print("Must print 'Hello, World!' (shallow copy): ", nl);
+t1["t"]["()"] = (function () { print("Hello, World!", nl); } );
+//t2["t"](); // Functor call equivalent to t2["t"]["()"]();
+
+/////////////////////////////////////////////////////////////////////////////
+
+function count_table_type(table, type)
+{
+    if(typeof(table) != "table" or typeof(type) != "string")
+    {
+        return;
+    }
+    
+    keys = objectmemberkeys(t);
+    n_elems = objecttotalmembers(t);
+    n = 0;  
+        
+    for(i = 0; i < n_elems; ++i)
+    {
+        if(typeof(t[keys[i]]) == type)
+        {
+            ++n;
+        }
+    }
+    
+    return n;
+}
+
+t = [ 
+        {"info" : (function() 
+                    { 
+                        self = argument(0);
+                        if(totalarguments() == 1 and typeof(self) == "table") 
+                        { 
+                            n_vars = count_table_type(self, "number") +
+                            count_table_type(self, "bool") + count_table_type(self, "string");
+                            n_funcs = count_table_type(self, "userfunc");
+                            n_tables = count_table_type(self, "table");
+                                        
+                            print("variables:", n_vars, ", functions:", n_funcs, ", tables:", n_tables, nl);
+                        }
+                    }) 
+        },
+        {"b" : 2}, {"c" : 3}, {"d" : true}, {"e" : "lala"}, {"f" : (function () {})}, {"g" : [1, 2, 3]}
+    ];
+        
+print("Must print: variables: 4, functions: 2, tables: 1", nl);
+t..info();
+
+/////////////////////////////////////////////////////////////////////////////
+
+print("Danger! Type 'y' to proceed: ");
+option = input();
+if(option == "y")
+{
+    tc = [];
+    tc["tc"] = tc;
+    print(tc);
+}
+else
+{
+    tc = [];
+    tc["tc"] = objectcopy(tc);
+    print(tc);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+-->17_libfuncs_bonus2_part2_tables_catch_self_reference_error.asc OUR RESULT
+table: {
+0.000000
+Must print 0: 0.000000
+Must print 5: 0.000000
+illegal use of type number as table
+
+-->18_tables_bonus.asc CODE
+/*
+    Test file for the final phase of HY-340: Languages & Compilers
+    Computer science dpt, University of Crete, Greece
+
+    Expected Output:
+    must print >print libFunc<: print libFunc
+	must print >tKey table<: tKey table
+	must print >tKey table<: tKey table
+	must print nil or run time error: nil
+	must print Trueeeee: Trueeeeee
+	must print >f userFunc<: f userFunc
+	must print >f userFunc<: f userFunc
+	Call Functor's print
+	LALA
+
+ */
+
+function f() {}
+tKey = [3];
+
+t = [ 
+	{ print : "print libFunc" }, 
+	{ typeof : "typeof libFunc" }, 
+	{ f : "f userFunc" }, 
+	{ tKey : "tKey table" }, 
+	{ true : "Trueeeeee" }, 
+	{ "lala" : "lala string key" } 
+];
+
+print("must print >print libFunc<: ", t[print], "\n"); // print libFunc
+print("must print >tKey table<: ", t[tKey], "\n"); // tKey table
+
+t2 = tKey;
+print("must print >tKey table<: ", t[t2], "\n"); // tKey table
+
+t2 = [3];
+print("must print nil or run time error: ", t[t2], "\n");
+
+
+print("must print Trueeeee: ", t[true], "\n"); // Trueeee
+
+func = f;
+print("must print >f userFunc<: ", t[f], "\n"); // f userFunc
+print("must print >f userFunc<: ", t[func], "\n"); // f userFunc
+
+func = [
+	{"()" : (function (t, msg){
+		print("Call ", t.class, "'s print\n");
+		print(msg);
+	})},
+	{"class": "Functor"}
+];
+
+func("LALA\n");
+
+
+-->18_tables_bonus.asc OUR RESULT
+warning set elem avm
+warning set elem avm
+warning set elem avm
+warning set elem avm
+warning set elem avm
+table: {[print] not found
+must print >print libFunc<: nil
+table: {[table: {] not found
+must print >tKey table<: nil
+table: {[table: {] not found
+must print >tKey table<: nil
+table: {[table: {] not found
+must print nil or run time error: nil
+table: {[true] not found
+must print Trueeeee: nil
+table: {[f] not found
+must print >f userFunc<: nil
+table: {[f] not found
+must print >f userFunc<: nil
+alpha_vm: avm/avm_stack.cpp:86: void avm_call_functor(avm_table*): Assertion `pc < AVM_ENDING_PC && instructions[pc].opcode == funcenter_v' failed.
+./alpha: line 28: 15062 Aborted                 (core dumped) ./alpha_vm $FLAG out.abc
+
+-->19_Circle.asc CODE
+nl = "\n";
+
+circle = [ {"pi" : pi = 3.141628}, {"r" : 0}, {"x" : 0}, {"y" : 0}];
+
+function Area (circle){
+	return ::pi * circle.r * circle.r;
+}
+
+function Perimeter(circle) {
+	return 2 * circle.pi * circle.r;
+}
+
+function InitCircle() {
+	circle.r = (local defaultVal = 5);
+	circle.x = defaultVal;
+	circle.y = defaultVal;
+}
+
+InitCircle();
+print("pi (must be 3.141628}): ", pi, "\n");
+print("circle Area (must be 78.540700000000001): ", Area(circle), nl);
+print("circle Perimeter (must be 31.41628): ", Perimeter(circle), "\n\n");
+
+
+
+-->19_Circle.asc OUR RESULT
+pi (must be 3.141628}): 3.141628
+circle Area (must be 78.540700000000001): 78.540701
+circle Perimeter (must be 31.41628): 31.416280
+
+
+
+-->20_delegation.asc CODE
+/* Something (who knows what this is) */
+DEBUG = false;
+
+// Utility constants
+nl = "\n";
+// Utility functions
+function println() {
+	local argc = totalarguments();
+	for (local i = 0; i < argc; ++i)
+		::print(argument(i));
+	::print(::nl);
+}
+function nothing(){}
+dprintln = nothing;
+if (DEBUG) {
+	::dprintln = ::println;
+}
+
+// //////////// alpha Objects /////////////// //
+/* _f_ is a function which operates on members of the object _obj_.
+ * _f_ should return true or false in order to continue or stop
+ * iterating over the given object. _closure_ is passed to f in every call.
+ * _f_ is called like
+ *     should_continue = f(closure, object_member_key, object_memeber);
+ */
+function objectforeach(obj, f, closure) {
+	local keys = ::objectmemberkeys(obj);
+	local keys_length = ::objecttotalmembers(keys);
+	local go_on = true;
+	for (local i = 0; go_on and i < keys_length; ++i) {
+		local key = keys[i];
+		go_on = f(closure, key, obj[key]);
+	}
+}
+function objecthaskey(obj, key) {
+	local closure = [{"has_key": false}, {"key": key}];
+	objectforeach(obj, (function(closure, key, val) {
+		::dprintln("closure.has_key(", closure.has_key, ") = key(",
+				key, ") == closure.key(", closure.key, ") -> ",
+				(key == closure.key));
+		return not (closure.has_key = key == closure.key);}),
+		closure);
+	::dprintln("closure = ", closure);
+	return closure.has_key;
+}
+function objecthas(obj, val) {
+	local closure = [{"has": false}, {"val": val}];
+	objectforeach(obj, (function(closure, key, val) {
+		return not (closure.has = val == closure.val);}),
+		closure);
+	return closure.has;
+}
+/* _predicate_ is called like:
+ *    preicate(closure, object_member_key, object_member)
+ * If it returns true, then searhing ends and the object
+ * for which _predicate_ returned true is returned (by
+ * this function).
+ */
+function objectfind(obj, predicate, closure) {
+	local fclosure = [
+		  { "closure": closure }
+		, { "predicate": predicate }
+	];
+	objectforeach(obj, (function(fclosure, key, val) {
+			local result = true;
+			if (fclosure.predicate(fclosure.closure, key, val)) {
+				fclosure.result = val;
+				result = false; // stop iterating
+			}
+			return result;
+		}),
+		fclosure);
+	return fclosure.result;
+}
+function objectfindif(obj, predicate, closure) {
+	return objectfind(obj, predicate, closure) != nil;
+}
+
+// //////////////////// Tables //////////////////// //
+function table_append(table, obj) {
+	table["__data"][table["__nextIndex"]++] = obj;
+}
+/*
+ * should_continue=f(closure, key, val); 
+ */
+function table_foreach(table, f, closure) { 
+	local tclosure = [ { "f": f }, { "closure": closure} ];
+	objectforeach(table["__data"], (function(closure, key, val) {
+			return closure.f(closure.closure, key, val);
+		}),
+		tclosure); 
+}
+function table_find(table, predicate, closure) {
+	return objectfind(table["__data"], predicate, closure);
+}
+function table_findif(table, predicate, closure) {
+	return objectfindif(table["__data"], predicate, closure);
+}
+
+function createTable() {
+	return [
+		  { "append"      : table_append  }
+		, { "foreach"     : table_foreach }
+		, { "find"        : table_find    }
+		, { "findif"      : table_findif  }
+		// state
+		, { "__nextIndex" : 0             }
+		, { "__data"      : []            }
+	];
+}
+
+
+// ///////////////////// Desires ////////////////// //
+// find in-depth (including delegatees too) if a desire
+// understands a message
+function desire_understands(desire, message) {
+	local result = objecthaskey(desire, message);
+	if (not result)
+		result = desire["__delegatees"]..findif(
+				(function(closure, key, delegatee) {
+					return delegatee..understands(closure.message);
+				})
+				, [{"message": message}]);
+	return result;
+}
+// send a message to a desire
+function desire_send(self, methodname, arguments) {
+	local result = nil;
+	if (objecthaskey(self, methodname))
+		result = self[methodname](self, arguments);
+	else {
+		local delegatee = self["__delegatees"]..find(
+				  (function(closure, key, delegatee) {
+					return delegatee..understands(closure.message);
+					})
+				, [{"message": methodname}]);
+		if (delegatee)
+			result = delegatee..send(methodname, arguments);
+	}
+	return result;
+}
+// Create a basic desire
+function createDesire() {
+	return [
+		// State
+		  { "__delegatees": createTable() }
+		// methods
+		, { "send": desire_send }
+		, { "delegate": (function (self, delegatee) {
+				self["__delegatees"]..append(delegatee);
+			})}
+		, { "understands": desire_understands }
+	];
+}
+
+
+father = createDesire();
+father.poo = (function(){ ::println("father poo called."); });
+
+mother = createDesire();
+mother.poo = (function(){ ::println("mother poo called."); });
+
+fother = createDesire();
+fother.loo = (function(){ ::println("fother loo called."); });
+
+mather = createDesire();
+mather.loo = (function(){ :: println( "mather loo called." ) ; } ) ;
+
+choild = createDesire();
+choild..delegate(father);
+
+granchoild = createDesire();
+granchoild..delegate(choild);
+
+
+
+
+methodname = "poo";
+methodargs = nil;
+function play_with_granchoild() {
+	granchoild..send(methodname, methodargs);
+}
+
+
+////////////////////////////
+::print("---------------------------\nShould print \"father poo called.\": ");
+play_with_granchoild();
+
+////////////////////////////
+choild..delegate(mother);
+::print("---------------------------\nShould print \"father poo called.\": ");
+play_with_granchoild();
+
+
+
+
+methodname = "loo";
+methodargs = nil;
+////////////////////////////
+granchoild..delegate(fother);
+::print("---------------------------\nShould print \"fother loo called.\": ");
+play_with_granchoild();
+
+
+////////////////////////////
+granchoild..delegate(mather);
+::print("---------------------------\nShould print \"fother loo called.\": ");
+play_with_granchoild();
+
+
+
+-->20_delegation.asc OUR RESULT
+table: {[append] not found
+call: can not bind ' nil' to function
+
+-->21_queens.asc CODE
+
+N=8;
+row = [];
+col = [];
+diag1 = [];
+diag2 = [];
+
+function print_board() {
+	for (i=0; i < N; ++i)
+	{
+		for (j=0; j < N; ++j)
+		{
+			if (col[i] == j)
+				print(" Q");
+			else
+				print(" .");
+		}
+		print("\n");
+	}
+	print("\n");
+
+	return 0;
+}
+
+function try(c) {
+	if (c == N)
+		print_board();
+	else
+	{
+		for (r=0; r < N; ++r)
+		{
+			if ((row[r] == 0) and (diag1[r+c] == 0) and (diag2[r+7-c] == 0))
+			{
+				row[r]=1;
+				diag1[r+c]=1;
+				diag2[r+7-c]=1;
+				
+				col[c]=r;
+				try(c+1);
+				
+				row[r]=0;
+				diag1[r+c]=0;
+				diag2[r+7-c]=0;
+			}
+		}
+	}
+}
+
+
+for (i=0; i < N; ++i)
+{
+	row[i]=0;
+	col[i]=0;
+}
+
+for (i=0; i < 2*N-1; ++i)
+{
+	diag1[i]=0;
+	diag2[i]=0;
+}
+
+try(0);
+
+
+
+-->21_queens.asc OUR RESULT
+(...)
+ . . . . . . . Q
+ . Q . . . . . .
+ . . . . Q . . .
+ . . Q . . . . .
+ Q . . . . . . .
+ . . . . . . Q .
+ . . . Q . . . .
+ . . . . . Q . .
+
+ . . . . . . . Q
+ . . Q . . . . .
+ Q . . . . . . .
+ . . . . . Q . .
+ . Q . . . . . .
+ . . . . Q . . .
+ . . . . . . Q .
+ . . . Q . . . .
+
+ . . . . . . . Q
+ . . . Q . . . .
+ Q . . . . . . .
+ . . Q . . . . .
+ . . . . . Q . .
+ . Q . . . . . .
+ . . . . . . Q .
+ . . . . Q . . .
+
+-->22_hercules.asc CODE
+endl = "\n\r";
+// Hercules 
+///##############
+///
+// What it does
+//# It throws hercules in a labyrinth and Hercies has to get out
+//#################################
+
+//(* TEH /*** MAP ***/ OMG *)
+/* The map is a table of tables (familiar...)
+ * each element of the table has to evaluate to false to
+ * be a freepath pass.
+ */
+S/*tart*/ = 2;
+E/*xit*/ = 3;
+
+function newLabyrinthData() {
+	return [
+		// Rowz
+		[ S, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1 ],
+		[ 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0 ],
+		[ 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1 ],
+		[ 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0 ],
+		[ 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0 ],
+		[ 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0 ],
+		[ 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+		[ 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+		[ 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, E ]
+	];
+} // function newLabyrinthData
+
+function newLabyrinth() {
+	return [
+		{ "data" : newLabyrinthData() },
+		{ "visualize" : 
+			(function (lab) {
+				result = [];
+				for (j = 0; j < objecttotalmembers(lab); ++j) {
+					result[j] = [];
+					for (i = 0; i < objecttotalmembers(lab[j]); ++i)
+						if (lab[j][i] == S) result[j][i] = "S";
+						else if (lab[j][i] == E) result[j][i] = "E";
+						else if (not lab[j][i]) result[j][i] = " ";
+						else result[j][i] = "X";
+				}
+				return result;
+			})
+		},
+		{ "print" :
+			(function (viz) {
+				// NOTICE : nice bug here. If one forgets to add
+				// the global scope resolution, there is a silly
+				// recursion.
+				for (j = 0; j < objecttotalmembers(viz); ++j) {
+					for (i = 0; i < objecttotalmembers(viz[j]); ++i)
+						::print (viz[j][i]);
+					::print (endl);
+				}
+			})
+		},
+		// Dispatcher functor
+		{ "()" :
+			(function (this, what) {
+				if (what == "viz")
+					return this.visualize(this.data);
+				else if (what == "print")
+					return this.print(this("viz"));
+				else if (what == "lab")
+					return this.data;
+				else if (what == "maxJ")
+					return objecttotalmembers(this("lab"));
+				else if (what == "maxI")
+					return objecttotalmembers(this("lab")[0]);
+				else
+					return nil;
+			})
+		}
+	];
+} // function newLabyrinth
+
+Up = 0; Right = 1; Down = 2; Left = 3;
+function newHercules(lab) {
+	result = [
+		{"direction" : Right},
+		{"x" : 0},
+		{"y" : 0},
+		{"lab" : lab},
+		{"marks" : ["^", ">", "v", "<"]},
+//		## Move functions return true if movement happened.
+		{ "up" : 
+			(function (me, lab) {
+				lab = lab("lab"); // get labyrinth data
+				if (me.y - 1 <  0)
+					return false;
+				next_block = lab[me.y - 1][me.x];
+				if (next_block and not (next_block == E))
+					// not walkable
+					return false;
+//				# Move myself
+				--me.y;
+				return true;
+			})
+		},
+		{ "right" :
+			(function (me, lab) {
+				if (me.x + 1 >= lab("maxI"))
+					return false;
+				lab = lab("lab"); // get labyrinth data
+				next_block = lab[me.y][me.x + 1];
+				if (next_block and not (next_block == E))
+					// not walkable
+					return false;
+//				# Move myself
+				++me.x;
+				return true;
+			})
+		},
+		{ "down" :
+			(function (me, lab) {
+				if (me.y + 1 >= lab("maxJ"))
+					return false;
+				lab = lab("lab"); // get labyrinth data
+				next_block = lab[me.y + 1][me.x];
+				if (next_block and not (next_block == E))
+					// not walkable
+					return false;
+//				# Move myself
+				++me.y;
+				return true;
+			})
+		},
+		{ "left" :
+			(function (me, lab) {
+				lab = lab("lab"); // get labyrinth data
+				if (me.x - 1 < 0)
+					return false;
+				next_block = lab[me.y][me.x -1 ];
+				if (next_block and not (next_block == E))
+					// not walkable
+					return false;
+//				# Move myself
+				--me.x;
+				return true;
+			})
+		},
+		// Moves forward as long as there is no wall
+		// ahead. When a wall is encountered ahead,
+		// he turns right.
+		{ "move" :
+			(function (me, lab) {
+				for (i = 0; i < 4; ++i) {
+					if (not me.moves[me.direction](me, lab))
+						me("turn");
+					else
+						// Check if we reached exit
+						if (lab("lab")[me.y][me.x] == E) {
+							print ("<herc33gr> im free wheee!!111 :DDD", endl);
+							return true;
+						} else 
+							// Keep trying hercie :/
+							return false;
+				}
+				print("<herc33gr> omj im trapped lol", endl);
+				return true;
+			})
+		},
+		{ "report" :
+			(function (me) {
+				// Get lab
+				local lab = me.lab;
+				// Get lab's visualisation
+				vlab = lab("viz");
+				// Place ourself on the map
+				vlab[me.y][me.x]= me.marks[me.direction];
+				// Print it
+				print ("----------------------------------------", endl);
+				lab.print(vlab);
+			})
+		},
+		// Dispatcher functor
+		{ "()" :
+			(function (me, what) {
+				if (what == "move")
+					return me.move(me, me.lab);
+				else if (what == "turn")
+					me.direction = ++me.direction % 4;
+				else if (what == "report")
+					return me.report(me);
+			})
+		}
+	];
+
+	result.moves = [
+		result.up,
+		result.right,
+		result.down,
+		result.left
+	];
+	
+	return result;
+} // function newHercules
+
+lab = newLabyrinth();
+herc = newHercules(lab);
+
+while (not herc("move"))
+	herc("report");
+
+
+
+
+
+-->22_hercules.asc OUR RESULT
+illegal use of typeuserfuncas table
+illegal use of typeuserfuncas table
+illegal use of typeuserfuncas table
+illegal use of typeuserfuncas table
+alpha_vm: avm/avm_stack.cpp:86: void avm_call_functor(avm_table*): Assertion `pc < AVM_ENDING_PC && instructions[pc].opcode == funcenter_v' failed.
+./alpha: line 28: 15262 Aborted                 (core dumped) ./alpha_vm $FLAG out.abc
+
+
+-->23_visitor.asc CODE
+/*
+proper output: 
+
+Book Title: Hitchhicker's Guide to the Galaxy
+        Section :Section #1
+                paragraph 1... blah
+                paragraph 2... blah
+        Section :Section #2
+        Section :Section #3
+
+*/
+
+function Book(title) {
+    return [
+		{ "title" : title },
+		{ "sections" : [] },
+
+		{ "AppendSection" :
+			(function(book, section) {
+				book.sections[objecttotalmembers(book.sections)] = section;
+			})
+		},
+
+        { "Accept" :
+        	(function(book, visitor) {
+        		visitor.VisitBook(book);
+
+        		for (i=0; i < objecttotalmembers(book.sections); ++i)
+        			book.sections[i].Accept(book.sections[i], visitor);
+        	})
+        }
+    ];
+}
+
+function Section(title) {
+    return [
+        { "title" : title },
+        { "paragraphs" : [] },
+
+		{ "AppendParagraph" :
+			(function(section, paragraph) {
+				section.paragraphs[objecttotalmembers(section.paragraphs)]
+					= paragraph;
+			})
+		},
+
+        { "Accept" :
+        	(function(section, visitor) {
+        		visitor.VisitSection(section);
+
+        		for (i=0; i < objecttotalmembers(section.paragraphs); ++i)
+        			section.paragraphs[i].Accept(section.paragraphs[i], visitor);
+        	})
+        }
+    ];
+}
+
+function Paragraph(text) {
+    return [
+        { "content" : text },
+
+        { "Accept" :
+        	(function(paragraph, visitor) {
+        		visitor.VisitParagraph(paragraph);
+        	})
+        }
+    ];
+}
+
+book = Book("Hitchhicker's Guide to the Galaxy");
+book..AppendSection(Section("Section #1"));
+book..AppendSection(Section("Section #2"));
+book..AppendSection(Section("Section #3"));
+
+book.sections[0]..AppendParagraph(Paragraph("paragraph 1... blah"));
+book.sections[0]..AppendParagraph(Paragraph("paragraph 2... blah"));
+
+
+function PrintVisitor() {
+	return [
+		{ "VisitBook" :
+			(function(book) {
+				print("Book Title: ", book.title, "\n");
+			})
+		},
+		{ "VisitSection" :
+			(function(section) {
+				print("\tSection :", section.title, "\n");
+			})
+		},
+		{ "VisitParagraph" :
+			(function(paragraph) {
+				print("\t\t", paragraph.content, "\n");
+			})
+		}
+	];
+}
+
+book.Accept(book, PrintVisitor());
+
+
+-->23_visitor.asc OUR RESULT
+warning set elem avm
+table: {[table: {] not found
+warning set elem avm
+table: {[table: {] not found
+warning set elem avm
+table: {[table: {] not found
+table: {[0.000000] not found
+illegal use of type nil as table
+
+-->24_Tree1.asc CODE
+/*
+//proper	output
+parent
+childL
+grandChildLL
+grandChildLR
+childR
+grandChildRL
+grandChildRR
+
+
+
+
+parent
+childR
+grandChildRR
+grandChildRL
+childL
+grandChildLR
+grandChildLL
+*/
+nl = "\n";
+
+function TreeNode (
+	//p, l, r
+) {
+	parent  = 0;
+	left	= 0;
+	right	= 0; 
+
+	return  [
+		{"class" : "TreeNode"},
+		{"parent": parent},	
+		{"left"	 : left},
+		{"right" : right},
+		{"info"	 : 0},
+		{"marked": false}
+	];
+}
+
+function Stack () {
+
+	return [
+		{"class" : "Stack"},
+		{"next"  : 0},
+		{"data"  : []},
+		{"empty" : (function (self){
+			return self.next == 0;
+		})},
+		
+		{"push"	 : (function (self, data){
+			self.data[self.next++] = data;
+		})},
+		
+		{"pop"	 : (function (self){
+			if (self.next > 0)
+				self.data[--self.next] = nil;
+		})},
+		
+		{"top" 	 : (function (self){
+			return self.data[self.next-1];
+		})}
+	];
+}
+
+function PrintTree (root) {
+	if (root)
+		print(root.info, ::nl);
+
+	if (root.left)
+		PrintTree(root.left);
+
+	if (root.right)
+		PrintTree(root.right);
+}
+
+function PostOrder(root) {
+	k = Stack();
+	k..push(root);
+
+	while(not k..empty()){
+		tmp = k..top();
+		k..pop();
+		
+		if (tmp.marked)
+			print(tmp.info, nl);
+		else {
+			if (tmp.left)   k..push(tmp.left);
+			if (tmp.right)	k..push(tmp.right);
+			tmp.marked = true;
+			k..push(tmp);
+		}
+	}
+}
+/*
+							  root
+							 /    \   
+						    /      \
+						   /  	    \
+						  /    	     \
+					  childL	     childR
+					  /     \        /     \
+					 /       \  grandChildRR\
+				    /         \			     \
+			grandChildLL  grandChildLR      grandChildRR
+*/
+
+root 			= TreeNode();
+childL 			= TreeNode();
+childR 			= TreeNode();
+grandChildLL 	= TreeNode();
+grandChildLR 	= TreeNode();
+grandChildRL 	= TreeNode();
+grandChildRR 	= TreeNode();
+
+root.info 	  		= "parent";
+childL.info 	  	= "childL";
+childR.info 	  	= "childR";
+grandChildLL.info 	= "grandChildLL";
+grandChildLR.info 	= "grandChildLR";
+grandChildRL.info 	= "grandChildRL";
+grandChildRR.info 	= "grandChildRR";
+
+root.left  = childL;
+root.right = childR;
+
+childL.parent	= root;
+childL.left		= grandChildLL;
+childL.right	= grandChildLR;
+
+childR.parent 	= root;
+childR.left		= grandChildRL;
+childR.right	= grandChildRR;
+
+
+grandChildLL.parent = childL;
+grandChildLR.parent = childL;
+
+grandChildRL.parent = childR;
+grandChildRL.parnet = childR;
+
+
+PrintTree(root);
+print("\n", ::nl, "\n", nl);
+PostOrder(root);
+
+
+
+
+
+-->24_Tree1.asc OUR RESULT
+parent
+childL
+grandChildLL
+grandChildLR
+childR
+grandChildRL
+grandChildRR
+
+
+
+
+table: {[0.000000] not found
+parent
+
+-->25_Tree2.asc CODE
+nl = "\n";
+
+function Power(base, exponent) {
+	
+	if (exponent < 0)
+		return -1;
+	
+	if (exponent == 0)
+		return 1;
+	
+	return base * Power(base, exponent - 1);
+}
+
+
+//----------------------------------------------
+
+function TreeNode (
+	//p, l, r
+	) {
+	parent  = 0;
+	left	= 0;
+	right	= 0; 
+
+	return  [
+		{"class" : "TreeNode"},
+		{"parent": parent},	
+		{"left"	 : left},
+		{"right" : right},
+		{"info"	 : 0},
+		{"marked": false}
+	];
+}
+
+//----------------------------------------------
+
+function Stack () {
+
+	return [
+		{"class" : "Stack"},
+		{"back"  : 0},
+		{"data"  : []},
+		{"empty" : (function (self){
+			return self.back == 0;
+		})},
+		
+		{"push"	 : (function (self, data){
+			self.data[self.back++] = data;
+		})},
+		
+		{"pop"	 : (function (self){
+			if (self.back > 0)
+				self.data[--self.back] = nil;
+		})},
+		
+		{"top" 	 : (function (self){
+			return self.data[self.back-1];
+		})}
+	];
+}
+
+//----------------------------------------------
+
+function List () {
+	return [
+		{"class" : "List"},
+		{"back"  : 0},
+		{"front" : 0},
+		{"data"  : []},
+		
+		{"empty" : (function (self){
+			return self.back == 0;
+		})},
+		
+		{"erase" : (function (self){
+			self.net	= 0;
+			self.data 	= [];
+		})},		
+
+		{"size" : (function (self){
+			return self.back;
+		})},
+		
+		{"push_back" : (function (self, data){
+			self.data[self.back++] = data;
+		})},
+		
+		{"pop_back"	 : (function (self){
+			local data = nil;
+			if (self.back > 0) {
+				data = self.data[--self.back];
+				self.data[self.back] = nil;
+			}
+			return data;
+		})},
+		
+		{"pop_front"	 : (function (self){
+			local data = nil;
+			if (self.front < self.back) {
+				data = self.data[self.front];
+				self.data[self.front++] = nil;
+			}
+			return data;
+		})}
+	];
+}
+
+//----------------------------------------------
+
+function PrintTree (root) {
+	if (root)
+		print(root.info, nl);
+
+	if (root.left)
+		PrintTree(root.left);
+
+	if (root.right)
+		PrintTree(root.right);
+}
+
+//----------------------------------------------
+
+function PostOrder(root) {
+	k = Stack();//.new();
+	k..push(root);
+
+	while(not k..empty()){
+		tmp = k..top();
+		k..pop();
+		
+		if (tmp.marked)
+			print(tmp.info, nl);
+		else {
+			if (tmp.left)   k..push(tmp.left);
+			if (tmp.right)	k..push(tmp.right);
+			tmp.marked = true;
+			k..push(tmp);
+		}
+	}
+}
+
+//----------------------------------------------
+
+function GenerateTree(maxHeight) {
+	if (maxHeight < 0)
+		return nil;
+			
+	local currentlevel	= List();//.new();
+	local nextLevel 	= List();//.new();
+	
+	local root 			= TreeNode();
+	root.info			= "root";
+	currentlevel..push_back(root);
+	//level = 2 beacuse we have already created the root level
+	
+	for(local level = 2; level <= maxHeight; ++level) {
+		
+		local nodesInLevel = Power(2, level-1);		//number of nodes in a level: 2^(level-1)
+		for(local i = 0; i < nodesInLevel; i = i+2) {
+			local parent 	= currentlevel..pop_front();
+			local childR 	= TreeNode();
+			local childL 	= TreeNode();
+			
+		//	childL.info 	= parent.info + "L";
+		//	childR.info 	= parent.info + "R";
+			
+			parent.left		= childL;
+			parent.right	= childR;
+			
+			childL.parent	= parent;
+			childR.parent	= parent;
+			
+			nextLevel..push_back(childL);
+			nextLevel..push_back(childR);
+		}
+		currentlevel = nextLevel;
+	}
+	
+	return root;
+}
+
+tree = GenerateTree(10);
+PrintTree(tree);
+print("\n", ::nl, "\n", nl);
+PostOrder(tree);
+
+
+-->25_Tree2.asc OUR RESULT
+table: {[table: {] not found
+table: {[0.000000] not found
+illegal use of typenilas table
+illegal use of type nil as table
