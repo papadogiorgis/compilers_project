@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <string>
 #include <cstring>
 #include <cmath>
 #include <vector>
@@ -178,7 +179,19 @@ std::string bool_tostring(avm_memcell* m)
 std::string table_tostring(avm_memcell *m)
 {
     assert(m && m->type == table_m);
-    std::string result = "table: {";
+    std::string result = "[";
+    // unsigned size = m->data.tableVal->strIndexed.size() + m->data.tableVal->numIndexed.size();
+    for (auto const& elem : m->data.tableVal->strIndexed){
+        result += "(key: " + elem.first + " , " ;
+        result += "value: " + avm_tostring(elem.second) + "), ";
+    }
+
+    for (auto const& elem : m->data.tableVal->numIndexed){
+        result += "(key: " + std::to_string(elem.first) + " , " ;
+        result += "value: " + avm_tostring(elem.second) + "), ";
+    }
+    result += "]";
+
     return result;
 }
 
