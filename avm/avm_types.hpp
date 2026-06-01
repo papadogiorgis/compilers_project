@@ -53,5 +53,6 @@ void avm_assign (avm_memcell *lv, avm_memcell *rv);
 void avm_tablesetelem(avm_table* table, avm_memcell* key, avm_memcell *elem);
 avm_memcell* avm_tablegetelem(avm_table* table, avm_memcell* index);
 userfunc* avm_getfuncinfo(unsigned address);
+userfunc* avm_getfuncinfo_byindex(unsigned index);
 
 #endif

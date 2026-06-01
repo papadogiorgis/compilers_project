@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <iostream>
+#include <cmath>
 
 #include "../instr.hpp"
 #include "../avm_stack.hpp"
@@ -45,6 +46,22 @@ void libfunc_objectcopy(void){}
 void libfunc_totalarguments(void){}
 void libfunc_argument(void){}
 void libfunc_strtonum(void){}
-void libfunc_sqrt(void){}
+
+void libfunc_sqrt(void){
+    unsigned n = avm_totalactuals();
+    if(n!=1){
+        printf("Error: Only one argument expected in sqrt()\n");
+        return;
+    }
+    avm_memcell* arg = avm_getactual(0);
+    avm_memcellclear(&retval);
+    if(arg->type != number_m){
+        retval.type = nil_m;
+        return;
+    }
+    retval.type = number_m;
+    retval.data.numVal = sqrt(arg->data.numVal);
+}
+
 void libfunc_cos(void){}
 void libfunc_sin(void){}

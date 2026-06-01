@@ -9,6 +9,7 @@
 extern bool debug_flag;
 extern unsigned char executionFinished;
 extern unsigned pc;
+extern unsigned esp;
 
 int main(int argc, char* argv[]){
     avm_initialize_stack();
@@ -16,6 +17,10 @@ int main(int argc, char* argv[]){
     if(!load_binary(argc, argv)){
         return -1;
     }
+
+    /*shift esp down to reserve space for globals/temps*/
+    esp = esp-programVarOffset;
+
     std::cout << "total instr: " << totalInstructions <<"\n";
 
     while(!executionFinished) {

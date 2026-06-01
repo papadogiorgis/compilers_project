@@ -34,20 +34,20 @@ avm_memcell* avm_getactual (unsigned i);
 extern tostring_func_t tostringFuncs[];
 
 std::string avm_tostring(avm_memcell* m);
-void execute_call(instruction *instr);
+// void execute_call(instruction *instr); ITS IN AVM_DISPATCH
 void avm_dec_top(void);
 void avm_push_envvalue (unsigned val);
 void avm_callsaveenviroment (void);
-void execute_funcenter(instruction *instr);
+// void execute_funcenter(instruction *instr); ITS IN AVM_DISPATCH
 unsigned avm_get_envvalue (unsigned i);
-void execute_funcexit(instruction* instr);
+// void execute_funcexit(instruction* instr); ITS IN AVM_DISPATCH
 void avm_call_functor (avm_table *t);
 library_func_t avm_getlibfunc(std::string id);
 void avm_calllibfunc(char *id);
 unsigned avm_totalactuals (void);
 avm_memcell* avm_getactual (unsigned i);
 extern void avm_push_table_arg(avm_table* t);
-void execute_pusharg (instruction* instr);
+// void execute_pusharg (instruction* instr); ITS IN AVM_DISPATCH
 void avm_register_libfunc(std::string id, library_func_t func);
 void avm_initfuncs(void);
 void avm_initialize_stack(void);

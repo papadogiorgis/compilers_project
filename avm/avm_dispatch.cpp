@@ -97,7 +97,8 @@ void execute_arithmetic (instruction* i)
     avm_memcell* rv1 = avm_translate_operand(&i->arg1, &ax);
     avm_memcell* rv2 = avm_translate_operand(&i->arg2, &bx);
 
-    assert(lv && (&stack[STACK_SZ - 1] >= lv && lv > &stack[esp]));
+    // assert(lv && (&stack[STACK_SZ - 1] >= lv && lv > &stack[esp]));
+    assert(lv && (&stack[STACK_SZ - 1] >= lv && lv >= &stack[esp]));
     assert(rv1 && rv2);
 
     if (rv1->type != number_m || rv2->type != number_m) {
@@ -144,7 +145,8 @@ void execute_assign(instruction *instr)
 void execute_newtable(instruction* i)
 {
     avm_memcell* lv = avm_translate_operand(&i->result, 0);
-    assert(lv && (((&stack[STACK_SZ - 1] >= lv) && (&stack[esp] < lv)) || (lv == &retval)));
+    // assert(lv && (((&stack[STACK_SZ - 1] >= lv) && (&stack[esp] < lv)) || (lv == &retval)));
+    assert(lv && (((&stack[STACK_SZ - 1] >= lv) && (&stack[esp] <= lv)) || (lv == &retval)));
     avm_memcellclear(lv);
 
     lv->type = table_m;
@@ -158,8 +160,10 @@ void execute_tablegetelem(instruction* instr)
     avm_memcell* t = avm_translate_operand(&instr->arg1, (avm_memcell*)0);
     avm_memcell* i = avm_translate_operand(&instr->arg2, &ax);
 
-    assert(lv && &stack[STACK_SZ - 1] >= lv && lv > &stack[esp]);
-    assert(t && &stack[STACK_SZ - 1] >= t && t > &stack[esp]);
+    // assert(lv && &stack[STACK_SZ - 1] >= lv && lv > &stack[esp]);
+    // assert(t && &stack[STACK_SZ - 1] >= t && t > &stack[esp]);
+    assert(lv && &stack[STACK_SZ - 1] >= lv && lv >= &stack[esp]);
+    assert(t && &stack[STACK_SZ - 1] >= t && t >= &stack[esp]);
 
     avm_memcellclear(lv);
     lv->type = nil_m;
@@ -446,22 +450,32 @@ void execute_getretval(instruction* instr){
 // }
 
 /*-------------remainings-------------*/
-void execute_call(instruction *instr)
-{
+void execute_call(instruction *instr){
     avm_memcell* func = avm_translate_operand(&instr->arg1, &ax);
     assert(func);
 
     switch (func->type) {
         case userfunc_m : {
             avm_callsaveenviroment();
-            pc = func->data.funcVal;
+            // pc = func->data.funcVal;
+
+            userfunc* finfo = avm_getfuncinfo_byindex(func->data.funcVal);
+            assert(finfo);
+            pc = finfo->address;
+
             assert(pc < AVM_ENDING_PC);
             assert(instructions[pc].opcode == funcenter_v);
             break;
         }
-        case string_m: avm_calllibfunc(func->data.strVal);
-        case libfunc_m: avm_calllibfunc(func->data.libFuncVal);
-        case table_m: avm_call_functor(func->data.tableVal);
+        case string_m:
+            avm_calllibfunc(func->data.strVal);
+            break;
+        case libfunc_m:
+            avm_calllibfunc(func->data.libFuncVal);
+            break;
+        case table_m:
+            avm_call_functor(func->data.tableVal);
+            break;
 
         default: {
             std::string s = avm_tostring(func);
@@ -487,9 +501,14 @@ void execute_funcenter(instruction *instr)
 {
     avm_memcell* func = avm_translate_operand(&instr->result, &ax);
     assert(func);
-    assert (pc == func->data.funcVal);
+    // assert (pc == func->data.funcVal);
+
+    userfunc* funcInfo = avm_getfuncinfo_byindex(func->data.funcVal);
+    assert(funcInfo);
+    assert(pc == funcInfo->address);
+
     totalActuals = 0;
-    userfunc *funcInfo = avm_getfuncinfo(pc);
+    //userfunc *funcInfo = avm_getfuncinfo(pc);
     ebp = esp;
     esp = esp - funcInfo->localsize;
 }
@@ -502,10 +521,12 @@ void execute_funcexit(instruction* i)
     pc = avm_get_envvalue(ebp + AVM_SAVEDPC_OFFSET);
     ebp = avm_get_envvalue(ebp + AVM_SAVEDTOPSP_OFFSET);
 
-    while (oldTop++ <= esp){
-        avm_memcellclear(&stack[oldTop]);
+    // while (oldTop++ <= esp){
+    //     avm_memcellclear(&stack[oldTop]);
+    // }
+    for(unsigned i=oldTop+1 ; i<= esp; ++i){
+        avm_memcellclear(&stack[i]);
     }
-    
 }
 
 

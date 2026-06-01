@@ -10,6 +10,7 @@
 #include <map>
 #include <cstring>
 #include "instr.hpp"
+#include "avm_dispatch.hpp"
 
 avm_memcell ax, bx, cx, retval; // registers
 unsigned ebp = STACK_SZ;
@@ -119,7 +120,7 @@ void avm_calllibfunc(char *id){
 
 unsigned avm_totalactuals (void)
 {
-    std::cout << avm_get_envvalue(ebp + AVM_NUMACTUALS_OFFSET) << "\n";
+    //std::cout << avm_get_envvalue(ebp + AVM_NUMACTUALS_OFFSET) << "\n";
     return avm_get_envvalue(ebp + AVM_NUMACTUALS_OFFSET);
 }
 
@@ -172,8 +173,11 @@ std::string userfunc_tostring(avm_memcell* m)
 {
     assert(m && m->type == userfunc_m);
     // TODO : add impl later because funcs table is missing
-    std::string ret = userFuncs[m->data.funcVal].id;
-    return ret; //just to satisfy the g++ for now
+    // std::string ret = userFuncs[m->data.funcVal].id;
+    // return ret; //just to satisfy the g++ for now
+
+    userfunc* finfo = avm_getfuncinfo_byindex(m->data.funcVal);
+    return finfo ? std::string(finfo->id) : "Unknown_Function";
 }
 
 std::string libfunc_tostring(avm_memcell* m)
@@ -223,7 +227,8 @@ void avm_initfuncs(void) {
 
 void avm_initialize_stack(void)
 {
-    esp = ebp = STACK_SZ;
+    /*STACK_SZ is out of bounds for an array of size STACK_SZ, so i start at STACK_SZ-1*/
+    esp = ebp = STACK_SZ - 1;
     ax.type = undef_m;
     bx.type = undef_m;
     cx.type = undef_m;

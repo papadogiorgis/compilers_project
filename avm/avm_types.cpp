@@ -70,7 +70,7 @@ void avm_tablesetelem(avm_table* t, avm_memcell* key, avm_memcell *elem)
 {
     assert(t && key && elem);
     
-    if(elem->type == number_m) {
+    if(key->type == number_m) {
         double num = key->data.numVal;
         auto it = t->numIndexed.find(num);
 
@@ -86,7 +86,7 @@ void avm_tablesetelem(avm_table* t, avm_memcell* key, avm_memcell *elem)
                 avm_assign(it->second, elem);
             }
             else {
-                avm_memcell* newcell = (avm_memcell*)malloc(sizeof(avm_memcell));
+                avm_memcell* newcell = new avm_memcell();
                 newcell->type = undef_m;
                 avm_assign(newcell, elem);
                 t->numIndexed[num] = newcell;
@@ -109,14 +109,12 @@ void avm_tablesetelem(avm_table* t, avm_memcell* key, avm_memcell *elem)
                 avm_assign(it->second, elem);
             }
             else {
-                avm_memcell* newcell = (avm_memcell*)malloc(sizeof(avm_memcell));
+                avm_memcell* newcell = new avm_memcell();
                 newcell->type = undef_m;
                 avm_assign(newcell, elem);
                 t->strIndexed[strKey] = newcell;
             }
-        
         }
-    
     }
     else {
         std::cout << "warning set elem avm\n";
@@ -152,11 +150,20 @@ userfunc* avm_getfuncinfo(unsigned address){
     return nullptr;
 }
 
+userfunc* avm_getfuncinfo_byindex(unsigned index){
+    if(index<totalUserFuncs){
+        return &userFuncs[index];
+    }
+    return nullptr;
+}
+
 avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg){
     switch (arg->type) {
         case global_a: return &stack[STACK_SZ - 1 - arg->val];
-        case local_a: return &stack[esp -1- arg->val];
-        case formal_a: return &stack[esp + ENV_SZ + 1 + arg->val];
+        // case local_a: return &stack[esp -1- arg->val];
+        // case formal_a: return &stack[esp + ENV_SZ + 1 + arg->val];
+        case local_a: return &stack[ebp - arg->val];
+        case formal_a: return &stack[ebp + ENV_SZ + 1 + arg->val];
         case retval_a: return &retval;
 
         case number_a: {
