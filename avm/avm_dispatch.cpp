@@ -55,7 +55,9 @@ execute_func_t executeFuncs[] = {
 void executeCycle (void) {
     if (executionFinished) { std::cout << "exefin\n"; return; }
     else if (pc == AVM_ENDING_PC) {
-        std::cout << "pc == avm ending pc\n";
+        if(debug_flag != 0){
+            std::cout << "pc == avm ending pc\n";
+        }
         executionFinished = 1;
         return;
     }
@@ -64,7 +66,9 @@ void executeCycle (void) {
         // instruction *instr = code + pc;
         instruction *instr = instructions + pc;
         assert(instr->opcode >= 0 && instr->opcode <= AVM_MAX_INSTRUCTIONS);
-        std::cout << "VM fetching pc:" << pc << "opcode: " << instr->opcode << ".\n";
+        if(debug_flag != 0){
+            std::cout << "VM fetching pc:" << pc << "opcode: " << instr->opcode << ".\n";
+        }
         if (instr->srcline)
             currLine = instr->srcline;
         unsigned oldPc = pc;

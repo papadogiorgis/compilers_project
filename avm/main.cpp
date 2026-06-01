@@ -21,7 +21,9 @@ int main(int argc, char* argv[]){
     /*shift esp down to reserve space for globals/temps*/
     esp = esp-programVarOffset;
 
-    std::cout << "total instr: " << totalInstructions <<"\n";
+    if(debug_flag != 0){
+        std::cout << "total instr: " << totalInstructions <<"\n";
+    }
 
     while(!executionFinished) {
         executeCycle();

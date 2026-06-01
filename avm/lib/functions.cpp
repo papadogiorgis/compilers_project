@@ -12,13 +12,16 @@
 
 void avm_registerlibfunc (char* id, library_func_t addr);
 extern avm_memcell ax, bx, cx, retval;
+extern bool debug_flag;
 
 extern const char* typeStrings[];
 
 void libfunc_print(void)
 {
     unsigned n = avm_totalactuals();
-    std::cout << n << "\n";
+    // if(debug_flag!=0){
+    //     std::cout << n << "\n";
+    // }
     for (unsigned i = 0; i < n; ++i) {
         std::string s = avm_tostring(avm_getactual(i));
         std::cout << s;

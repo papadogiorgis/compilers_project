@@ -39,6 +39,8 @@
     extern char* yytext;
     extern FILE* yyin;
     extern unsigned currQuad;
+
+    extern unsigned int functionLocalOffset;
 %}
 
 %union {
@@ -482,7 +484,10 @@ funcprefix:     FUNC funcname
                     $$->iaddress = nextquadlabel() + 1;
                     emit(jump, NULL, NULL, NULL, 0, yylineno);
                     emit(funcstart,  NULL, NULL,lvalue_expr($$), 0, yylineno);
-                    stack_push(stack, currscopeoffset());
+                    /*stack_push(stack, currscopeoffset());*/
+
+                    stack_push(stack, functionLocalOffset);
+                    enterscopespace();
                     resetFormalArgOffset();
                     infunc++;
 
@@ -494,6 +499,7 @@ funcprefix:     FUNC funcname
 
 funcargs:       LEFT_PAR {scope++;} idlist {scope--;} RIGHT_PAR
                 {
+                    enterscopespace();
                     resetFunctionLocalOffset();
                 };
 
@@ -509,10 +515,15 @@ funcblockend:   {pop_loopcounter();};
 funcdef:        funcprefix funcargs funcbody
                 {
                     infunc--;
-                    int offset = pop_and_top(stack);
-                    restoreCurrScopeOffset(offset);
+                    exitscopespace();
+                    exitscopespace();
+
+                    /*int offset = pop_and_top(stack);
+                    restoreCurrScopeOffset(offset);*/
+
+                    functionLocalOffset = pop_and_top(stack);
+                    
                     $1->totalLocals = $3;
-                    // exitscopespace();
                     if(ret_top){
                         patchlist(ret_top->retlist, nextquadlabel());
                         ret_stack* temp = ret_top;
