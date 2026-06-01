@@ -4,6 +4,8 @@
 #include <cassert>
 #include <cstdio>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include <cstring>
 #include <vector>
 #include <cstdlib>
@@ -142,8 +144,9 @@ extern void avm_push_table_arg(avm_table* t)
 std::string number_tostring(avm_memcell* m)
 {
     assert(m->type == number_m);
-    std::string res = std::to_string(m->data.numVal);
-    return res;
+    std::ostringstream res;
+    res << std::fixed << std::setprecision(3) << m->data.numVal;
+    return res.str();
 }
 
 std::string string_tostring(avm_memcell* m)
@@ -173,11 +176,12 @@ std::string userfunc_tostring(avm_memcell* m)
 {
     assert(m && m->type == userfunc_m);
     // TODO : add impl later because funcs table is missing
-    // std::string ret = userFuncs[m->data.funcVal].id;
-    // return ret; //just to satisfy the g++ for now
+    std::string ret = "user func: ";
+    ret += userFuncs[m->data.funcVal].id;
+    return ret; //just to satisfy the g++ for now
 
-    userfunc* finfo = avm_getfuncinfo_byindex(m->data.funcVal);
-    return finfo ? std::string(finfo->id) : "Unknown_Function";
+    // userfunc* finfo = avm_getfuncinfo_byindex(m->data.funcVal);
+    // return finfo ? std::string(finfo->id) : "Unknown_Function";
 }
 
 std::string libfunc_tostring(avm_memcell* m)
