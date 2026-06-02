@@ -188,6 +188,13 @@ void libfunc_totalarguments(void)
 
     unsigned p_topsp = avm_get_envvalue(ebp + AVM_SAVEDTOPSP_OFFSET);
 
+    // to check global scope
+    if (p_topsp == STACK_SZ - 1) {
+        std::cout << "Runtime error: totalarguments called outside of function\n";
+        retval.type = nil_m;
+        return;
+    }
+
     if(p_topsp == 0){
         //std::cout << "totalarguments called outside of function\n";
         retval.type = nil_m;
@@ -204,6 +211,15 @@ void libfunc_argument(void)
     unsigned n = avm_totalactuals();
     avm_memcellclear(&retval);
     //retval.type = undef_m;
+
+    unsigned p_topsp = avm_get_envvalue(ebp + AVM_SAVEDTOPSP_OFFSET);
+
+    // to check global scope
+    if (p_topsp == STACK_SZ - 1) {
+        std::cout << "Runtime error: libfunc argument called outside of function\n";
+        retval.type = nil_m;
+        return;
+    }
 
     if (n != 1) {
         std::cout << "lib function 'argument' must be called with one argument only\n";
@@ -247,7 +263,7 @@ void libfunc_strtonum(void)
     }
     avm_memcell* arg = avm_getactual(0);
     if(arg->type != string_m){
-        printf("Error: Failed to convert parameter to number in strtonum\n");
+        printf("Runtime-Error: Failed to convert parameter to number in strtonum\n"); // DEBUG PRINTS the can be removed
         retval.type = nil_m;
         return;
     }
@@ -257,7 +273,7 @@ void libfunc_strtonum(void)
     double num = strtod(str, &endptr);
 
     if((endptr == str)||(*endptr != '\0')){
-        printf("Error: Failed to convert parameter to number in strtonum\n");
+        printf("Runtime-Error: Failed to convert parameter to number in strtonum\n");
         retval.type = nil_m;
     }else{
         retval.type = number_m;
