@@ -1130,35 +1130,20 @@ while (true) {
 
 -->16_libfuncs_bonus1.asc OUR RESULT
 Table t is: [(key: key1 , value: 1.000), (key: key2 , value: 2.000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.000), (key: 2.000000 , value: 4.000), (key: 4.000000 , value: 5.000), ]), ]
-Lenght of table t is (must be 5):0.000
+Lenght of table t is (must be 5):5.000
 Function prnt printing: user function 35 and print: print
 Table t in prnt is: [(key: 0.000000 , value: [(key: key1 , value: 1.000), (key: key2 , value: 2.000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.000), (key: 2.000000 , value: 4.000), (key: 4.000000 , value: 5.000), ]), ]), (key: 1.000000 , value: 2.000), (key: 2.000000 , value: 3.140), (key: 3.000000 , value: 4), (key: 4.000000 , value: true), (key: 5.000000 , value: false), ]
-Table indices of global t: user function 32 which has length: user function 32
-warning: assigning from undef content
-warning: assigning from undef content
-undefwarning: assigning from undef content
-warning: assigning from undef content
-warning: assigning from undef content
-undefwarning: assigning from undef content
-warning: assigning from undef content
-warning: assigning from undef content
-undefwarning: assigning from undef content
-warning: assigning from undef content
-warning: assigning from undef content
-undefwarning: assigning from undef content
-(...)
-warning: assigning from undef content
-warning: assigning from undef content
-undefwarning: assigning from undef content
-warning: assigning from undef content
-warning: assigning from undef content
-undefwarning: assigning from undef content
-warning: assigning from undef content
-warning: assigning from undef content
-undefwarning: assigning from undef content
-warning: assigning from undef content
-warning: assigning from undef content
-undefwarning: assigning from undef content
+Table indices of global t: [(key: 0.000000 , value: key1), (key: 1.000000 , value: key2), (key: 2.000000 , value: key3), (key: 3.000000 , value: key4), (key: 4.000000 , value: key5), ] which has length: 5.000
+Table copy is: [(key: key1 , value: 1.000), (key: key2 , value: 2.000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.000), (key: 2.000000 , value: 4.000), (key: 4.000000 , value: 5.000), ]), ] and it is printed with print_function
+Failed to convert parameter to number in strtonum
+PASSED: value: nil type: nil
+Failed to convert parameter to number in strtonum
+PASSED: value: nil type: nil
+FAILED value: 3.141 != 3.141
+FAILED value: 1.414 != 1.414
+FAILED type: number != nil, value: -nan
+FAILED value: -0.952 != 0.500
+FAILED value: -0.988 != 0.500
 
 -->17_libfuncs_bonus2_part2_tables_catch_self_reference_error.asc CODE
 /*
@@ -1294,10 +1279,19 @@ else
 
 -->17_libfuncs_bonus2_part2_tables_catch_self_reference_error.asc OUR RESULT
 [(key: a , value: 1.000), (key: b , value: 2.000), (key: c , value: 3.000), (key: e , value: 5.000), (key: f , value: 6.000), ]
-0.000
-Must print 0: 0.000
-Must print 5: 0.000
-Error: Illegal use of type number as table
+5.000
+Failed to convert parameter to number in strtonum
+Failed to convert parameter to number in strtonum
+Failed to convert parameter to number in strtonum
+Failed to convert parameter to number in strtonum
+Failed to convert parameter to number in strtonum
+Must print 0: 5.000
+Must print 5: 5.000
+Must print true (shallow copy): trueMust print true (shallow copy): trueMust print 'Hello, World!' (shallow copy): 
+Must print: variables: 4, functions: 2, tables: 1
+variables:0.000, functions:0.000, tables:0.000
+Danger! Type 'y' to proceed: y
+[(key: tc , value: [table (self-reference)]), ]
 
 -->18_tables_bonus.asc CODE
 /*
@@ -1614,10 +1608,13 @@ play_with_granchoild();
 
 -->20_delegation.asc OUR RESULT
 ---------------------------
-Should print "father poo called.": ---------------------------
-Should print "father poo called.": ---------------------------
-Should print "fother loo called.": ---------------------------
-Should print "fother loo called.": 
+Should print "father poo called.": father poo called.
+---------------------------
+Should print "father poo called.": father poo called.
+---------------------------
+Should print "fother loo called.": fother loo called.
+---------------------------
+Should print "fother loo called.": fother loo called.
 
 -->21_queens.asc CODE
 
