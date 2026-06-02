@@ -1131,22 +1131,34 @@ while (true) {
 -->16_libfuncs_bonus1.asc OUR RESULT
 Table t is: [(key: key1 , value: 1.000), (key: key2 , value: 2.000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.000), (key: 2.000000 , value: 4.000), (key: 4.000000 , value: 5.000), ]), ]
 Lenght of table t is (must be 5):0.000
-Function prnt printing: user func: prnt and print: print
+Function prnt printing: user function 35 and print: print
 Table t in prnt is: [(key: 0.000000 , value: [(key: key1 , value: 1.000), (key: key2 , value: 2.000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.000), (key: 2.000000 , value: 4.000), (key: 4.000000 , value: 5.000), ]), ]), (key: 1.000000 , value: 2.000), (key: 2.000000 , value: 3.140), (key: 3.000000 , value: 4), (key: 4.000000 , value: true), (key: 5.000000 , value: false), ]
-Table indices of global t: user func: lala which has length: user func: lala
+Table indices of global t: user function 32 which has length: user function 32
 warning: assigning from undef content
 warning: assigning from undef content
-undefwarning: assigning from undef content	
+undefwarning: assigning from undef content
+warning: assigning from undef content
+warning: assigning from undef content
+undefwarning: assigning from undef content
+warning: assigning from undef content
+warning: assigning from undef content
+undefwarning: assigning from undef content
+warning: assigning from undef content
+warning: assigning from undef content
+undefwarning: assigning from undef content
 (...)
-undefwarning: assigning from undef content
 warning: assigning from undef content
 warning: assigning from undef content
 undefwarning: assigning from undef content
 warning: assigning from undef content
 warning: assigning from undef content
 undefwarning: assigning from undef content
-alpha_vm: avm/avm_stack.cpp:71: unsigned int avm_get_envvalue(unsigned int): Assertion `stack[i].type == number_m' failed.
-./alpha: line 28:  8878 Aborted                 (core dumped) ./alpha_vm $FLAG out.abc
+warning: assigning from undef content
+warning: assigning from undef content
+undefwarning: assigning from undef content
+warning: assigning from undef content
+warning: assigning from undef content
+undefwarning: assigning from undef content
 
 -->17_libfuncs_bonus2_part2_tables_catch_self_reference_error.asc CODE
 /*
@@ -1345,20 +1357,13 @@ func("LALA\n");
 
 
 -->18_tables_bonus.asc OUR RESULT
-[(key: lala , value: lala string key), ][print] not found
-must print >print libFunc<: nil
-[(key: lala , value: lala string key), ][[(key: 0.000000 , value: 3.000), ]] not found
-must print >tKey table<: nil
-[(key: lala , value: lala string key), ][[(key: 0.000000 , value: 3.000), ]] not found
-must print >tKey table<: nil
-[(key: lala , value: lala string key), ][[(key: 0.000000 , value: 3.000), ]] not found
+must print >print libFunc<: print libFunc
+must print >tKey table<: tKey table
+must print >tKey table<: tKey table
 must print nil or run time error: nil
-[(key: lala , value: lala string key), ][true] not found
-must print Trueeeee: nil
-[(key: lala , value: lala string key), ][user func: f] not found
-must print >f userFunc<: nil
-[(key: lala , value: lala string key), ][user func: f] not found
-must print >f userFunc<: nil
+must print Trueeeee: Trueeeeee
+must print >f userFunc<: f userFunc
+must print >f userFunc<: f userFunc
 Call Functor's print
 LALA
 
@@ -1608,8 +1613,11 @@ play_with_granchoild();
 
 
 -->20_delegation.asc OUR RESULT
-[(key: __delegatees , value: [table (self-reference)]), (key: delegate , value: user func: $6), (key: send , value: user func: desire_send), (key: understands , value: user func: desire_understands), ][append] not found
-call: can not bind ' nil' to function
+---------------------------
+Should print "father poo called.": ---------------------------
+Should print "father poo called.": ---------------------------
+Should print "fother loo called.": ---------------------------
+Should print "fother loo called.": 
 
 -->21_queens.asc CODE
 

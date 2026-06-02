@@ -168,9 +168,17 @@ avm_memcell* avm_tablegetelem(avm_table* table, avm_memcell* index){
             return temp->second;
         }
     }else{
-        auto temp = table->otherIndexed.find(index);
-        if(temp != table->otherIndexed.end()){
-            return temp->second;
+        for(auto it=table->otherIndexed.begin(); it != table->otherIndexed.end(); ++it){
+            avm_memcell* k = it->first;
+            if(k->type == index->type){
+                bool match = false;
+                if(k->type == bool_m) match = (k->data.boolVal == index->data.boolVal);
+                else if(k->type == userfunc_m) match = (k->data.funcVal == index->data.funcVal);
+                else if(k->type == libfunc_m) match = (strcmp(k->data.libFuncVal, index->data.libFuncVal)==0);
+                else if(k->type == table_m) match = (k->data.tableVal == index->data.tableVal);
+
+                if(match) return it->second;
+            }
         }
     }
     return nullptr;
