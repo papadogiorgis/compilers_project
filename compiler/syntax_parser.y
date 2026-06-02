@@ -41,6 +41,15 @@
     extern unsigned currQuad;
 
     extern unsigned int functionLocalOffset;
+
+    /*--------for test 15----------*/
+    extern unsigned int tcount;
+    typedef struct tcount_node{
+        unsigned int val;
+        struct tcount_node* next;
+    }tcount_node;
+    tcount_node* tcount_stack_top = NULL;
+    /*-----------------------------*/
 %}
 
 %union {
@@ -491,6 +500,14 @@ funcprefix:     FUNC funcname
                     resetFormalArgOffset();
                     infunc++;
 
+                    /*--------for test 15----------*/
+                    tcount_node* newtcount = malloc(sizeof(tcount_node));
+                    newtcount->val = tcount;
+                    newtcount->next = tcount_stack_top;
+                    tcount_stack_top = newtcount;
+                    tcount = 0;
+                    /*-----------------------------*/
+
                     ret_stack* new_ret = malloc(sizeof(ret_stack));
                     new_ret->retlist = 0;
                     new_ret->next = ret_top;
@@ -522,6 +539,15 @@ funcdef:        funcprefix funcargs funcbody
                     restoreCurrScopeOffset(offset);*/
 
                     functionLocalOffset = pop_and_top(stack);
+
+                    /*--------for test 15----------*/
+                    if(tcount_stack_top != NULL){
+                        tcount = tcount_stack_top->val;
+                        tcount_node* temptcount = tcount_stack_top;
+                        tcount_stack_top = tcount_stack_top->next;
+                        free(temptcount);
+                    }
+                    /*-----------------------------*/
                     
                     $1->totalLocals = $3;
                     if(ret_top){

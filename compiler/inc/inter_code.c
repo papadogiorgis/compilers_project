@@ -134,12 +134,20 @@ expr* inter_code_objectdef_elist(expr* e){
 	int i = 0;
 	expr* elist_element = e;
 	while(elist_element != NULL){
-		expr* arith = newexpr(constnum_e);
-		arith->numConst = i;
-		expr* val = emit_if_tableitem(elist_element);
-		emit(tablesetelem, arith, val, temp, 0, yylineno);
+		if((elist_element->index != NULL)&&(elist_element->value != NULL)){
+			/*if the element was parsed as an indexed element*/
+			expr* idx = emit_if_tableitem(elist_element->index);
+			expr* val = emit_if_tableitem(elist_element->value);
+			emit(tablesetelem, idx, val, temp, 0, yylineno);
+		}else{
+			/*otherwise treat it as a standard numeric array*/
+			expr* arith = newexpr(constnum_e);
+			arith->numConst = i;
+			expr* val = emit_if_tableitem(elist_element);
+			emit(tablesetelem, arith, val, temp, 0, yylineno);
+			i++;
+		}
 		elist_element = elist_element->next;
-		i++;
 	}
 	return temp;
 }

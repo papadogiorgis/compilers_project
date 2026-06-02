@@ -978,7 +978,7 @@ first hello
 second hello
 third hello
 fourth hello
-table2_2 ok1
+table1_2 ok1
 table2_3 ok2
 
 -->16_libfuncs_bonus1.asc CODE
