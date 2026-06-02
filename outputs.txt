@@ -26,11 +26,11 @@ executor(t.tablefunc());
 executor(t.tablefunc()());	//run time error
 
 -->01_err_1.asc OUR RESULT
-$3
-$5
-4.000000
-3.000000
-call: can not bind ' 3.000000' to function
+user function 14
+user function 53
+4.0000000000
+3.0000000000
+call: can not bind ' 3.0000000000' to function
 
 -->02_err_2.asc CODE
 /*  Testt file for the final phase of HY-340: Languages & Compilers
@@ -51,7 +51,7 @@ t1[1](); //run time error
 
 -->02_err_2.asc OUR RESULT
 this is a text message
-call: can not bind ' 34.000000' to function
+call: can not bind ' 34.0000000000' to function
 
 -->03_err_3.asc CODE
 /*
@@ -90,7 +90,7 @@ while(true)print("ok"); // never prints
 
 
 -->03_err_3.asc OUR RESULT
-table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table: {table:...
+...(key: 27.000000 , value: [(key: bigggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 0.0000000000), (key: biggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 1.0000000000), ]), (key: 28.000000 , value: [(key: bigggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 0.0000000000), (key: biggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 1.0000000000), ]), (key: 29.000000 , value: [(key: bigggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 0.0000000000), (key: biggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 1.0000000000), ]),...
 
 -->04_err_4.asc CODE
 /*
@@ -121,23 +121,25 @@ right(left);
 
 -->04_err_4.asc OUR RESULT
 (...)
-Func: left right
-Func: right left
-Func: left right
-Func: right left
-Func: left right
-Func: right left
-Func: left right
-Func: right left
-Func: left right
-Func: right left
-Func: left right
-Func: right left
-Func: left right
-Func: right left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
 stack overflow
-alpha_vm: avm/avm_stack.cpp:67: unsigned int avm_get_envvalue(unsigned int): Assertion `stack[i].type == number_m' failed.
-./alpha: line 28: 14330 Aborted                 (core dumped) ./alpha_vm $FLAG out.abc
 
 -->05_err_5.asc CODE
 /*  Testt file for the final phase of HY-340: Languages & Compilers
@@ -172,7 +174,7 @@ foo();
 
 -->05_err_5.asc OUR RESULT
 corrupt & destroy
-./alpha: line 28: 14390 Segmentation fault      (core dumped) ./alpha_vm $FLAG out.abc
+Error: out of stack - ask argument which is not pushed in the arguments list
 
 -->06_err_6.asc CODE
 /*
@@ -240,8 +242,9 @@ function foo () {
 foo();
 
 -->06_err_6.asc OUR RESULT
-stack overflow
-stack overflow
+YOYOYOYOYOYOYOYOYO...YOYOYOYOYO...(key: 96.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.0000000000), ]), ]), (key: 97.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.0000000000), ]), ]), (key: 98.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.0000000000), ]), ]), (key: 99.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.0000000000), ]), ]), ]), (key: 0.000000 , value: 3.0000000000), ]
+end-j
+WARNING: table[0.0000000000] not found! at line 39
 
 -->07_relop_logic.asc CODE
 /*
@@ -283,13 +286,19 @@ f = not f; //false
 print(f, nl);
 
 -->07_relop_logic.asc OUR RESULT
-1.0000002.0000003.000000Error: Relational operator on non-numbers.
+1.00000000002.00000000003.0000000000true false true
+true
+false
 
 -->08_arith.asc CODE
 -->EMPTY FILE
 
 -->08_arith.asc OUR RESULT
 -->DID NOT RUN TEST ON EMPTY SOURCE FILE(they probably forgot)
+syntax error: at line 1 before token: 
+Input not valid!
+
+Parsing failed!
 
 -->09_if_else.asc CODE
 /*
@@ -350,10 +359,10 @@ print(g, nl);
 
 
 -->09_if_else.asc OUR RESULT
-1.000000
+1.0000000000
 e is FALSE!
-5.000000
-7.000000
+5.0000000000
+7.0000000000
 
 -->10_loop_simple.asc CODE
 /*
@@ -454,18 +463,18 @@ print(nl);
 
 -->10_loop_simple.asc OUR RESULT
 GP SERIES (first:2, ratio:3)
-1.000000  3.000000  9.000000  27.000000  81.000000  243.000000  729.000000  
-Sum of the GP series till 7.000000 terms is 1093.000000
+1.0000000000  3.0000000000  9.0000000000  27.0000000000  81.0000000000  243.0000000000  729.0000000000  
+Sum of the GP series till 7.0000000000 terms is 1093.0000000000
 
 GP SERIES(first:2, ratio:2)
-1.000000  2.000000  4.000000  8.000000  16.000000  32.000000  64.000000  
-Product of the GP series till 7.000000 terms is 2097152.000000
+1.0000000000  2.0000000000  4.0000000000  8.0000000000  16.0000000000  32.0000000000  64.0000000000  
+Product of the GP series till 7.0000000000 terms is 2097152.0000000000
 
  Even numbers till 60:
-0.000000  2.000000  4.000000  6.000000  8.000000  10.000000  12.000000  14.000000  16.000000  18.000000  20.000000  22.000000  24.000000  26.000000  28.000000  30.000000  32.000000  34.000000  36.000000  38.000000  40.000000  42.000000  44.000000  46.000000  48.000000  50.000000  52.000000  54.000000  56.000000  58.000000  
+0.0000000000  2.0000000000  4.0000000000  6.0000000000  8.0000000000  10.0000000000  12.0000000000  14.0000000000  16.0000000000  18.0000000000  20.0000000000  22.0000000000  24.0000000000  26.0000000000  28.0000000000  30.0000000000  32.0000000000  34.0000000000  36.0000000000  38.0000000000  40.0000000000  42.0000000000  44.0000000000  46.0000000000  48.0000000000  50.0000000000  52.0000000000  54.0000000000  56.0000000000  58.0000000000  
 
  Odd numbers till 60:
-1.000000  3.000000  5.000000  7.000000  9.000000  11.000000  13.000000  15.000000  17.000000  19.000000  21.000000  23.000000  25.000000  27.000000  29.000000  31.000000  33.000000  35.000000  37.000000  39.000000  41.000000  43.000000  45.000000  47.000000  49.000000  51.000000  53.000000  55.000000  57.000000  59.000000
+1.0000000000  3.0000000000  5.0000000000  7.0000000000  9.0000000000  11.0000000000  13.0000000000  15.0000000000  17.0000000000  19.0000000000  21.0000000000  23.0000000000  25.0000000000  27.0000000000  29.0000000000  31.0000000000  33.0000000000  35.0000000000  37.0000000000  39.0000000000  41.0000000000  43.0000000000  45.0000000000  47.0000000000  49.0000000000  51.0000000000  53.0000000000  55.0000000000  57.0000000000  59.0000000000
 
 -->11_loop_advanced.asc CODE
 /*
@@ -511,7 +520,7 @@ print("\n");
 
 -->11_loop_advanced.asc OUR RESULT
 To print all prime numbers between 1 to 100
-3.000000, 5.000000, 7.000000, 11.000000, 13.000000, 17.000000, 19.000000, 23.000000, 29.000000, 31.000000, 37.000000, 41.000000, 43.000000, 47.000000, 53.000000, 59.000000, 61.000000, 67.000000, 71.000000, 73.000000, 79.000000, 83.000000, 89.000000, 97.000000,
+3.0000000000, 5.0000000000, 7.0000000000, 11.0000000000, 13.0000000000, 17.0000000000, 19.0000000000, 23.0000000000, 29.0000000000, 31.0000000000, 37.0000000000, 41.0000000000, 43.0000000000, 47.0000000000, 53.0000000000, 59.0000000000, 61.0000000000, 67.0000000000, 71.0000000000, 73.0000000000, 79.0000000000, 83.0000000000, 89.0000000000, 97.0000000000,
 
 -->12_loop_bubblesort_tables_calls.asc CODE
 /*
@@ -593,13 +602,13 @@ print("\n");
 
 
 -->12_loop_bubblesort_tables_calls.asc OUR RESULT
-Find the element at position 6.000000
+Find the element at position 6.0000000000
 
 Before sorting:
-14.000000, -2.000000, 5.000000, 133.000000, -20.000000, 85638.000000, 234.000000, -246.000000, 
+14.0000000000, -2.0000000000, 5.0000000000, 133.0000000000, -20.0000000000, 85638.0000000000, 234.0000000000, -246.0000000000, 
 
 After sorting:
--246.000000, -20.000000, -2.000000, 5.000000, 14.000000, 133.000000, 234.000000, 85638.000000,
+-246.0000000000, -20.0000000000, -2.0000000000, 5.0000000000, 14.0000000000, 133.0000000000, 234.0000000000, 85638.0000000000,
 
 -->13_func_calls.asc CODE
 /*
@@ -764,47 +773,41 @@ t[0](1)[0](2)[0](3);
 
 
 -->13_func_calls.asc OUR RESULT
-1.000000
+1.0000000000
 hello
-fract(1): 1.000000 (must be 1)
-fract(2): 2.000000 (must be 2)
-fract(3): 6.000000 (must be 6)
-fract(4): 24.000000 (must be 24)
-foo: 10.000000
-foo2: 9.000000
-foo3: 10.000000
-foo: 8.000000
-foo2: 7.000000
-foo3: 8.000000
-foo: 6.000000
-foo2: 5.000000
-foo3: 6.000000
-foo: 4.000000
-foo2: 3.000000
-foo3: 4.000000
-foo: 2.000000
-foo2: 1.000000
-foo3: 2.000000
-foo: 0.000000
+fract(1): 1.0000000000 (must be 1)
+fract(2): 2.0000000000 (must be 2)
+fract(3): 6.0000000000 (must be 6)
+fract(4): 24.0000000000 (must be 24)
+foo: 10.0000000000
+foo2: 9.0000000000
+foo3: 10.0000000000
+foo: 8.0000000000
+foo2: 7.0000000000
+foo3: 8.0000000000
+foo: 6.0000000000
+foo2: 5.0000000000
+foo3: 6.0000000000
+foo: 4.0000000000
+foo2: 3.0000000000
+foo3: 4.0000000000
+foo: 2.0000000000
+foo2: 1.0000000000
+foo3: 2.0000000000
+foo: 0.0000000000
 hello world
 hello world inside
-hello world inside
-
-(...)
-hello world inside
-hello world inside
-hello world inside
-hello world inside
-hello world inside
-hello world inside
-hello world inside
-hello world inside
-hello world inside
-hello world inside
-hello world inside
-stack overflow
-alpha_vm: avm/avm_stack.cpp:67: unsigned int avm_get_envvalue(unsigned int): Assertion `stack[i].type == number_m' failed.
-./alpha: line 28: 14786 Aborted                 (core dumped) ./alpha_vm $FLAG out.abc
+bar_
+zero
+zero
+one
+scope1
+scope2
+global
+global
+global
+1.00000000002.00000000003.0000000000
+1.00000000002.00000000003.0000000000
 
 -->14_tables1.asc CODE
 /*
@@ -868,14 +871,14 @@ print(vec2, nl);
 
 
 -->14_tables1.asc OUR RESULT
-2.000000
+2.0000000000
 zero
-1.000000
-1.000000
+1.0000000000
+1.0000000000
 true
-0.000000
+0.0000000000
 hello
-table: {
+[(key: 0.000000 , value: false), (key: 1.000000 , value: true), (key: 2.000000 , value: []), (key: 3.000000 , value: 5.0000000000), (key: 4.000000 , value: [(key: 0.000000 , value: hello), (key: 1.000000 , value: hi), ]), (key: 5.000000 , value: []), ]
 
 -->15_tables2.asc CODE
 /*
@@ -966,17 +969,17 @@ table.table1[2]("ok1\n");
 table.table2[3]("ok2\n");
 
 -->15_tables2.asc OUR RESULT
-pt.x: 21.000000
-pt.y: 32.000000
-sq.p1.x: 6.000000
-sq.p1.y: 12.000000
-sq.p2.x: 26.000000
-sq.p2.y: 32.000000
+pt.x: 21.0000000000
+pt.y: 32.0000000000
+sq.p1.x: 6.0000000000
+sq.p1.y: 12.0000000000
+sq.p2.x: 26.0000000000
+sq.p2.y: 32.0000000000
 first hello
 second hello
 third hello
 fourth hello
-table2_2 ok1
+table1_2 ok1
 table2_3 ok2
 
 -->16_libfuncs_bonus1.asc CODE
@@ -1127,23 +1130,21 @@ while (true) {
 
 
 -->16_libfuncs_bonus1.asc OUR RESULT
-Table t is: table: {
-Lenght of table t is (must be 5):0.000000
-Function prnt printing: prnt and print: print
-Table t in prnt is: table: {
-Table indices of global t: lala which has length: lala
-warning: assigning from undef content
-warning: assigning from undef content
-undefwarning: assigning from undef content
-(...)
-warning: assigning from undef content
-warning: assigning from undef content
-undefwarning: assigning from undef content
-warning: assigning from undef content
-warning: assigning from undef content
-undefwarning: assigning from undef content
-alpha_vm: avm/avm_stack.cpp:67: unsigned int avm_get_envvalue(unsigned int): Assertion `stack[i].type == number_m' failed.
-./alpha: line 28: 14949 Aborted                 (core dumped) ./alpha_vm $FLAG out.abc
+Table t is: [(key: key1 , value: 1.0000000000), (key: key2 , value: 2.0000000000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.0000000000), (key: 2.000000 , value: 4.0000000000), (key: 4.000000 , value: 5.0000000000), ]), ]
+Lenght of table t is (must be 5):5.0000000000
+Function prnt printing: user function 35 and print: print
+Table t in prnt is: [(key: 0.000000 , value: [(key: key1 , value: 1.0000000000), (key: key2 , value: 2.0000000000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.0000000000), (key: 2.000000 , value: 4.0000000000), (key: 4.000000 , value: 5.0000000000), ]), ]), (key: 1.000000 , value: 2.0000000000), (key: 2.000000 , value: 3.1400001049), (key: 3.000000 , value: 4), (key: 4.000000 , value: true), (key: 5.000000 , value: false), ]
+Table indices of global t: [(key: 0.000000 , value: key1), (key: 1.000000 , value: key2), (key: 2.000000 , value: key3), (key: 3.000000 , value: key4), (key: 4.000000 , value: key5), ] which has length: 5.0000000000
+Table copy is: [(key: key1 , value: 1.0000000000), (key: key2 , value: 2.0000000000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.0000000000), (key: 2.000000 , value: 4.0000000000), (key: 4.000000 , value: 5.0000000000), ]), ] and it is printed with print_function
+Error: Failed to convert parameter to number in strtonum
+PASSED: value: nil type: nil
+Error: Failed to convert parameter to number in strtonum
+PASSED: value: nil type: nil
+PASSED: value: 3.1410000324 type: number
+PASSED: value: 1.4142135382 type: number
+PASSED: value: nil type: nil
+PASSED: value: 0.5000000000 type: number
+PASSED: value: 0.5000000000 type: number
 
 -->17_libfuncs_bonus2_part2_tables_catch_self_reference_error.asc CODE
 /*
@@ -1278,11 +1279,26 @@ else
 
 
 -->17_libfuncs_bonus2_part2_tables_catch_self_reference_error.asc OUR RESULT
-table: {
-0.000000
-Must print 0: 0.000000
-Must print 5: 0.000000
-illegal use of type number as table
+[(key: a , value: 1.0000000000), (key: b , value: 2.0000000000), (key: c , value: 3.0000000000), (key: e , value: 5.0000000000), (key: f , value: 6.0000000000), ]
+5.0000000000
+Error: Failed to convert parameter to number in strtonum
+WARNING: table[a] not found! at line 46
+Error: Failed to convert parameter to number in strtonum
+WARNING: table[b] not found! at line 46
+Error: Failed to convert parameter to number in strtonum
+WARNING: table[c] not found! at line 46
+Error: Failed to convert parameter to number in strtonum
+WARNING: table[e] not found! at line 46
+Error: Failed to convert parameter to number in strtonum
+WARNING: table[f] not found! at line 46
+Must print 0: 0.0000000000
+Must print 5: 5.0000000000
+Must print true (shallow copy): trueWARNING: table[b] not found! at line 60
+Must print true (shallow copy): trueMust print 'Hello, World!' (shallow copy): 
+Must print: variables: 4, functions: 2, tables: 1
+variables:4.0000000000, functions:2.0000000000, tables:1.0000000000
+Danger! Type 'y' to proceed: y
+[(key: tc , value: [table (self-reference)]), ]
 
 -->18_tables_bonus.asc CODE
 /*
@@ -1342,27 +1358,16 @@ func("LALA\n");
 
 
 -->18_tables_bonus.asc OUR RESULT
-warning set elem avm
-warning set elem avm
-warning set elem avm
-warning set elem avm
-warning set elem avm
-table: {[print] not found
-must print >print libFunc<: nil
-table: {[table: {] not found
-must print >tKey table<: nil
-table: {[table: {] not found
-must print >tKey table<: nil
-table: {[table: {] not found
+must print >print libFunc<: print libFunc
+must print >tKey table<: tKey table
+must print >tKey table<: tKey table
+WARNING: table[[(key: 0.000000 , value: 3.0000000000), ]] not found! at line 37
 must print nil or run time error: nil
-table: {[true] not found
-must print Trueeeee: nil
-table: {[f] not found
-must print >f userFunc<: nil
-table: {[f] not found
-must print >f userFunc<: nil
-alpha_vm: avm/avm_stack.cpp:86: void avm_call_functor(avm_table*): Assertion `pc < AVM_ENDING_PC && instructions[pc].opcode == funcenter_v' failed.
-./alpha: line 28: 15062 Aborted                 (core dumped) ./alpha_vm $FLAG out.abc
+must print Trueeeee: Trueeeeee
+must print >f userFunc<: f userFunc
+must print >f userFunc<: f userFunc
+Call Functor's print
+LALA
 
 -->19_Circle.asc CODE
 nl = "\n";
@@ -1391,9 +1396,9 @@ print("circle Perimeter (must be 31.41628): ", Perimeter(circle), "\n\n");
 
 
 -->19_Circle.asc OUR RESULT
-pi (must be 3.141628}): 3.141628
-circle Area (must be 78.540700000000001): 78.540701
-circle Perimeter (must be 31.41628): 31.416280
+pi (must be 3.141628}): 3.1416280270
+circle Area (must be 78.540700000000001): 78.5407006741
+circle Perimeter (must be 31.41628): 31.4162802696
 
 
 
@@ -1610,8 +1615,20 @@ play_with_granchoild();
 
 
 -->20_delegation.asc OUR RESULT
-table: {[append] not found
-call: can not bind ' nil' to function
+---------------------------
+Should print "father poo called.": father poo called.
+---------------------------
+Should print "father poo called.": father poo called.
+---------------------------
+Should print "fother loo called.": WARNING: table[result] not found! at line 73
+WARNING: table[result] not found! at line 73
+WARNING: table[result] not found! at line 73
+fother loo called.
+---------------------------
+Should print "fother loo called.": WARNING: table[result] not found! at line 73
+WARNING: table[result] not found! at line 73
+WARNING: table[result] not found! at line 73
+fother loo called.
 
 -->21_queens.asc CODE
 
@@ -1681,7 +1698,7 @@ try(0);
 
 -->21_queens.asc OUR RESULT
 (...)
- . . . . . . . Q
+. . . . . . . Q
  . Q . . . . . .
  . . . . Q . . .
  . . Q . . . . .
@@ -1923,13 +1940,11 @@ while (not herc("move"))
 
 
 -->22_hercules.asc OUR RESULT
-illegal use of typeuserfuncas table
-illegal use of typeuserfuncas table
-illegal use of typeuserfuncas table
-illegal use of typeuserfuncas table
-alpha_vm: avm/avm_stack.cpp:86: void avm_call_functor(avm_table*): Assertion `pc < AVM_ENDING_PC && instructions[pc].opcode == funcenter_v' failed.
-./alpha: line 28: 15262 Aborted                 (core dumped) ./alpha_vm $FLAG out.abc
-
+illegal use of type userfunc as table
+illegal use of type userfunc as table
+illegal use of type userfunc as table
+illegal use of type userfunc as table
+Error: Illegal use of type userfunc as table
 
 -->23_visitor.asc CODE
 /*
@@ -2034,14 +2049,12 @@ book.Accept(book, PrintVisitor());
 
 
 -->23_visitor.asc OUR RESULT
-warning set elem avm
-table: {[table: {] not found
-warning set elem avm
-table: {[table: {] not found
-warning set elem avm
-table: {[table: {] not found
-table: {[0.000000] not found
-illegal use of type nil as table
+Book Title: Hitchhicker's Guide to the Galaxy
+	Section :Section #1
+		paragraph 1... blah
+		paragraph 2... blah
+	Section :Section #2
+	Section :Section #3
 
 -->24_Tree1.asc CODE
 /*
@@ -2206,7 +2219,7 @@ grandChildRR
 
 
 
-table: {[0.000000] not found
+WARNING: table[0.0000000000] not found! at line 57
 parent
 
 -->25_Tree2.asc CODE
@@ -2397,7 +2410,42 @@ PostOrder(tree);
 
 
 -->25_Tree2.asc OUR RESULT
-table: {[table: {] not found
-table: {[0.000000] not found
-illegal use of typenilas table
-illegal use of type nil as table
+WARNING: table[0.0000000000] not found! at line 100
+WARNING: table[0.0000000000] not found! at line 100
+WARNING: table[1.0000000000] not found! at line 100
+WARNING: table[2.0000000000] not found! at line 100
+WARNING: table[3.0000000000] not found! at line 100
+WARNING: table[4.0000000000] not found! at line 100
+WARNING: table[5.0000000000] not found! at line 100
+WARNING: table[6.0000000000] not found! at line 100
+WARNING: table[7.0000000000] not found! at line 100
+WARNING: table[8.0000000000] not found! at line 100
+WARNING: table[9.0000000000] not found! at line 100
+WARNING: table[10.0000000000] not found! at line 100
+(...)
+root
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+(...)
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+
+
+
+
+WARNING: table[0.0000000000] not found! at line 52
+root

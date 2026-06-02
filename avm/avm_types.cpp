@@ -18,6 +18,8 @@ extern char** stringConsts;
 extern char** namedLibfuncs;
 extern userfunc* userFuncs;
 extern unsigned totalUserFuncs;
+extern unsigned avm_totalactuals(void);
+extern unsigned char executionFinished;
 
 const char* typeStrings[] = {
     "number",
@@ -117,7 +119,40 @@ void avm_tablesetelem(avm_table* t, avm_memcell* key, avm_memcell *elem)
         }
     }
     else {
-        std::cout << "warning set elem avm\n";
+        //std::cout << "warning set elem avm\n";
+        bool found = false;
+        for(auto it=t->otherIndexed.begin(); it != t->otherIndexed.end(); ++it){
+            avm_memcell* k = it->first;
+            bool match = false;
+            if(k->type == key->type){
+                if(k->type == bool_m) match=(k->data.boolVal == key->data.boolVal);
+                else if(k->type == userfunc_m) match=(k->data.funcVal == key->data.funcVal);
+                else if(k->type == libfunc_m) match=(strcmp(k->data.libFuncVal, key->data.libFuncVal)==0);
+                else if(k->type == table_m) match=(k->data.tableVal == key->data.tableVal);
+            }
+            if(match){
+                if(elem->type == nil_m){
+                    avm_memcellclear(it->second);
+                    delete it->second;
+                    avm_memcellclear(it->first);
+                    delete it->first;
+                    t->otherIndexed.erase(it);
+                }else{
+                    avm_assign(it->second, elem);
+                }
+                found=true;
+                break;
+            }
+        }
+        if((!found)&&(elem->type != nil_m)){
+            avm_memcell* newkey = new avm_memcell();
+            newkey->type = undef_m;
+            avm_assign(newkey, key);
+            avm_memcell* newcell = new avm_memcell();
+            newcell->type = undef_m;
+            avm_assign(newcell, elem);
+            t->otherIndexed[newkey] = newcell;
+        }
     }
 }
 
@@ -133,9 +168,17 @@ avm_memcell* avm_tablegetelem(avm_table* table, avm_memcell* index){
             return temp->second;
         }
     }else{
-        auto temp = table->otherIndexed.find(index);
-        if(temp != table->otherIndexed.end()){
-            return temp->second;
+        for(auto it=table->otherIndexed.begin(); it != table->otherIndexed.end(); ++it){
+            avm_memcell* k = it->first;
+            if(k->type == index->type){
+                bool match = false;
+                if(k->type == bool_m) match = (k->data.boolVal == index->data.boolVal);
+                else if(k->type == userfunc_m) match = (k->data.funcVal == index->data.funcVal);
+                else if(k->type == libfunc_m) match = (strcmp(k->data.libFuncVal, index->data.libFuncVal)==0);
+                else if(k->type == table_m) match = (k->data.tableVal == index->data.tableVal);
+
+                if(match) return it->second;
+            }
         }
     }
     return nullptr;
@@ -163,7 +206,15 @@ avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg){
         // case local_a: return &stack[esp -1- arg->val];
         // case formal_a: return &stack[esp + ENV_SZ + 1 + arg->val];
         case local_a: return &stack[ebp - arg->val];
-        case formal_a: return &stack[ebp + ENV_SZ + 1 + arg->val];
+        case formal_a:
+            if(arg->val >= avm_totalactuals()){
+                fprintf(stderr, "Error: out of stack - ask argument which is not pushed in the arguments list\n");
+                executionFinished=1;
+                static avm_memcell dummy;
+                dummy.type = undef_m;
+                return &dummy;
+            }
+            return &stack[ebp + ENV_SZ + 1 + arg->val];
         case retval_a: return &retval;
 
         case number_a: {
@@ -211,15 +262,21 @@ void avm_assign (avm_memcell *lv, avm_memcell *rv)
         fprintf(stderr, "warning: assigning from undef content\n");
     }
 
-    avm_memcellclear(lv);
-    memcpy(lv, rv, sizeof(avm_memcell));
+    //avm_memcellclear(lv);
+    //memcpy(lv, rv, sizeof(avm_memcell));
+    avm_memcell temp;
+    memcpy(&temp, rv, sizeof(avm_memcell));
 
-    if (lv->type == string_m){
-        lv->data.strVal = strdup(rv->data.strVal);
-    }else if (lv->type == libfunc_m) {
-        lv->data.libFuncVal = strdup(rv->data.libFuncVal);
-    }else if (lv->type == table_m) {
-        lv->data.tableVal->incrrefcounter();
+    if (temp.type == string_m){
+        temp.data.strVal = strdup(rv->data.strVal);
+    }else if (temp.type == libfunc_m) {
+        temp.data.libFuncVal = strdup(rv->data.libFuncVal);
+    }else if (temp.type == table_m) {
+        temp.data.tableVal->incrrefcounter();
     }
+
+    avm_memcellclear(lv);
+    memcpy(lv, &temp, sizeof(avm_memcell));
+
     return;
 }

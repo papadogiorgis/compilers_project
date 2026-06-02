@@ -37,7 +37,7 @@ expr* inter_code_assign(expr* lval, expr* rval)
 expr* inter_code_arithmetic(expr* lval, expr* rval, iopcode op)
 {
 	if (!is_arith(lval) || !is_arith(rval)) {
-		fprintf(stderr, "ERROR: ILLEGAL ARITHMETIC OPERATION AT LINE %d\n", yylineno);
+		fprintf(stderr, "\nERROR: ILLEGAL ARITHMETIC OPERATION AT LINE %d\n", yylineno);
 		return NULL;
 	}
 	lval = emit_if_tableitem(lval);
@@ -134,12 +134,20 @@ expr* inter_code_objectdef_elist(expr* e){
 	int i = 0;
 	expr* elist_element = e;
 	while(elist_element != NULL){
-		expr* arith = newexpr(constnum_e);
-		arith->numConst = i;
-		expr* val = emit_if_tableitem(elist_element);
-		emit(tablesetelem, arith, val, temp, 0, yylineno);
+		if((elist_element->index != NULL)&&(elist_element->value != NULL)){
+			/*if the element was parsed as an indexed element*/
+			expr* idx = emit_if_tableitem(elist_element->index);
+			expr* val = emit_if_tableitem(elist_element->value);
+			emit(tablesetelem, idx, val, temp, 0, yylineno);
+		}else{
+			/*otherwise treat it as a standard numeric array*/
+			expr* arith = newexpr(constnum_e);
+			arith->numConst = i;
+			expr* val = emit_if_tableitem(elist_element);
+			emit(tablesetelem, arith, val, temp, 0, yylineno);
+			i++;
+		}
 		elist_element = elist_element->next;
-		i++;
 	}
 	return temp;
 }
@@ -163,6 +171,7 @@ expr* inter_code_member_item(expr* val, expr* index){
 	/*if val is already a tableitem save its value
 	  in a temp val */
 	val = emit_if_tableitem(val);
+	index = emit_if_tableitem(index);
 	index = inter_code_bool_to_val(index);
 	expr* mem_item = newexpr(tableitem_e);
 	mem_item->sym = val->sym;

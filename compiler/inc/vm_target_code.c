@@ -131,7 +131,7 @@ unsigned libfuncs_nevused(char* s){
 
 unsigned userfuncs_newfunc(node* sym){
     for(unsigned i=0; i<totalUserFuncs; i++){
-        if(strcmp(userFuncs[i].id,sym->key)==0){
+        if((strcmp(userFuncs[i].id,sym->key)==0)&&(userFuncs[i].address == sym->iaddress)){
             return i;
         }
     }

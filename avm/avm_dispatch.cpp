@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <cmath>
 
 extern avm_memcell ax, bx, cx, retval;
 extern avm_memcell stack[STACK_SZ];
@@ -164,27 +165,23 @@ void execute_tablegetelem(instruction* instr)
     avm_memcell* t = avm_translate_operand(&instr->arg1, (avm_memcell*)0);
     avm_memcell* i = avm_translate_operand(&instr->arg2, &ax);
 
-    // assert(lv && &stack[STACK_SZ - 1] >= lv && lv > &stack[esp]);
-    // assert(t && &stack[STACK_SZ - 1] >= t && t > &stack[esp]);
     assert(lv && &stack[STACK_SZ - 1] >= lv && lv >= &stack[esp]);
     assert(t && &stack[STACK_SZ - 1] >= t && t >= &stack[esp]);
 
-    avm_memcellclear(lv);
-    lv->type = nil_m;
-
-    if(t->type!=table_m){
-        printf("illegal use of type %s as table\n", typeStrings[t->type]);
+    if(t->type != table_m){
+        printf("Error: Illegal use of type %s as table\n",typeStrings[t->type]);
         executionFinished=1;
-    }else{
-        avm_memcell* content = avm_tablegetelem(t->data.tableVal, i);
-        if (content) {
-            avm_assign(lv, content);
-        }
-        else {
-            std::string ts = avm_tostring(t);
-            std::string is = avm_tostring(i);
-            std::cout << ts << "[" << is << "] not found\n";
-        }
+        return;
+    }
+    avm_memcell* content = avm_tablegetelem(t->data.tableVal, i);
+
+    if (content) {
+        avm_assign(lv, content);
+    }
+    else {
+        std::cout<<"WARNING: table["<<avm_tostring(i)<<"] not found! at line "<<currLine<<"\n";
+        avm_memcellclear(lv);
+        lv->type = nil_m;
     }
 }
 
@@ -198,7 +195,7 @@ void execute_tablesetelem(instruction* instr)
     assert(i && c);
 
     if (t->type != table_m){
-        std::cout << "illegal use of type" << typeStrings[t->type] << "as table\n";
+        std::cout << "illegal use of type " << typeStrings[t->type] << " as table\n";
     }
     else {
         avm_tablesetelem(t->data.tableVal, i, c);
@@ -284,7 +281,7 @@ void execute_jeq (instruction* instr) {
     }else {
         switch(rv1->type){
             case number_m:
-                result = (rv1->data.numVal == rv2->data.numVal);
+                result = (std::abs(rv1->data.numVal - rv2->data.numVal) < 1e-5);
                 break;
             case string_m:
                 result = (strcmp(rv1->data.strVal, rv2->data.strVal)==0);
@@ -330,7 +327,7 @@ void execute_jne(instruction* instr){
     }else {
         switch(rv1->type){
             case number_m:
-                result = (rv1->data.numVal != rv2->data.numVal);
+                result = (std::abs(rv1->data.numVal - rv2->data.numVal) >= 1e-5);
                 break;
             case string_m:
                 result = (strcmp(rv1->data.strVal, rv2->data.strVal) != 0);
@@ -360,11 +357,16 @@ void execute_jle(instruction* i){
     avm_memcell* rv1 = avm_translate_operand(&i->arg1, &ax);
     avm_memcell* rv2 = avm_translate_operand(&i->arg2, &bx);
 
-    if((rv1->type != number_m)||(rv2->type != number_m)){
-        printf("Error: Relational operator on non-numbers.\n");
-        executionFinished=1;
-    }else if(rv1->data.numVal <= rv2->data.numVal){
-        pc = i->result.val;
+    // if((rv1->type != number_m)||(rv2->type != number_m)){
+    //     printf("Error: Relational operator on non-numbers.\n");
+    //     executionFinished=1;
+    // }else if(rv1->data.numVal <= rv2->data.numVal){
+    //     pc = i->result.val;
+    // }
+    if((rv1->type == number_m)&&(rv2->type == number_m)){
+        if(rv1->data.numVal <= rv2->data.numVal){
+            pc = i->result.val;
+        }
     }
 }
 
@@ -373,11 +375,16 @@ void execute_jge(instruction* i){
     avm_memcell* rv1 = avm_translate_operand(&i->arg1, &ax);
     avm_memcell* rv2 = avm_translate_operand(&i->arg2, &bx);
 
-    if((rv1->type != number_m)||(rv2->type != number_m)){
-        printf("Error: Relational operator on non-numbers.\n");
-        executionFinished=1;
-    }else if(rv1->data.numVal >= rv2->data.numVal){
-        pc = i->result.val;
+    // if((rv1->type != number_m)||(rv2->type != number_m)){
+    //     printf("Error: Relational operator on non-numbers.\n");
+    //     executionFinished=1;
+    // }else if(rv1->data.numVal >= rv2->data.numVal){
+    //     pc = i->result.val;
+    // }
+    if((rv1->type == number_m)&&(rv2->type == number_m)){
+        if(rv1->data.numVal >= rv2->data.numVal){
+            pc = i->result.val;
+        }
     }
 }
 
@@ -386,11 +393,16 @@ void execute_jlt(instruction* i){
     avm_memcell* rv1 = avm_translate_operand(&i->arg1, &ax);
     avm_memcell* rv2 = avm_translate_operand(&i->arg2, &bx);
 
-    if((rv1->type != number_m)||(rv2->type != number_m)){
-        printf("Error: Relational operator on non-numbers.\n");
-        executionFinished=1;
-    }else if(rv1->data.numVal < rv2->data.numVal){
-        pc = i->result.val;
+    // if((rv1->type != number_m)||(rv2->type != number_m)){
+    //     printf("Error: Relational operator on non-numbers.\n");
+    //     executionFinished=1;
+    // }else if(rv1->data.numVal < rv2->data.numVal){
+    //     pc = i->result.val;
+    // }
+    if((rv1->type == number_m)&&(rv2->type == number_m)){
+        if(rv1->data.numVal < rv2->data.numVal){
+            pc = i->result.val;
+        }
     }
 }
 
@@ -399,11 +411,16 @@ void execute_jgt(instruction* i){
     avm_memcell* rv1 = avm_translate_operand(&i->arg1, &ax);
     avm_memcell* rv2 = avm_translate_operand(&i->arg2, &bx);
 
-    if((rv1->type != number_m)||(rv2->type != number_m)){
-        printf("Error: Relational operator on non-numbers.\n");
-        executionFinished=1;
-    }else if(rv1->data.numVal > rv2->data.numVal){
-        pc = i->result.val;
+    // if((rv1->type != number_m)||(rv2->type != number_m)){
+    //     printf("Error: Relational operator on non-numbers.\n");
+    //     executionFinished=1;
+    // }else if(rv1->data.numVal > rv2->data.numVal){
+    //     pc = i->result.val;
+    // }
+    if((rv1->type == number_m)&&(rv2->type == number_m)){
+        if(rv1->data.numVal > rv2->data.numVal){
+            pc = i->result.val;
+        }
     }
 }
 
@@ -462,6 +479,8 @@ void execute_call(instruction *instr){
         case userfunc_m : {
             avm_callsaveenviroment();
             // pc = func->data.funcVal;
+
+            if(executionFinished) return;
 
             userfunc* finfo = avm_getfuncinfo_byindex(func->data.funcVal);
             assert(finfo);
