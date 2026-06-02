@@ -157,7 +157,7 @@ std::string number_tostring(avm_memcell* m)
 {
     assert(m->type == number_m);
     std::ostringstream res;
-    res << std::fixed << std::setprecision(3) << m->data.numVal; // max 3 digits percition for readability
+    res << std::fixed << std::setprecision(10) << m->data.numVal;
 
     /* double integer;
     double modf = std::modf(m->data.numVal, &integer);

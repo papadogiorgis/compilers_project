@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <cmath>
 
 extern avm_memcell ax, bx, cx, retval;
 extern avm_memcell stack[STACK_SZ];
@@ -111,7 +112,7 @@ void execute_arithmetic (instruction* i)
     }else {
         if((i->opcode == div_v)||(i->opcode == mod_v)){
             if(rv2->data.numVal == 0.0){
-                printf("\nError: Division or modulo by zero!!\n");
+                printf("Error: Division or modulo by zero!!\n");
                 executionFinished = 1;
                 return;
             }
@@ -130,7 +131,7 @@ void execute_uminus(instruction* i){
     assert(lv && rv1);
 
     if(rv1->type != number_m){
-        printf("\nError: Uminus applied to non-number.\n");
+        printf("Error: Uminus applied to non-number.\n");
         executionFinished=1;
     }else{
         avm_memcellclear(lv);
@@ -168,7 +169,7 @@ void execute_tablegetelem(instruction* instr)
     assert(t && &stack[STACK_SZ - 1] >= t && t >= &stack[esp]);
 
     if(t->type != table_m){
-        printf("\nError: Illegal use of type %s as table\n",typeStrings[t->type]);
+        printf("Error: Illegal use of type %s as table\n",typeStrings[t->type]);
         executionFinished=1;
         return;
     }
@@ -178,7 +179,7 @@ void execute_tablegetelem(instruction* instr)
         avm_assign(lv, content);
     }
     else {
-        std::cout<<"\nWARNING: table["<<avm_tostring(i)<<"] not found! at line "<<currLine<<"\n";
+        std::cout<<"WARNING: table["<<avm_tostring(i)<<"] not found! at line "<<currLine<<"\n";
         avm_memcellclear(lv);
         lv->type = nil_m;
     }
@@ -268,19 +269,19 @@ void execute_jeq (instruction* instr) {
     unsigned char result = 0;
 
     if(rv1->type == undef_m || rv2->type == undef_m){
-        printf("\nError: 'undef' involved in equality\n");
+        printf("Error: 'undef' involved in equality\n");
         executionFinished=1;
     }else if (rv1->type == bool_m || rv2->type == bool_m){
         result = (avm_tobool(rv1) == avm_tobool(rv2));
     }else if (rv1->type == nil_m || rv2->type == nil_m){
         result = rv1->type == nil_m && rv2->type == nil_m;
     }else if (rv1->type != rv2->type){
-        printf("\nError: %s == %s is illegal\n", typeStrings[rv1->type], typeStrings[rv2->type]);
+        printf("Error: %s == %s is illegal\n", typeStrings[rv1->type], typeStrings[rv2->type]);
         executionFinished=1;
     }else {
         switch(rv1->type){
             case number_m:
-                result = (rv1->data.numVal == rv2->data.numVal);
+                result = (std::abs(rv1->data.numVal - rv2->data.numVal) < 1e-5);
                 break;
             case string_m:
                 result = (strcmp(rv1->data.strVal, rv2->data.strVal)==0);
@@ -314,19 +315,19 @@ void execute_jne(instruction* instr){
     unsigned char result = 0;
 
     if(rv1->type == undef_m || rv2->type == undef_m){
-        printf("\nError: 'undef' involved in equality\n");
+        printf("Error: 'undef' involved in equality\n");
         executionFinished=1;
     }else if (rv1->type == bool_m || rv2->type == bool_m){
         result = (avm_tobool(rv1) != avm_tobool(rv2));
     }else if (rv1->type == nil_m || rv2->type == nil_m){
         result = !(rv1->type == nil_m && rv2->type == nil_m);
     }else if (rv1->type != rv2->type){
-        printf("\nError: %s != %s is illegal\n", typeStrings[rv1->type], typeStrings[rv2->type]);
+        printf("Error: %s != %s is illegal\n", typeStrings[rv1->type], typeStrings[rv2->type]);
         executionFinished=1;
     }else {
         switch(rv1->type){
             case number_m:
-                result = (rv1->data.numVal != rv2->data.numVal);
+                result = (std::abs(rv1->data.numVal - rv2->data.numVal) >= 1e-5);
                 break;
             case string_m:
                 result = (strcmp(rv1->data.strVal, rv2->data.strVal) != 0);
@@ -357,7 +358,7 @@ void execute_jle(instruction* i){
     avm_memcell* rv2 = avm_translate_operand(&i->arg2, &bx);
 
     // if((rv1->type != number_m)||(rv2->type != number_m)){
-    //     printf("\nError: Relational operator on non-numbers.\n");
+    //     printf("Error: Relational operator on non-numbers.\n");
     //     executionFinished=1;
     // }else if(rv1->data.numVal <= rv2->data.numVal){
     //     pc = i->result.val;
@@ -375,7 +376,7 @@ void execute_jge(instruction* i){
     avm_memcell* rv2 = avm_translate_operand(&i->arg2, &bx);
 
     // if((rv1->type != number_m)||(rv2->type != number_m)){
-    //     printf("\nError: Relational operator on non-numbers.\n");
+    //     printf("Error: Relational operator on non-numbers.\n");
     //     executionFinished=1;
     // }else if(rv1->data.numVal >= rv2->data.numVal){
     //     pc = i->result.val;
@@ -393,7 +394,7 @@ void execute_jlt(instruction* i){
     avm_memcell* rv2 = avm_translate_operand(&i->arg2, &bx);
 
     // if((rv1->type != number_m)||(rv2->type != number_m)){
-    //     printf("\nError: Relational operator on non-numbers.\n");
+    //     printf("Error: Relational operator on non-numbers.\n");
     //     executionFinished=1;
     // }else if(rv1->data.numVal < rv2->data.numVal){
     //     pc = i->result.val;
@@ -411,7 +412,7 @@ void execute_jgt(instruction* i){
     avm_memcell* rv2 = avm_translate_operand(&i->arg2, &bx);
 
     // if((rv1->type != number_m)||(rv2->type != number_m)){
-    //     printf("\nError: Relational operator on non-numbers.\n");
+    //     printf("Error: Relational operator on non-numbers.\n");
     //     executionFinished=1;
     // }else if(rv1->data.numVal > rv2->data.numVal){
     //     pc = i->result.val;
@@ -462,7 +463,7 @@ void execute_getretval(instruction* instr){
 //     lv->type = nil_m;
 
 //     if(t->type != table_m){
-//         printf("\nError: Illegal use of type %s as table\n", typeStrings[t->type]);
+//         printf("Error: Illegal use of type %s as table\n", typeStrings[t->type]);
 //         executionFinished = 1;
 //     }else{
 //         //ANDREA DO THIS <3

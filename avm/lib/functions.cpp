@@ -31,7 +31,7 @@ void libfunc_typeof(void)
 {
     unsigned n = avm_totalactuals();
     if (n != 1){
-        printf("\none argument expected in typeof\n");
+        printf("one argument expected in typeof\n");
     }
     else {
         avm_memcellclear(&retval);
@@ -74,14 +74,14 @@ void libfunc_input(void){
 void libfunc_objectmemberkeys(void){
     unsigned n = avm_totalactuals();
     if(n != 1){
-        printf("\nError: objectmemberkeys expects 1 argument\n");
+        printf("Error: objectmemberkeys expects 1 argument\n");
         avm_memcellclear(&retval);
         retval.type = nil_m;
         return;
     }
     avm_memcell* arg = avm_getactual(0);
     if(arg->type != table_m){
-        printf("\nError: objectmemberkeys argument is not a table\n");
+        printf("Error: objectmemberkeys argument is not a table\n");
         avm_memcellclear(&retval);
         retval.type = nil_m;
         return;
@@ -123,14 +123,14 @@ void libfunc_objectmemberkeys(void){
 void libfunc_objecttotalmembers(void){
     unsigned n = avm_totalactuals();
     if(n != 1){
-        printf("\nError: objecttotalmembers expects 1 argument\n");
+        printf("Error: objecttotalmembers expects 1 argument\n");
         avm_memcellclear(&retval);
         retval.type = nil_m;
         return;
     }
     avm_memcell* arg = avm_getactual(0);
     if(arg->type != table_m){
-        printf("\nError: objecttotalmembers argument is not a table\n");
+        printf("Error: objecttotalmembers argument is not a table\n");
         avm_memcellclear(&retval);
         retval.type = nil_m;
         return;
@@ -143,14 +143,14 @@ void libfunc_objecttotalmembers(void){
 void libfunc_objectcopy(void){
     unsigned n = avm_totalactuals();
     if(n != 1){
-        printf("\nError: objectcopy expects 1 argument\n");
+        printf("Error: objectcopy expects 1 argument\n");
         avm_memcellclear(&retval);
         retval.type = nil_m;
         return;
     }
     avm_memcell* arg = avm_getactual(0);
     if(arg->type != table_m){
-        printf("\nError: objectcopy argument is not a table\n");
+        printf("Error: objectcopy argument is not a table\n");
         avm_memcellclear(&retval);
         retval.type = nil_m;
         return;
@@ -213,7 +213,7 @@ void libfunc_argument(void)
 
     avm_memcell* arg = avm_getactual(0);
     if(arg->type != number_m){
-        std::cout<<"\nlib function 'argument' expects a number\n";
+        std::cout<<"lib function 'argument' expects a number\n";
         retval.type = nil_m;
         return;
     }
@@ -227,7 +227,7 @@ void libfunc_argument(void)
     unsigned call_num_actuals = avm_get_envvalue(ptopsp + AVM_NUMACTUALS_OFFSET);
     unsigned index = arg->data.numVal;
     if(index >= call_num_actuals){
-        std::cout<<"\nError: argument index out of bounds.\n";
+        std::cout<<"Error: argument index out of bounds.\n";
         retval.type = nil_m;
         return;
     }
@@ -241,13 +241,13 @@ void libfunc_strtonum(void)
     avm_memcellclear(&retval);
     unsigned n = avm_totalactuals();
     if(n != 1){
-        printf("\nError: strtonum expects 1 argument\n");
+        printf("Error: strtonum expects 1 argument\n");
         retval.type = nil_m;
         return;
     }
     avm_memcell* arg = avm_getactual(0);
     if(arg->type != string_m){
-        printf("\nFailed to convert parameter to number in strtonum\n");
+        printf("Error: Failed to convert parameter to number in strtonum\n");
         retval.type = nil_m;
         return;
     }
@@ -257,7 +257,7 @@ void libfunc_strtonum(void)
     double num = strtod(str, &endptr);
 
     if((endptr == str)||(*endptr != '\0')){
-        printf("\nFailed to convert parameter to number in strtonum\n");
+        printf("Error: Failed to convert parameter to number in strtonum\n");
         retval.type = nil_m;
     }else{
         retval.type = number_m;

@@ -28,9 +28,9 @@ executor(t.tablefunc()());	//run time error
 -->01_err_1.asc OUR RESULT
 user function 14
 user function 53
-4.000
-3.000
-call: can not bind ' 3.000' to function
+4.0000000000
+3.0000000000
+call: can not bind ' 3.0000000000' to function
 
 -->02_err_2.asc CODE
 /*  Testt file for the final phase of HY-340: Languages & Compilers
@@ -51,7 +51,7 @@ t1[1](); //run time error
 
 -->02_err_2.asc OUR RESULT
 this is a text message
-call: can not bind ' 34.000' to function
+call: can not bind ' 34.0000000000' to function
 
 -->03_err_3.asc CODE
 /*
@@ -90,7 +90,7 @@ while(true)print("ok"); // never prints
 
 
 -->03_err_3.asc OUR RESULT
-...(key: 66.000000 , value: [(key: bigggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 0.000), (key: biggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 1.000), ]), (key: 67.000000 , value: [(key: bigggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 0.000), (key: biggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 1.000), ]), (key: 68.000000 , value: [(key: bigggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 0.000), (key: biggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 1.000), ]),...
+...(key: 27.000000 , value: [(key: bigggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 0.0000000000), (key: biggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 1.0000000000), ]), (key: 28.000000 , value: [(key: bigggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 0.0000000000), (key: biggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 1.0000000000), ]), (key: 29.000000 , value: [(key: bigggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 0.0000000000), (key: biggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg , value: 1.0000000000), ]),...
 
 -->04_err_4.asc CODE
 /*
@@ -242,10 +242,9 @@ function foo () {
 foo();
 
 -->06_err_6.asc OUR RESULT
-YOYOYOYOYOYOYOYOYO...YOYOYOYOYO...(key: 87.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 88.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 89.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 90.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 91.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 92.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 93.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 94.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 95.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 96.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 97.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 98.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 99.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), ]), (key: 0.000000 , value: 3.000), ]
+YOYOYOYOYOYOYOYOYO...YOYOYOYOYO...(key: 96.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.0000000000), ]), ]), (key: 97.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.0000000000), ]), ]), (key: 98.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.0000000000), ]), ]), (key: 99.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.0000000000), ]), ]), ]), (key: 0.000000 , value: 3.0000000000), ]
 end-j
-
-WARNING: table[0.000] not found! at line 39
+WARNING: table[0.0000000000] not found! at line 39
 
 -->07_relop_logic.asc CODE
 /*
@@ -287,7 +286,7 @@ f = not f; //false
 print(f, nl);
 
 -->07_relop_logic.asc OUR RESULT
-1.0002.0003.000true false true
+1.00000000002.00000000003.0000000000true false true
 true
 false
 
@@ -360,10 +359,10 @@ print(g, nl);
 
 
 -->09_if_else.asc OUR RESULT
-1.000
+1.0000000000
 e is FALSE!
-5.000
-7.000
+5.0000000000
+7.0000000000
 
 -->10_loop_simple.asc CODE
 /*
@@ -464,18 +463,18 @@ print(nl);
 
 -->10_loop_simple.asc OUR RESULT
 GP SERIES (first:2, ratio:3)
-1.000  3.000  9.000  27.000  81.000  243.000  729.000  
-Sum of the GP series till 7.000 terms is 1093.000
+1.0000000000  3.0000000000  9.0000000000  27.0000000000  81.0000000000  243.0000000000  729.0000000000  
+Sum of the GP series till 7.0000000000 terms is 1093.0000000000
 
 GP SERIES(first:2, ratio:2)
-1.000  2.000  4.000  8.000  16.000  32.000  64.000  
-Product of the GP series till 7.000 terms is 2097152.000
+1.0000000000  2.0000000000  4.0000000000  8.0000000000  16.0000000000  32.0000000000  64.0000000000  
+Product of the GP series till 7.0000000000 terms is 2097152.0000000000
 
  Even numbers till 60:
-0.000  2.000  4.000  6.000  8.000  10.000  12.000  14.000  16.000  18.000  20.000  22.000  24.000  26.000  28.000  30.000  32.000  34.000  36.000  38.000  40.000  42.000  44.000  46.000  48.000  50.000  52.000  54.000  56.000  58.000  
+0.0000000000  2.0000000000  4.0000000000  6.0000000000  8.0000000000  10.0000000000  12.0000000000  14.0000000000  16.0000000000  18.0000000000  20.0000000000  22.0000000000  24.0000000000  26.0000000000  28.0000000000  30.0000000000  32.0000000000  34.0000000000  36.0000000000  38.0000000000  40.0000000000  42.0000000000  44.0000000000  46.0000000000  48.0000000000  50.0000000000  52.0000000000  54.0000000000  56.0000000000  58.0000000000  
 
  Odd numbers till 60:
-1.000  3.000  5.000  7.000  9.000  11.000  13.000  15.000  17.000  19.000  21.000  23.000  25.000  27.000  29.000  31.000  33.000  35.000  37.000  39.000  41.000  43.000  45.000  47.000  49.000  51.000  53.000  55.000  57.000  59.000
+1.0000000000  3.0000000000  5.0000000000  7.0000000000  9.0000000000  11.0000000000  13.0000000000  15.0000000000  17.0000000000  19.0000000000  21.0000000000  23.0000000000  25.0000000000  27.0000000000  29.0000000000  31.0000000000  33.0000000000  35.0000000000  37.0000000000  39.0000000000  41.0000000000  43.0000000000  45.0000000000  47.0000000000  49.0000000000  51.0000000000  53.0000000000  55.0000000000  57.0000000000  59.0000000000
 
 -->11_loop_advanced.asc CODE
 /*
@@ -521,7 +520,7 @@ print("\n");
 
 -->11_loop_advanced.asc OUR RESULT
 To print all prime numbers between 1 to 100
-3.000, 5.000, 7.000, 11.000, 13.000, 17.000, 19.000, 23.000, 29.000, 31.000, 37.000, 41.000, 43.000, 47.000, 53.000, 59.000, 61.000, 67.000, 71.000, 73.000, 79.000, 83.000, 89.000, 97.000,
+3.0000000000, 5.0000000000, 7.0000000000, 11.0000000000, 13.0000000000, 17.0000000000, 19.0000000000, 23.0000000000, 29.0000000000, 31.0000000000, 37.0000000000, 41.0000000000, 43.0000000000, 47.0000000000, 53.0000000000, 59.0000000000, 61.0000000000, 67.0000000000, 71.0000000000, 73.0000000000, 79.0000000000, 83.0000000000, 89.0000000000, 97.0000000000,
 
 -->12_loop_bubblesort_tables_calls.asc CODE
 /*
@@ -603,13 +602,13 @@ print("\n");
 
 
 -->12_loop_bubblesort_tables_calls.asc OUR RESULT
-Find the element at position 6.000
+Find the element at position 6.0000000000
 
 Before sorting:
-14.000, -2.000, 5.000, 133.000, -20.000, 85638.000, 234.000, -246.000, 
+14.0000000000, -2.0000000000, 5.0000000000, 133.0000000000, -20.0000000000, 85638.0000000000, 234.0000000000, -246.0000000000, 
 
 After sorting:
--246.000, -20.000, -2.000, 5.000, 14.000, 133.000, 234.000, 85638.000,
+-246.0000000000, -20.0000000000, -2.0000000000, 5.0000000000, 14.0000000000, 133.0000000000, 234.0000000000, 85638.0000000000,
 
 -->13_func_calls.asc CODE
 /*
@@ -774,28 +773,28 @@ t[0](1)[0](2)[0](3);
 
 
 -->13_func_calls.asc OUR RESULT
-1.000
+1.0000000000
 hello
-fract(1): 1.000 (must be 1)
-fract(2): 2.000 (must be 2)
-fract(3): 6.000 (must be 6)
-fract(4): 24.000 (must be 24)
-foo: 10.000
-foo2: 9.000
-foo3: 10.000
-foo: 8.000
-foo2: 7.000
-foo3: 8.000
-foo: 6.000
-foo2: 5.000
-foo3: 6.000
-foo: 4.000
-foo2: 3.000
-foo3: 4.000
-foo: 2.000
-foo2: 1.000
-foo3: 2.000
-foo: 0.000
+fract(1): 1.0000000000 (must be 1)
+fract(2): 2.0000000000 (must be 2)
+fract(3): 6.0000000000 (must be 6)
+fract(4): 24.0000000000 (must be 24)
+foo: 10.0000000000
+foo2: 9.0000000000
+foo3: 10.0000000000
+foo: 8.0000000000
+foo2: 7.0000000000
+foo3: 8.0000000000
+foo: 6.0000000000
+foo2: 5.0000000000
+foo3: 6.0000000000
+foo: 4.0000000000
+foo2: 3.0000000000
+foo3: 4.0000000000
+foo: 2.0000000000
+foo2: 1.0000000000
+foo3: 2.0000000000
+foo: 0.0000000000
 hello world
 hello world inside
 bar_
@@ -807,8 +806,8 @@ scope2
 global
 global
 global
-1.0002.0003.000
-1.0002.0003.000
+1.00000000002.00000000003.0000000000
+1.00000000002.00000000003.0000000000
 
 -->14_tables1.asc CODE
 /*
@@ -872,14 +871,14 @@ print(vec2, nl);
 
 
 -->14_tables1.asc OUR RESULT
-2.000
+2.0000000000
 zero
-1.000
-1.000
+1.0000000000
+1.0000000000
 true
-0.000
+0.0000000000
 hello
-[(key: 0.000000 , value: false), (key: 1.000000 , value: true), (key: 2.000000 , value: []), (key: 3.000000 , value: 5.000), (key: 4.000000 , value: [(key: 0.000000 , value: hello), (key: 1.000000 , value: hi), ]), (key: 5.000000 , value: []), ]
+[(key: 0.000000 , value: false), (key: 1.000000 , value: true), (key: 2.000000 , value: []), (key: 3.000000 , value: 5.0000000000), (key: 4.000000 , value: [(key: 0.000000 , value: hello), (key: 1.000000 , value: hi), ]), (key: 5.000000 , value: []), ]
 
 -->15_tables2.asc CODE
 /*
@@ -970,12 +969,12 @@ table.table1[2]("ok1\n");
 table.table2[3]("ok2\n");
 
 -->15_tables2.asc OUR RESULT
-pt.x: 21.000
-pt.y: 32.000
-sq.p1.x: 6.000
-sq.p1.y: 12.000
-sq.p2.x: 26.000
-sq.p2.y: 32.000
+pt.x: 21.0000000000
+pt.y: 32.0000000000
+sq.p1.x: 6.0000000000
+sq.p1.y: 12.0000000000
+sq.p2.x: 26.0000000000
+sq.p2.y: 32.0000000000
 first hello
 second hello
 third hello
@@ -1131,23 +1130,21 @@ while (true) {
 
 
 -->16_libfuncs_bonus1.asc OUR RESULT
-Table t is: [(key: key1 , value: 1.000), (key: key2 , value: 2.000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.000), (key: 2.000000 , value: 4.000), (key: 4.000000 , value: 5.000), ]), ]
-Lenght of table t is (must be 5):5.000
+Table t is: [(key: key1 , value: 1.0000000000), (key: key2 , value: 2.0000000000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.0000000000), (key: 2.000000 , value: 4.0000000000), (key: 4.000000 , value: 5.0000000000), ]), ]
+Lenght of table t is (must be 5):5.0000000000
 Function prnt printing: user function 35 and print: print
-Table t in prnt is: [(key: 0.000000 , value: [(key: key1 , value: 1.000), (key: key2 , value: 2.000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.000), (key: 2.000000 , value: 4.000), (key: 4.000000 , value: 5.000), ]), ]), (key: 1.000000 , value: 2.000), (key: 2.000000 , value: 3.140), (key: 3.000000 , value: 4), (key: 4.000000 , value: true), (key: 5.000000 , value: false), ]
-Table indices of global t: [(key: 0.000000 , value: key1), (key: 1.000000 , value: key2), (key: 2.000000 , value: key3), (key: 3.000000 , value: key4), (key: 4.000000 , value: key5), ] which has length: 5.000
-Table copy is: [(key: key1 , value: 1.000), (key: key2 , value: 2.000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.000), (key: 2.000000 , value: 4.000), (key: 4.000000 , value: 5.000), ]), ] and it is printed with print_function
-
-Failed to convert parameter to number in strtonum
+Table t in prnt is: [(key: 0.000000 , value: [(key: key1 , value: 1.0000000000), (key: key2 , value: 2.0000000000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.0000000000), (key: 2.000000 , value: 4.0000000000), (key: 4.000000 , value: 5.0000000000), ]), ]), (key: 1.000000 , value: 2.0000000000), (key: 2.000000 , value: 3.1400001049), (key: 3.000000 , value: 4), (key: 4.000000 , value: true), (key: 5.000000 , value: false), ]
+Table indices of global t: [(key: 0.000000 , value: key1), (key: 1.000000 , value: key2), (key: 2.000000 , value: key3), (key: 3.000000 , value: key4), (key: 4.000000 , value: key5), ] which has length: 5.0000000000
+Table copy is: [(key: key1 , value: 1.0000000000), (key: key2 , value: 2.0000000000), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3.0000000000), (key: 2.000000 , value: 4.0000000000), (key: 4.000000 , value: 5.0000000000), ]), ] and it is printed with print_function
+Error: Failed to convert parameter to number in strtonum
 PASSED: value: nil type: nil
-
-Failed to convert parameter to number in strtonum
+Error: Failed to convert parameter to number in strtonum
 PASSED: value: nil type: nil
-FAILED value: 3.141 != 3.141
-FAILED value: 1.414 != 1.414
+PASSED: value: 3.1410000324 type: number
+PASSED: value: 1.4142135382 type: number
 PASSED: value: nil type: nil
-FAILED value: 0.500 != 0.500
-FAILED value: 0.500 != 0.500
+PASSED: value: 0.5000000000 type: number
+PASSED: value: 0.5000000000 type: number
 
 -->17_libfuncs_bonus2_part2_tables_catch_self_reference_error.asc CODE
 /*
@@ -1282,35 +1279,24 @@ else
 
 
 -->17_libfuncs_bonus2_part2_tables_catch_self_reference_error.asc OUR RESULT
-[(key: a , value: 1.000), (key: b , value: 2.000), (key: c , value: 3.000), (key: e , value: 5.000), (key: f , value: 6.000), ]
-5.000
-
-Failed to convert parameter to number in strtonum
-
+[(key: a , value: 1.0000000000), (key: b , value: 2.0000000000), (key: c , value: 3.0000000000), (key: e , value: 5.0000000000), (key: f , value: 6.0000000000), ]
+5.0000000000
+Error: Failed to convert parameter to number in strtonum
 WARNING: table[a] not found! at line 46
-
-Failed to convert parameter to number in strtonum
-
+Error: Failed to convert parameter to number in strtonum
 WARNING: table[b] not found! at line 46
-
-Failed to convert parameter to number in strtonum
-
+Error: Failed to convert parameter to number in strtonum
 WARNING: table[c] not found! at line 46
-
-Failed to convert parameter to number in strtonum
-
+Error: Failed to convert parameter to number in strtonum
 WARNING: table[e] not found! at line 46
-
-Failed to convert parameter to number in strtonum
-
+Error: Failed to convert parameter to number in strtonum
 WARNING: table[f] not found! at line 46
-Must print 0: 0.000
-Must print 5: 5.000
-Must print true (shallow copy): true
-WARNING: table[b] not found! at line 60
+Must print 0: 0.0000000000
+Must print 5: 5.0000000000
+Must print true (shallow copy): trueWARNING: table[b] not found! at line 60
 Must print true (shallow copy): trueMust print 'Hello, World!' (shallow copy): 
 Must print: variables: 4, functions: 2, tables: 1
-variables:4.000, functions:2.000, tables:1.000
+variables:4.0000000000, functions:2.0000000000, tables:1.0000000000
 Danger! Type 'y' to proceed: y
 [(key: tc , value: [table (self-reference)]), ]
 
@@ -1375,8 +1361,7 @@ func("LALA\n");
 must print >print libFunc<: print libFunc
 must print >tKey table<: tKey table
 must print >tKey table<: tKey table
-
-WARNING: table[[(key: 0.000000 , value: 3.000), ]] not found! at line 37
+WARNING: table[[(key: 0.000000 , value: 3.0000000000), ]] not found! at line 37
 must print nil or run time error: nil
 must print Trueeeee: Trueeeeee
 must print >f userFunc<: f userFunc
@@ -1411,9 +1396,9 @@ print("circle Perimeter (must be 31.41628): ", Perimeter(circle), "\n\n");
 
 
 -->19_Circle.asc OUR RESULT
-pi (must be 3.141628}): 3.142
-circle Area (must be 78.540700000000001): 78.541
-circle Perimeter (must be 31.41628): 31.416
+pi (must be 3.141628}): 3.1416280270
+circle Area (must be 78.540700000000001): 78.5407006741
+circle Perimeter (must be 31.41628): 31.4162802696
 
 
 
@@ -1635,19 +1620,13 @@ Should print "father poo called.": father poo called.
 ---------------------------
 Should print "father poo called.": father poo called.
 ---------------------------
-Should print "fother loo called.": 
+Should print "fother loo called.": WARNING: table[result] not found! at line 73
 WARNING: table[result] not found! at line 73
-
-WARNING: table[result] not found! at line 73
-
 WARNING: table[result] not found! at line 73
 fother loo called.
 ---------------------------
-Should print "fother loo called.": 
+Should print "fother loo called.": WARNING: table[result] not found! at line 73
 WARNING: table[result] not found! at line 73
-
-WARNING: table[result] not found! at line 73
-
 WARNING: table[result] not found! at line 73
 fother loo called.
 
@@ -1719,7 +1698,7 @@ try(0);
 
 -->21_queens.asc OUR RESULT
 (...)
- . . . . . . . Q
+. . . . . . . Q
  . Q . . . . . .
  . . . . Q . . .
  . . Q . . . . .
@@ -2070,11 +2049,12 @@ book.Accept(book, PrintVisitor());
 
 
 -->23_visitor.asc OUR RESULT
-[(key: Accept , value: user func: $1), (key: AppendSection , value: user func: $0), (key: sections , value: [table (self-reference)]), (key: title , value: Hitchhicker's Guide to the Galaxy), ][[(key: Accept , value: user func: $3), (key: AppendParagraph , value: user func: $2), (key: paragraphs , value: [table (self-reference)]), (key: title , value: Section #1), ]] not found
-[(key: Accept , value: user func: $1), (key: AppendSection , value: user func: $0), (key: sections , value: [table (self-reference)]), (key: title , value: Hitchhicker's Guide to the Galaxy), ][[(key: Accept , value: user func: $3), (key: AppendParagraph , value: user func: $2), (key: paragraphs , value: [table (self-reference)]), (key: title , value: Section #2), ]] not found
-[(key: Accept , value: user func: $1), (key: AppendSection , value: user func: $0), (key: sections , value: [table (self-reference)]), (key: title , value: Hitchhicker's Guide to the Galaxy), ][[(key: Accept , value: user func: $3), (key: AppendParagraph , value: user func: $2), (key: paragraphs , value: [table (self-reference)]), (key: title , value: Section #3), ]] not found
-[(key: Accept , value: user func: $1), (key: AppendSection , value: user func: $0), (key: sections , value: [table (self-reference)]), (key: title , value: Hitchhicker's Guide to the Galaxy), ][0.000] not found
-Error: Illegal use of type nil as table
+Book Title: Hitchhicker's Guide to the Galaxy
+	Section :Section #1
+		paragraph 1... blah
+		paragraph 2... blah
+	Section :Section #2
+	Section :Section #3
 
 -->24_Tree1.asc CODE
 /*
@@ -2239,7 +2219,7 @@ grandChildRR
 
 
 
-[(key: class , value: Stack), (key: data , value: [table (self-reference)]), (key: empty , value: user func: $0), (key: next , value: 0.000), (key: pop , value: user func: $2), (key: push , value: user func: $1), (key: top , value: user func: $3), ][0.000] not found
+WARNING: table[0.0000000000] not found! at line 57
 parent
 
 -->25_Tree2.asc CODE
@@ -2430,7 +2410,42 @@ PostOrder(tree);
 
 
 -->25_Tree2.asc OUR RESULT
-[(key: back , value: 1.000), (key: class , value: List), (key: data , value: [table (self-reference)]), (key: empty , value: user func: $4), (key: erase , value: user func: $5), (key: front , value: 0.000), (key: pop_back , value: user func: $8), (key: pop_front , value: user func: $9), (key: push_back , value: user func: $7), (key: size , value: user func: $6), (key: 0.000000 , value: [(key: class , value: TreeNode), (key: info , value: root), (key: left , value: 0.000), (key: marked , value: false), (key: parent , value: 0.000), (key: right , value: 0.000), ]), ][[(key: back , value: 1.000), (key: class , value: List), (key: data , value: [table (self-reference)]), (key: empty , value: user func: $4), (key: erase , value: user func: $5), (key: front , value: 0.000), (key: pop_back , value: user func: $8), (key: pop_front , value: user func: $9), (key: push_back , value: user func: $7), (key: size , value: user func: $6), (key: 0.000000 , value: [(key: class , value: TreeNode), (key: info , value: root), (key: left , value: 0.000), (key: marked , value: false), (key: parent , value: 0.000), (key: right , value: 0.000), ]), ]] not found
-[(key: back , value: 1.000), (key: class , value: List), (key: data , value: [table (self-reference)]), (key: empty , value: user func: $4), (key: erase , value: user func: $5), (key: front , value: 1.000), (key: pop_back , value: user func: $8), (key: pop_front , value: user func: $9), (key: push_back , value: user func: $7), (key: size , value: user func: $6), ][0.000] not found
-illegal use of type nil as table
-Error: Illegal use of type nil as table
+WARNING: table[0.0000000000] not found! at line 100
+WARNING: table[0.0000000000] not found! at line 100
+WARNING: table[1.0000000000] not found! at line 100
+WARNING: table[2.0000000000] not found! at line 100
+WARNING: table[3.0000000000] not found! at line 100
+WARNING: table[4.0000000000] not found! at line 100
+WARNING: table[5.0000000000] not found! at line 100
+WARNING: table[6.0000000000] not found! at line 100
+WARNING: table[7.0000000000] not found! at line 100
+WARNING: table[8.0000000000] not found! at line 100
+WARNING: table[9.0000000000] not found! at line 100
+WARNING: table[10.0000000000] not found! at line 100
+(...)
+root
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+(...)
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+0.0000000000
+
+
+
+
+WARNING: table[0.0000000000] not found! at line 52
+root
