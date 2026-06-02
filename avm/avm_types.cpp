@@ -200,7 +200,7 @@ avm_memcell* avm_translate_operand(vmarg *arg, avm_memcell *reg){
         case local_a: return &stack[ebp - arg->val];
         case formal_a:
             if(arg->val >= avm_totalactuals()){
-                fprintf(stderr, "Error: out of stack\n");
+                fprintf(stderr, "Error: out of stack - ask argument which is not pushed in the arguments list\n");
                 executionFinished=1;
                 static avm_memcell dummy;
                 dummy.type = undef_m;

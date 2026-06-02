@@ -174,16 +174,15 @@ void execute_tablegetelem(instruction* instr)
     }
     avm_memcell* content = avm_tablegetelem(t->data.tableVal, i);
 
-    avm_memcellclear(lv);
-    lv->type = nil_m;
-
     if (content) {
         avm_assign(lv, content);
     }
     else {
-        std::string ts = avm_tostring(t);
+        /*std::string ts = avm_tostring(t);
         std::string is = avm_tostring(i);
-        std::cout << ts << "[" << is << "] not found\n";
+        std::cout << ts << "[" << is << "] not found\n";*/
+        avm_memcellclear(lv);
+        lv->type = nil_m;
     }
 }
 

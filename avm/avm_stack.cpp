@@ -68,9 +68,13 @@ void avm_callsaveenviroment (void)
 
 unsigned avm_get_envvalue (unsigned i)
 {
-    assert(stack[i].type == number_m);
+    //assert(stack[i].type == number_m);
+    if((i >= STACK_SZ)||(stack[i].type != number_m)){
+        executionFinished=1;
+        return 0;
+    }
     unsigned val = (unsigned) stack[i].data.numVal;
-    assert(((double) val) == stack[i].data.numVal);
+    //assert(((double) val) == stack[i].data.numVal);
     return val;
 }
 
@@ -215,12 +219,14 @@ std::string userfunc_tostring(avm_memcell* m)
 {
     assert(m && m->type == userfunc_m);
     // TODO : add impl later because funcs table is missing
-    std::string ret = "user func: ";
-    ret += userFuncs[m->data.funcVal].id;
-    return ret; //just to satisfy the g++ for now
+    // std::string ret = "user func: ";
+    // ret += userFuncs[m->data.funcVal].id;
+    // return ret;
 
     // userfunc* finfo = avm_getfuncinfo_byindex(m->data.funcVal);
     // return finfo ? std::string(finfo->id) : "Unknown_Function";
+
+    return "user function "+ std::to_string(userFuncs[m->data.funcVal].address);
 }
 
 std::string libfunc_tostring(avm_memcell* m)

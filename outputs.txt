@@ -26,8 +26,8 @@ executor(t.tablefunc());
 executor(t.tablefunc()());	//run time error
 
 -->01_err_1.asc OUR RESULT
-user func: $3
-user func: $5
+user function 14
+user function 53
 4.000
 3.000
 call: can not bind ' 3.000' to function
@@ -121,22 +121,24 @@ right(left);
 
 -->04_err_4.asc OUR RESULT
 (...)
-Func: user func: left right
-Func: user func: right left
-Func: user func: left right
-Func: user func: right left
-Func: user func: left right
-Func: user func: right left
-Func: user func: left right
-Func: user func: right left
-Func: user func: left right
-Func: user func: right left
-Func: user func: left right
-Func: user func: right left
-Func: user func: left right
-Func: user func: right left
-Func: user func: left right
-Func: user func: right left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
+Func: user function 2 right
+Func: user function 20 left
 stack overflow
 
 -->05_err_5.asc CODE
@@ -172,7 +174,7 @@ foo();
 
 -->05_err_5.asc OUR RESULT
 corrupt & destroy
-Error: out of stack
+Error: out of stack - ask argument which is not pushed in the arguments list
 
 -->06_err_6.asc CODE
 /*
@@ -240,7 +242,8 @@ function foo () {
 foo();
 
 -->06_err_6.asc OUR RESULT
-YOYOYOYOYOYOYOYOYO...YOYOYOYOYO...value: 15625.000), (key: -124.000000 , value: 15376.000), (key: -123.000000 , value: 15129.000), (key: -122.000000 , value: 14884.000), (key: -121.000000 , value: 14641.000), (key: -120.000000 , value: 14400.000), (key: -119.000000 , value: 14161.000), (key: -118.000000 , value: 13924.000), (key: -117.000000 , value: 13689.000), (key: -116.000000 , value: 13456.000), (key: -115.000000 , value: 13225.000), (key: -114.000000 , value: 12996.000), (key: -113.000000 , value: 12769.000), (key: -112.000000 , value: 12544.000), (key: -111.000000 , value: 12321.000), (key: -110.000000 , value: 12100.000), (key: -109.000000 , value: 11881.000), (key: -108.000000 , value: 11664.000), (key: -107.000000 , value: 11449.000), (key: -106.000000 , value: 11236.000), (key: -105.000000 , value: 11025.000), (key: -104.000000 , value: 10816.000), (key: -103.000000 , value: 10609.000), (key: -102.000000 , value: 10404.000), (key: -101.000000 , value: 10201.000), (key: -100.000000 , value: 10000.000), (key: -99.000000 , value: 9801.000), (key: -98.000000 , value: 9604.000), (key: -97.000000 , value: 9409.000), (key: -96.000000 , value: 9216.000), (key: -95.000000 , value: 9025.000), (key: -94.000000 , value: 8836.000), (key: -93.000000 , value: 8649.000), (key: -92.000000 , value: 8464.000), (key: -91.000000 , value: 8281.000), (key: -90.000000 , value: 8100.000), (key: -89.000000 , value: 7921.000), (key: -88.000000 , value: 7744.000), (key: -87.000000 , value: 7569.000), (key: -86.000000 , value: 7396.000), (key: -85.000000 , value: 7225.000), (key: -84.000000 , value: 7056.000), (key: -83.000000 , value: 6889.000), (key: -82.000000 , value: 6724.000), (key: -81.000000 , value: 6561.000), (key: -80.000000 , value: 6400.000), (key: -79.000000 , value: 6241.000), (key: -78.000000 , value: 6084.000), (key: -77.000000 , value: 5929.000), (key: -76.000000 , value: 5776.000), (key: -75.000000 , value: 5625.000), (key: -74.000000 , value: 5476.000), (key: -73.000000 , value: 5329.000), (key: -72.000000 , value: 5184.000), (key: -71.000000 , value: 5041.000), (key: -70.000000 , value: 4900.000), (key: -69.000000 , value: 4761.000), (key: -68.000000 , value: 4624.000), (key: -67.000000 , value: 4489.000), (key: -66.000000 , value: 4356.000), (key: -65.000000 , value: 4225.000), (key: -64.000000 , value: 4096.000), (key: -63.000000 , value: 3969.000), (key: -62.000000 , value: 3844.000), (key: -61.000000 , value: 3721.000), (key: -60.000000 , value: 3600.000), (key: -59.000000 , value: 3481.000), (key: -58.000000 , value: 3364.000), (key: -57.000000 , value: 3249.000), (key: -56.000000 , value: 3136.000), (key: -55.000000 , value: 3025.000), (key: -54.000000 , value: 2916.000), (key: -53.000000 , value: 2809.000), (key: -52.000000 , value: 2704.000), (key: -51.000000 , value: 2601.000), (key: -50.000000 , value: 2500.000), (key: -49.000000 , value: 2401.000), (key: -48.000000 , value: 2304.000), (key: -47.000000 , value: 2209.000), (key: -46.000000 , value: 2116.000), (key: -45.000000 , value: 2025.000), (key: -44.000000 , value: 1936.000), (key: -43.000000 , value: 1849.000), (key: -42.000000 , value: 1764.000), (key: -41.000000 , value: 1681.000), (key: -40.000000 , value: 1600.000), (key: -39.000000 , value: 1521.000), (key: -38.000000 , value: 1444.000), (key: -37.000000 , value: 1369.000), (key: -36.000000 , value: 1296.000), (key: -35.000000 , value: 1225.000), (key: -34.000000 , value: 1156.000), (key: -33.000000 , value: 1089.000), (key: -32.000000 , value: 1024.000), (key: -31.000000 , value: 961.000), (key: -30.000000 , value: 900.000), (key: -29.000000 , value: 841.000), (key: -28.000000 , value: 784.000), (key: -27.000000 , value: 729.000), (key: -26.000000 , value: 676.000), (key: -25.000000 , value: 625.000), (key: -24.000000 , value: 576.000), (key: -23.000000 , value: 529.000), (key: -22.000000 , value: 484.000), (key: -21.000000 , value: 441.000), (key: -20.000000 , value: 400.000), (key: -19.000000 , value: 361.000), (key: -18.000000 , value: 324.000), (key: -17.000000 , value: 289.000), (key: -16.000000 , value: 256.000), (key: -15.000000 , value: 225.000), (key: -14.000000 , value: 196.000), (key: -13.000000 , value: 169.000), (key: -12.000000 , value: 144.000), (key: -11.000000 , value: 121.000), (key: -10.000000 , value: 100.000), (key: -9.000000 , value: 81.000), (key: -8.000000 , value: 64.000), (key: -7.000000 , value: 49.000), (key: -6.000000 , value: 36.000), (key: -5.000000 , value: 25.000), (key: -4.000000 , value: 16.000), (key: -3.000000 , value: 9.000), (key: -2.000000 , value: 4.000), (key: -1.000000 , value: 1.000), ][0.000] not found
+YOYOYOYOYOYOYOYOYO...YOYOYOYOYO...(key: 87.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 88.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 89.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 90.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 91.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 92.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 93.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 94.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 95.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 96.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 97.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 98.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), (key: 99.000000 , value: [(key: 0.000000 , value: [(key: 0.000000 , value: 3.000), ]), ]), ]), (key: 0.000000 , value: 3.000), ]
+end-j
 
 -->07_relop_logic.asc CODE
 /*
@@ -470,7 +473,7 @@ Product of the GP series till 7.000 terms is 2097152.000
 0.000  2.000  4.000  6.000  8.000  10.000  12.000  14.000  16.000  18.000  20.000  22.000  24.000  26.000  28.000  30.000  32.000  34.000  36.000  38.000  40.000  42.000  44.000  46.000  48.000  50.000  52.000  54.000  56.000  58.000  
 
  Odd numbers till 60:
-1.000  3.000  5.000  7.000  9.000  11.000  13.000  15.000  17.000  19.000  21.000  23.000  25.000  27.000  29.000  31.000  33.000  35.000  37.000  39.000  41.000  43.000  45.000  47.000  49.000  51.000  53.000  55.000  57.000  59.000   
+1.000  3.000  5.000  7.000  9.000  11.000  13.000  15.000  17.000  19.000  21.000  23.000  25.000  27.000  29.000  31.000  33.000  35.000  37.000  39.000  41.000  43.000  45.000  47.000  49.000  51.000  53.000  55.000  57.000  59.000
 
 -->11_loop_advanced.asc CODE
 /*
