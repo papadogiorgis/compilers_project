@@ -37,7 +37,7 @@ expr* inter_code_assign(expr* lval, expr* rval)
 expr* inter_code_arithmetic(expr* lval, expr* rval, iopcode op)
 {
 	if (!is_arith(lval) || !is_arith(rval)) {
-		fprintf(stderr, "ERROR: ILLEGAL ARITHMETIC OPERATION AT LINE %d\n", yylineno);
+		fprintf(stderr, "\nERROR: ILLEGAL ARITHMETIC OPERATION AT LINE %d\n", yylineno);
 		return NULL;
 	}
 	lval = emit_if_tableitem(lval);
@@ -171,6 +171,7 @@ expr* inter_code_member_item(expr* val, expr* index){
 	/*if val is already a tableitem save its value
 	  in a temp val */
 	val = emit_if_tableitem(val);
+	index = emit_if_tableitem(index);
 	index = inter_code_bool_to_val(index);
 	expr* mem_item = newexpr(tableitem_e);
 	mem_item->sym = val->sym;
