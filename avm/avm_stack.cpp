@@ -156,18 +156,16 @@ extern void avm_push_table_arg(avm_table* t)
 std::string number_tostring(avm_memcell* m)
 {
     assert(m->type == number_m);
-    std::ostringstream res;
-    res << std::fixed << std::setprecision(10) << m->data.numVal;
 
-    /* double integer;
-    double modf = std::modf(m->data.numVal, &integer);
-    if (modf == 0){ // if digits after decimal point are zero, print as integer
-        std::string res2;
-        res2 = std::to_string(static_cast<int>(integer));
-        return res2;
-    }*/
-
-    return res.str();
+    double val = m->data.numVal;
+    double intpart;
+    if(std::modf(val, &intpart) == 0.0){
+        return std::to_string(static_cast<long long>(intpart));
+    }else{
+        std::ostringstream res;
+        res<<std::setprecision(10)<<val;
+        return res.str();
+    }
 }
 
 std::string string_tostring(avm_memcell* m)
