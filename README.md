@@ -26,6 +26,9 @@ This project was compiled, tested, and verified on the computer named `mango` lo
 
 An easy way to compile and run an Alpha program is using the provided `alpha` shell script. This script automatically handles the build process, compiles your source file, executes it in the Virtual Machine, and cleans up the intermediate binary files.
 
+**Prerequisite:** Ensure the script is executable by running:
+`chmod +x alpha`
+
 **Usage:**
 * **Standard Run:** `./alpha <source_file.asc>`
 * **Debug Run:** `./alpha -debug-flag <source_file.asc>`
