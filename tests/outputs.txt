@@ -1158,10 +1158,12 @@ trypeof(typeof)	:libfunc<
 
 Testing lib function input and typeof (type exit for exit)
 
-input: 123
-typeof(stdin): number, value of stdin: 123
-input: Andreas
-typeof(stdin): string, value of stdin: Andreas
+input: 1
+typeof(stdin): number, value of stdin: 1
+input: hello
+typeof(stdin): string, value of stdin: hello
+input: 
+typeof(stdin): string, value of stdin: 
 input: ^C
 
 -->17_libfuncs_bonus2_part2_tables_catch_self_reference_error.asc CODE
