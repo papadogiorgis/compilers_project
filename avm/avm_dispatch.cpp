@@ -432,7 +432,12 @@ void execute_jump(instruction* instr){
     }
 }
 
-void execute_ret(instruction* instr){}
+void execute_ret(instruction* instr){
+    avm_memcell* rv = avm_translate_operand(&instr->arg1, &ax);
+    if(rv){
+        avm_assign(&retval, rv);
+    }
+}
 
 void execute_getretval(instruction* instr){
     avm_memcell* lv = avm_translate_operand(&instr->result, (avm_memcell*)0);

@@ -1133,15 +1133,15 @@ while (true) {
 Table t is: [(key: key1 , value: 1), (key: key2 , value: 2), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3), (key: 2.000000 , value: 4), (key: 4.000000 , value: 5), ]), ]
 Lenght of table t is (must be 5):5
 Function prnt printing: user function 35 and print: print
-Table t in prnt is: [(key: 0.000000 , value: [(key: key1 , value: 1), (key: key2 , value: 2), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3), (key: 2.000000 , value: 4), (key: 4.000000 , value: 5), ]), ]), (key: 1.000000 , value: 2), (key: 2.000000 , value: 3.140000105), (key: 3.000000 , value: 4), (key: 4.000000 , value: true), (key: 5.000000 , value: false), ]
+Table t in prnt is: [(key: 0.000000 , value: [(key: key1 , value: 1), (key: key2 , value: 2), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3), (key: 2.000000 , value: 4), (key: 4.000000 , value: 5), ]), ]), (key: 1.000000 , value: 2), (key: 2.000000 , value: 3.14), (key: 3.000000 , value: 4), (key: 4.000000 , value: true), (key: 5.000000 , value: false), ]
 Table indices of global t: [(key: 0.000000 , value: key1), (key: 1.000000 , value: key2), (key: 2.000000 , value: key3), (key: 3.000000 , value: key4), (key: 4.000000 , value: key5), ] which has length: 5
 Table copy is: [(key: key1 , value: 1), (key: key2 , value: 2), (key: key3 , value: tria), (key: key4 , value: true), (key: key5 , value: [(key: 1.000000 , value: 3), (key: 2.000000 , value: 4), (key: 4.000000 , value: 5), ]), ] and it is printed with print_function
 Runtime-Error: Failed to convert parameter to number in strtonum
 PASSED: value: nil type: nil
 Runtime-Error: Failed to convert parameter to number in strtonum
 PASSED: value: nil type: nil
-PASSED: value: 3.141000032 type: number
-PASSED: value: 1.414213538 type: number
+PASSED: value: 3.141 type: number
+PASSED: value: 1.414213562 type: number
 PASSED: value: nil type: nil
 PASSED: value: 0.5 type: number
 PASSED: value: 0.5 type: number
@@ -1158,13 +1158,22 @@ trypeof(typeof)	:libfunc<
 
 Testing lib function input and typeof (type exit for exit)
 
-input: 1
-typeof(stdin): number, value of stdin: 1
-input: hello
-typeof(stdin): string, value of stdin: hello
-input: 
-typeof(stdin): string, value of stdin: 
-input: ^C
+input: 3
+typeof(stdin): number, value of stdin: 3
+input: 3.4
+typeof(stdin): number, value of stdin: 3.4
+input: true
+typeof(stdin): bool, value of stdin: true
+input: false
+typeof(stdin): bool, value of stdin: false
+input: p[
+typeof(stdin): string, value of stdin: p[
+input: 4.4a
+typeof(stdin): string, value of stdin: 4.4a
+input: "gap gap gap"
+typeof(stdin): string, value of stdin: "gap gap gap"
+input: exit
+typeof(stdin): string, value of stdin: exit
 
 -->17_libfuncs_bonus2_part2_tables_catch_self_reference_error.asc CODE
 /*
@@ -1416,9 +1425,9 @@ print("circle Perimeter (must be 31.41628): ", Perimeter(circle), "\n\n");
 
 
 -->19_Circle.asc OUR RESULT
-pi (must be 3.141628}): 3.141628027
-circle Area (must be 78.540700000000001): 78.54070067
-circle Perimeter (must be 31.41628): 31.41628027
+pi (must be 3.141628}): 3.141628
+circle Area (must be 78.540700000000001): 78.5407
+circle Perimeter (must be 31.41628): 31.41628
 
 
 

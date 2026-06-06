@@ -163,7 +163,7 @@ union YYSTYPE
 
     int intval;
     char *strval;
-    float floatval;
+    double floatval;
     unsigned uintval;
     struct expr *expression;
     struct node *node;

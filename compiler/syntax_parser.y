@@ -55,7 +55,7 @@
 %union {
     int intval;
     char *strval;
-    float floatval;
+    double floatval;
     unsigned uintval;
     struct expr *expression;
     struct node *node;
@@ -565,7 +565,7 @@ funcdef:        funcprefix funcargs funcbody
 const:          INT
                     {
                         $$ = newexpr(constnum_e);
-                        $$->numConst = (float)$1;
+                        $$->numConst = (double)$1;
                         if(print_syntax){printf("line %d: const-> int\n", yylineno);}
                     }
                 | REAL
