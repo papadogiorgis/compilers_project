@@ -5,9 +5,6 @@
 * **Andreas Kantilierakis** [GitHub Profile](https://github.com/AndreasKantilierakis)
 * **Georgios Papadakis** [GitHub Profile](https://github.com/papadogiorgis)
 
-## Execution Environment
-This project was compiled, tested, and verified on the computer named `mango` located in the CSD labs.
-
 ## Make Targets
 * `make all`: Compiles all files and creates executables **alpha_compiler** and **alpha_vm**.
 * `make alpha_compiler`: Compiles only the Alpha Language Compiler.
@@ -38,7 +35,3 @@ An easy way to compile and run an Alpha program is using the provided `alpha` sh
 2. Runs `./alpha_compiler` on your target file (with *-debug-flag* if you are doing a debug run).
 3. If successful, runs `./alpha_vm` on the generated `out.abc` file (with *-debug-flag* if you are doing a debug run).
 4. Safely removes the intermediate `out.abc` file once execution finishes.
-
-## Implementation Status
-- **What works great:** The entire project has been completed successfully.
-- **What works partially:** None. All implemented features are fully functional.
