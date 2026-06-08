@@ -2,8 +2,8 @@
 *CS-340 Languages and Compilers - University of Crete*
 
 ## Authors
-* **Andreas Kantilierakis (csd5411)**
-* **Georgios Papadakis (csd4975)**
+* **Andreas Kantilierakis** [GitHub Profile](https://github.com/AndreasKantilierakis)
+* **Georgios Papadakis** [GitHub Profile](https://github.com/papadogiorgis)
 
 ## Execution Environment
 This project was compiled, tested, and verified on the computer named `mango` located in the CSD labs.
